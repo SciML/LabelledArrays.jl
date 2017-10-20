@@ -26,6 +26,6 @@ include("slvectors.jl")
 include("lmarrays.jl")
 include("larrays.jl")
 
-export SLVector, LMArray, LArray, @SLVector, @LMVector
+export SLVector, LMArray, LArray, @SLVector, @LMVector, @LVector
 
 end # module

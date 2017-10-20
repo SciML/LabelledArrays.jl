@@ -18,3 +18,28 @@ A = @SLVector [a,b,c] [1,2,3]
 ```
 
 Here we have that `A == [1,2,3]` and for example `A.b == 2`
+
+## LMArrays
+
+The `LMArray`s are `MArray`s with labels. Two constructors are available:
+
+```julia
+A = @LMArray [:a,:b,:c] [1,2,3]
+
+names = @SArray [:a,:b,:c]
+values = @MArray [1,2,3]
+A = LMArray(names,values)
+```
+
+The names must be an `SArray`.
+
+## LArrays
+
+The `LArray`s are fully mutable vectors with labels. These are less performant
+when using the labels, but can be convenient.
+
+```julia
+names = [:a,:b,:c]
+values = [1,2,3]
+A = LMArray(names,values)
+```

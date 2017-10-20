@@ -19,3 +19,23 @@ end
 @inline function Base.setindex!(A::LArray{S,T,N,L}, v, s::Symbol) where {L,N,T,S<:Tuple}
     A.values[symbol_to_index(A.names, s)] = v
 end
+
+"""
+    @LVector Type Names
+    @LVector Type Names Values
+
+Creates an `LArray` with names determined from the `Names`
+vector and values determined from the `Values` vector (if no values are provided,
+it defaults to not setting the values to zero). All of the values are converted
+to the type of the `Type` input.
+
+For example:
+
+    a = @LVector Float64 [a,b,c]
+    b = @LVector Float64 [a,b,c] [1,2,3]
+"""
+macro LVector(T,names,vals=nothing)
+    quote
+        LArray($names,$vals)
+    end
+end
