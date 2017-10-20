@@ -14,18 +14,22 @@ are labelled. Thus for instance you can set that the second component is named
 The `SLVector` macros are for creating static LabelledArrays:
 
 ```julia
+# Constructor 1
 A = @SLVector [a,b,c] [1,2,3]
 ```
 
-Here we have that `A == [1,2,3]` and for example `A.b == 2`
+Here we have that `A == [1,2,3]` and for example `A.b == 2`. `SLVector`s are just
+`FieldVectors`.
 
 ## LMArrays
 
 The `LMArray`s are `MArray`s with labels. Two constructors are available:
 
 ```julia
+# Constructor 1
 A = @LMArray [:a,:b,:c] [1,2,3]
 
+# Constructor 2
 names = @SArray [:a,:b,:c]
 values = @MArray [1,2,3]
 A = LMArray(names,values)
@@ -39,7 +43,11 @@ The `LArray`s are fully mutable vectors with labels. These are less performant
 when using the labels, but can be convenient.
 
 ```julia
+# Constructor 1
+A = @LArray [:a,:b,:c] [1,2,3]
+
+# Constructor 2
 names = [:a,:b,:c]
 values = [1,2,3]
-A = LMArray(names,values)
+A = LArray(names,values)
 ```
