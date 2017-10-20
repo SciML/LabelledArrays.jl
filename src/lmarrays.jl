@@ -46,11 +46,17 @@ to the type of the `Type` input.
 
 For example:
 
-    a = @MLVector Float64 [a,b,c]
-    b = @MLVector Float64 [a,b,c] [1,2,3]
+    a = @LMVector Float64 [a,b,c]
+    b = @LMVector Float64 [a,b,c] [1,2,3]
 """
 macro LMVector(T,names,vals=nothing)
     quote
         LMArray(@SArray($names),@MArray($vals))
     end
+end
+
+# Fix broadcast https://github.com/JuliaArrays/StaticArrays.jl/issues/314
+function StaticArrays.similar_type(::Type{V}, ::Type{T}, ::Size{N}) where
+                                                        {V<:LMArray,T,N}
+    V
 end
