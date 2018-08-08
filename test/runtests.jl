@@ -1,5 +1,5 @@
 using LabelledArrays
-using Base.Test
+using Test
 
 tic()
 @time @testset "SLVector Macros" begin include("slvectors.jl") end
