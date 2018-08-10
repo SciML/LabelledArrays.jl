@@ -3,7 +3,7 @@ abstract type SLVector{N,T} <: FieldVector{N,T} end
 # LVector Macro
 
 """
-    @LVector Names Values
+    @SLVector Values Names
 
 Creates a static `LVector` with names determined from the `Names`
 vector and values determined from the `Values` vector (if no values are provided,
@@ -12,9 +12,9 @@ to the type of the `Type` input.
 
 For example:
 
-    A = @SLVector [a,b,c] [1,2,3]
+    A = @SLVector [1,2,3] [a,b,c]
 """
-macro SLVector(_names,vals)
+macro SLVector(vals,_names)
     names = Symbol.(_names.args)
     type_name = gensym(:SLVector)
     construction_call = vals==nothing ?

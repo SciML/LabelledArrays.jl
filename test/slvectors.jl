@@ -1,7 +1,7 @@
 using LabelledArrays
-using Base.Test
+using Test
 
-b = @SLVector [a,b,c] [1,2,3]
+b = @SLVector [1,2,3] [a,b,c]
 
 @test b.a == 1
 @test b.b == 2

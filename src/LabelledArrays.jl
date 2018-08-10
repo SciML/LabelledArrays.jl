@@ -1,15 +1,6 @@
-__precompile__()
-
 module LabelledArrays
 
-using StaticArrays, Juno
-
-function symbol_to_index(names, s::Symbol)
-    findfirst((t)->s==t,names)
-end
-Base.@pure function symbol_to_index(names::SArray, s::Symbol)
-    findfirst((t)->s==t,names)
-end
+using StaticArrays
 
 #=
 Base.@pure function symbol_to_index(names, s::Symbol)
@@ -22,10 +13,9 @@ Base.@pure function symbol_to_index(names, s::Symbol)
 end
 =#
 
-include("slvectors.jl")
-include("lmarrays.jl")
-include("larrays.jl")
+include("slvector.jl")
+include("lvector.jl")
 
-export SLVector, LMArray, LArray, @SLVector, @LMVector, @LVector
+export SLVector, LVector, @SLVector, @LVector
 
 end # module
