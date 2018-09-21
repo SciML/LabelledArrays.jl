@@ -1,8 +1,9 @@
 using LabelledArrays
 using Test
 
-tic()
+@time begin
 @time @testset "SLVector Macros" begin include("slvectors.jl") end
-@time @testset "LMArrays" begin include("lmarrays.jl") end
-@time @testset "LArrays" begin include("larrays.jl") end
-toc()
+#@time @testset "LMArrays" begin include("lmarrays.jl") end
+@time @testset "LVectors" begin include("lvectors.jl") end
+@time @testset "DiffEq" begin include("diffeq.jl") end
+end

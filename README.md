@@ -7,47 +7,30 @@
 LabelledArrays.jl is a package which provides arrays with labels, i.e. they are
 arrays which `map`, `broadcast`, and all of that good stuff, but their components
 are labelled. Thus for instance you can set that the second component is named
-`:second` and retrieve it with `A[:second]`.
+`:second` and retrieve it with `A.second`.
 
 ## SLVectors
 
-The `SLVector` macros are for creating static LabelledArrays:
+The `SLVector` macros are for creating static LabelledArrays. First you create
+the type and then you can use that type.
 
 ```julia
 # Constructor 1
-A = @SLVector [a,b,c] [1,2,3]
+@SLVector ABC Int [a,b,c]
+A = ABC(1,2,3)
+A.a == 1
 ```
 
 Here we have that `A == [1,2,3]` and for example `A.b == 2`. `SLVector`s are just
 `FieldVectors`.
 
-## LMArrays
+## LVectors
 
-The `LMArray`s are `MArray`s with labels. Two constructors are available:
-
-```julia
-# Constructor 1
-A = @LMArray [:a,:b,:c] [1,2,3]
-
-# Constructor 2
-names = @SArray [:a,:b,:c]
-values = @MArray [1,2,3]
-A = LMArray(names,values)
-```
-
-The names must be an `SArray`.
-
-## LArrays
-
-The `LArray`s are fully mutable vectors with labels. These are less performant
-when using the labels, but can be convenient.
+The `LVectors`s are fully mutable vectors with labels. There is no performance
+loss by using the labelled instead of indexing.
 
 ```julia
 # Constructor 1
-A = @LArray [:a,:b,:c] [1,2,3]
-
-# Constructor 2
-names = [:a,:b,:c]
-values = [1,2,3]
-A = LArray(names,values)
+A = @LVector [1,2,3] (:a,:b,:c)
+A.a == 1
 ```

@@ -1,7 +1,8 @@
 using LabelledArrays
 using Test
 
-b = @SLVector [1,2,3] [a,b,c]
+@SLVector ABC Int [a,b,c]
+b = ABC(1,2,3)
 
 @test b.a == 1
 @test b.b == 2
@@ -12,4 +13,4 @@ b = @SLVector [1,2,3] [a,b,c]
 
 @test_throws UndefVarError fill!(a,1)
 @test typeof(b) <: SLVector{3,Int}
-b.+b
+typeof(b.+b) <: ABC

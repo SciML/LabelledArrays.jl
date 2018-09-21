@@ -1,32 +1,48 @@
 struct LVector{T,A <: AbstractVector{T},Syms} <: AbstractVector{T}
-    x::A
+    __x::A
 end
 
-Base.size(x::LVector) = size(getfield(x,:x))
-@inline Base.getindex(x::LVector,i...) = getfield(x,:x)[i...]
-@inline Base.setindex!(x::LVector,y,i...) = getfield(x,:x)[i...] = y
+Base.size(x::LVector) = size(getfield(x,:__x))
+@inline Base.getindex(x::LVector,i...) = getfield(x,:__x)[i...]
+@inline Base.setindex!(x::LVector,y,i...) = getfield(x,:__x)[i...] = y
 
-Base.propertynames(x::LVector{T,A,Syms}) where {T,A,Syms} = Syms
+Base.propertynames(::LVector{T,A,Syms}) where {T,A,Syms} = Syms
+symnames(::Type{LVector{T,A,Syms}}) where {T,A,Syms} = Syms
+
 @inline function Base.getproperty(x::LVector,s::Symbol)
-    if s == :x
-        return getfield(x,:x)
+    if s == :__x
+        return getfield(x,:__x)
     end
-    x[s]
+    x[Val(s)]
 end
 
 @inline function Base.setproperty!(x::LVector,s::Symbol,y)
-    if s == :x
-        return setfield!(x,:x,y)
+    if s == :__x
+        return setfield!(x,:__x,y)
     end
-    x[s] = y
+    x[Val(s)] = y
 end
 
 @inline function Base.getindex(x::LVector,s::Symbol)
-    x.x[findfirst(y->y==s,propertynames(x))]
+    getindex(x,Val(s))
+end
+
+@inline @generated function Base.getindex(x::LVector,::Val{s}) where s
+    idx = findfirst(y->y==s,symnames(x))
+    :(x.__x[$idx])
 end
 
 @inline function Base.setindex!(x::LVector,y,s::Symbol)
-    x.x[findfirst(y->y==s,propertynames(x))] = y
+    setindex!(x,y,Val(s))
+end
+
+@inline @generated function Base.setindex!(x::LVector,y,::Val{s}) where s
+    idx = findfirst(y->y==s,symnames(x))
+    :(x.__x[$idx] = y)
+end
+
+function Base.similar(x::LVector,::Type{S},dims::NTuple{N,Int}) where {S,N}
+    typeof(x)(similar(x.__x,S,dims))
 end
 
 """
