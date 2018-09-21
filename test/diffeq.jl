@@ -15,6 +15,7 @@ p = LorenzParameterVector(10.0,28.0,8/3)
 tspan = (0.0,10.0)
 prob = ODEProblem(f,u0,tspan,p)
 sol = solve(prob,Tsit5())
+@test sol[10].x > 0
 
 function iip_f(du,u,p,t)
   du.x = p.σ*(u.y-u.x)
