@@ -25,6 +25,7 @@ macro SLVector(tname,T,_names)
         struct $(tname) <: SLVector{$(length(names)),$T}
             $((:($n::$T) for n in names)...)
             $(tname)($((:($n) for n in names)...)) = new($((:($n) for n in names)...))
+            $(tname)(x::Tuple{Any}) = new(first(x))
         end
     end
 end
