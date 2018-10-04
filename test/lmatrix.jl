@@ -1,4 +1,4 @@
-using Revise, LabelledArrays, Test, InteractiveUtils
+using LabelledArrays, Test, InteractiveUtils
 
 x = @LMatrix [1.0 2.0; 3.0 4.0] (:a,:b) (:x,:y)
 
@@ -25,8 +25,8 @@ h(x) = x.a.x
 @inferred getindex(x,Val(:a),Val(:x))
 @code_warntype g(x)
 @inferred g(x)
-# @code_warntype h(x)
-# @inferred h(x)
+@code_warntype h(x)
+@inferred h(x)
 
 
 f2(x, y) = x[1,1] = y
@@ -65,3 +65,5 @@ end
 @inferred getindex(x,Val(:a),Val(:x))
 @code_warntype g(x)
 @inferred g(x)
+@code_warntype h(x)
+@inferred h(x)

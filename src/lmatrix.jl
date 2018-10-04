@@ -27,10 +27,7 @@ symnames(::Type{X}, dim) where X <: AbstractLMatrix{T,A,Syms1,Syms2} where {T,A,
 end
 
 @inline function Base.getproperty(p::LMatrixPartial{Val{s1}},s2::Symbol) where s1
-    if s2 == :__m
-        return getfield(p,:__m)
-    end
-    p.__m[Val(s1), Val(s2)]
+    getfield(p, :__m)[Val(s1), Val(s2)]
 end
 
 
@@ -42,7 +39,7 @@ end
 end
 
 @inline function Base.setproperty!(p::LMatrixPartial{Val{s1}},s2::Symbol,y) where s1
-    p.__m[Val(s1), Val(s2)] = y
+    getfield(p, :__m)[Val(s1), Val(s2)] = y
 end
 
 @inline Base.getindex(x::AbstractLMatrix,s1::Symbol,s2::Symbol) = getindex(x,Val(s1),Val(s2))
