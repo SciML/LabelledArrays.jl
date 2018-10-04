@@ -3,7 +3,7 @@ abstract type SLVector{N,T} <: FieldVector{N,T} end
 # SLVector Macro
 
 """
-    @SLVector TypeName ElementType Names
+t   @SLVector TypeName ElementType Names
 
 Creates a static vector type with name TypeName and  eltype ElementType
 with names determined from the `Names`.

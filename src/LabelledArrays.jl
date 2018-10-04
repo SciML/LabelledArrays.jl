@@ -6,6 +6,6 @@ include("slvector.jl")
 include("lvector.jl")
 include("lmatrix.jl")
 
-export SLVector, LVector, LMatrix, @SLVector, @LVector, @LMatrix
+export SLVector, LVector, SLMatrix, LMatrix, @SLVector, @LVector, @SLMatrix, @LMatrix
 
 end # module

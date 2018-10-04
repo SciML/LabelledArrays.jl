@@ -1,4 +1,4 @@
-using LabelledArrays, Test, InteractiveUtils
+using Revise, LabelledArrays, Test, InteractiveUtils
 
 x = @LMatrix [1.0 2.0; 3.0 4.0] (:a,:b) (:x,:y)
 
@@ -9,8 +9,6 @@ for (i,s) in enumerate(syms1)
     @show i,s
     @test x[i,:x] == x[s,:x]
 end
-
-x[Val(:a), Val(:x)]
 
 f(x) = x[1,1]
 g(x) = x[:a,:x]
@@ -48,3 +46,22 @@ h2(x, 7.0)
 @inferred g2(x, 1.0)
 @code_warntype h2(x, 1.0)
 @inferred h2(x, 1.0)
+
+x = @SLMatrix [1 2; 3 4] (:a,:b) (:x,:y)
+
+for (i,s) in enumerate(syms1)
+    @show i,s
+    @test x[i,:x] == x[s,:x]
+end
+
+@time f(x)
+@time f(x)
+@time g(x)
+@time g(x)
+@time h(x)
+@time h(x)
+
+@code_warntype getindex(x,Val(:a),Val(:x))
+@inferred getindex(x,Val(:a),Val(:x))
+@code_warntype g(x)
+@inferred g(x)
