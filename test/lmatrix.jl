@@ -1,5 +1,7 @@
 using LabelledArrays, Test, InteractiveUtils
 
+# Test LMatrix
+
 x = @LMatrix [1.0 2.0; 3.0 4.0] (:a,:b) (:x,:y)
 
 syms1 = (:a,:b)
@@ -38,6 +40,7 @@ g2(x, 6.0)
 h2(x, 7.0)
 @test x[1,1] == 7.0
 
+
 @time f2(x, 5.0)
 @time g2(x, 5.0)
 @time h2(x, 5.0)
@@ -46,6 +49,21 @@ h2(x, 7.0)
 @inferred g2(x, 1.0)
 @code_warntype h2(x, 1.0)
 @inferred h2(x, 1.0)
+
+# Assign to columns 
+
+x[:a,:] = [-1.0, -2.0]
+@test x[1,:] == [-1.0, -2.0]
+
+x.a = [-3.0, -4.0]
+@test x[1,:] == [-3.0, -4.0]
+
+# Broadcasting
+# x[:a,:] .= [-1.0, -2.0]
+# x.a .= [-3.0, -4.0]
+
+
+# Test SLMatrix
 
 x = @SLMatrix [1 2; 3 4] (:a,:b) (:x,:y)
 

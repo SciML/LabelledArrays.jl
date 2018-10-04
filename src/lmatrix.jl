@@ -13,11 +13,16 @@ struct LMatrixPartial{Sym1,M <: AbstractLMatrix}
 end
 
 Base.size(x::AbstractLMatrix) = size(getfield(x,:__x))
-@inline Base.getindex(x::AbstractLMatrix,i...) = getfield(x,:__x)[i...]
-@inline Base.setindex!(x::AbstractLMatrix,y,i...) = getfield(x,:__x)[i...] = y
-
 Base.propertynames(::AbstractLMatrix{T,A,Syms1,Syms2}) where {T,A,Syms1,Syms2} = Syms1, Syms2
 symnames(::Type{X}, dim) where X <: AbstractLMatrix{T,A,Syms1,Syms2} where {T,A,Syms1,Syms2} = (Syms1, Syms2)[dim]
+
+@inline function Base.getproperty(p::LMatrixPartial{Val{s1}},s2::Symbol) where s1
+    getfield(p, :__m)[Val(s1), Val(s2)]
+end
+
+@inline function Base.setproperty!(p::LMatrixPartial{Val{s1}},s2::Symbol,y) where s1
+    getfield(p, :__m)[Val(s1), Val(s2)] = y
+end
 
 @inline function Base.getproperty(x::AbstractLMatrix,s::Symbol)
     if s == :__x
@@ -26,22 +31,14 @@ symnames(::Type{X}, dim) where X <: AbstractLMatrix{T,A,Syms1,Syms2} where {T,A,
     LMatrixPartial{Val{s},typeof(x)}(x)
 end
 
-@inline function Base.getproperty(p::LMatrixPartial{Val{s1}},s2::Symbol) where s1
-    getfield(p, :__m)[Val(s1), Val(s2)]
-end
-
-
 @inline function Base.setproperty!(x::AbstractLMatrix,s::Symbol,y)
     if s == :__x
         return setfield!(x,:__x,y)
     end
-    x[s,:] .= y
+    x[s,:] = y
 end
 
-@inline function Base.setproperty!(p::LMatrixPartial{Val{s1}},s2::Symbol,y) where s1
-    getfield(p, :__m)[Val(s1), Val(s2)] = y
-end
-
+@inline Base.getindex(x::AbstractLMatrix,i...) = getfield(x,:__x)[i...]
 @inline Base.getindex(x::AbstractLMatrix,s1::Symbol,s2::Symbol) = getindex(x,Val(s1),Val(s2))
 @inline Base.getindex(x::AbstractLMatrix,i1,s2::Symbol) = getindex(x,i1,Val(s2))
 @inline Base.getindex(x::AbstractLMatrix,s1::Symbol,i2) = getindex(x,Val(s1),i2)
@@ -62,6 +59,7 @@ end
     :(x.__x[$idx1, i2])
 end
 
+@inline Base.setindex!(x::AbstractLMatrix,y,i...) = getfield(x,:__x)[i...] = y
 @inline Base.setindex!(x::AbstractLMatrix,y,s1::Symbol,s2::Symbol) = setindex!(x,y,Val(s1),Val(s2))
 @inline Base.setindex!(x::AbstractLMatrix,y,s1::Symbol,i2) = setindex!(x,y,Val(s1),i2)
 @inline Base.setindex!(x::AbstractLMatrix,y,i1,s2::Symbol) = setindex!(x,y,i1,Val(s2))
