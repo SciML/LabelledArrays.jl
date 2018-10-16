@@ -1,6 +1,10 @@
 struct LVector{T,A <: AbstractVector{T},Syms} <: AbstractVector{T}
     __x::A
+    LVector{Syms}(__x) where {T,A,Syms} = new{eltype(__x),typeof(__x),Syms}(__x)
+    LVector{T,Syms}(__x) where {T,Syms} = new{T,typeof(__x),Syms}(__x)
+    LVector{T,A,Syms}(__x) where {T,A,Syms} = new{T,A,Syms}(__x)
 end
+#
 
 Base.size(x::LVector) = size(getfield(x,:__x))
 @inline Base.getindex(x::LVector,i...) = getfield(x,:__x)[i...]
@@ -41,8 +45,13 @@ end
     :(x.__x[$idx] = y)
 end
 
-function Base.similar(x::LVector,::Type{S},dims::NTuple{N,Int}) where {S,N}
-    typeof(x)(similar(x.__x,S,dims))
+function Base.similar(x::LVector{T,A,Syms},::Type{S},dims::NTuple{N,Int}) where {T,A,Syms,S,N}
+    A = similar(x.__x,S,dims)
+    LVector{S,typeof(A),Syms}(A)
+end
+
+function LinearAlgebra.ldiv!(Y::LVector, A::Factorization, B::LVector)
+  ldiv!(Y.__x,A,B.__x)
 end
 
 """

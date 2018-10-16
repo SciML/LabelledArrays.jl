@@ -1,6 +1,6 @@
 module LabelledArrays
 
-using StaticArrays
+using StaticArrays, LinearAlgebra
 
 include("slvector.jl")
 include("lvector.jl")
