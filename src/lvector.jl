@@ -46,8 +46,8 @@ end
 end
 
 function Base.similar(x::LVector{T,A,Syms},::Type{S},dims::NTuple{N,Int}) where {T,A,Syms,S,N}
-    A = similar(x.__x,S,dims)
-    LVector{S,typeof(A),Syms}(A)
+    tmp = similar(x.__x,S,dims)
+    LVector{S,typeof(tmp),Syms}(tmp)
 end
 
 function LinearAlgebra.ldiv!(Y::LVector, A::Factorization, B::LVector)
