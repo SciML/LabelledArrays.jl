@@ -76,13 +76,13 @@ to the type of the `Type` input.
 
 For example:
 
-    a = @LVector Float64 [a,b,c]
-    b = @LVector [1,2,3] [a,b,c]
+    a = @LVector Float64 (:a,:b,:c)
+    b = @LVector [1,2,3] (:a,:b,:c)
 """
 macro LVector(vals,syms)
     if typeof(vals) <: Symbol
         return quote
-            LVector{$vals,Vector{$vals},$syms}(Vector(undef,length($syms)))
+            LVector{$vals,Vector{$vals},$syms}(Vector{$vals}(undef,length($syms)))
         end
     else
         return quote
