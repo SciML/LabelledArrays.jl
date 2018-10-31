@@ -90,3 +90,30 @@ macro LVector(vals,syms)
         end
     end
 end
+
+"""
+    @SLVector ElementType Names
+
+Creates an anonymous function that builds a labelled static vector with eltype
+`ElementType` with names determined from the `Names`.
+
+For example:
+
+```julia
+ABC = @SLVector Float64 (:a,:b,:c)
+x = ABC(1.0,2.5,3.0)
+x.a == 1.0
+x.b == 2.5
+x.c == x[3]
+```
+
+"""
+macro SLVector(E,syms)
+    return quote
+        function (vals...,)
+            v = SVector{$(length(syms.args)), $E}(vals...)
+            T = typeof(v)
+            return LVector{$(esc(E)),T,$syms}(v)
+        end
+    end
+end
