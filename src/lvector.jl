@@ -54,6 +54,17 @@ function LinearAlgebra.ldiv!(Y::LVector, A::Factorization, B::LVector)
   ldiv!(Y.__x,A,B.__x)
 end
 
+#####################################
+# Broadcast
+#####################################
+struct LVStyle{T,A,L} <: Broadcast.AbstractArrayStyle{1} end
+LVStyle{T,A,L}(x::Val{1}) where {T,A,L} = LVStyle{T,A,L}()
+Base.BroadcastStyle(::Type{LVector{T,A,L}}) where {T,A,L} = LVStyle{T,A,L}()
+
+function Base.similar(bc::Broadcast.Broadcasted{LVStyle{T,A,L}}, ::Type{ElType}) where {T,A,L,ElType}
+    return LVector{ElType,Vector{ElType},L}(similar(Vector{ElType},axes(bc)))
+end
+
 """
     @LVector Type Names
     @LVector Type Names Values
@@ -65,13 +76,13 @@ to the type of the `Type` input.
 
 For example:
 
-    a = @LVector Float64 [a,b,c]
-    b = @LVector [1,2,3] [a,b,c]
+    a = @LVector Float64 (:a,:b,:c)
+    b = @LVector [1,2,3] (:a,:b,:c)
 """
 macro LVector(vals,syms)
     if typeof(vals) <: Symbol
         return quote
-            LVector{$vals,Vector{$vals},$syms}(Vector(undef,length($syms)))
+            LVector{$vals,Vector{$vals},$syms}(Vector{$vals}(undef,length($syms)))
         end
     else
         return quote
