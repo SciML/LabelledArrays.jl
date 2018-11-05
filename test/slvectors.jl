@@ -19,3 +19,19 @@ bb = b.+b
 b1 = b.+1.0
 @test b1 isa LVector
 @test eltype(b1) == Float64
+
+# Type stability tests
+ABC_int = @SLVector Int (:a,:b,:c)
+ABC_float = @SLVector Float64 (:a, :b, :c)
+x = ABC_int(1,2,3)
+y = ABC_float(4.,5.,6.)
+
+@test typeof(copy(x)) == typeof(x)
+@test typeof(similar(x)) == typeof(x)
+@test typeof(similar(x, Float64)) == typeof(y)
+@test typeof(convert(AbstractVector{Float64}, x)) == typeof(y)
+@test_broken typeof(x .+ x) == typeof(x) # degrades to LVector of Vector{Int}
+@test typeof(broadcast(+, x, x)) == typeof(x) # why does this work then?
+@test_broken typeof(Float64.(x)) == typeof(y) # degrades to LVector of Vector{Float}
+@test typeof(broadcast(Float64, x)) == typeof(y) # why does this work then?
+@test_broken broadcast(+, x, y) # ERROR: conflicting broadcast rules defined
