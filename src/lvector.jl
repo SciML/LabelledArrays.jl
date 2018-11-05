@@ -91,11 +91,17 @@ macro LVector(vals,syms)
     end
 end
 
+#####################################
+# SLVector
+#####################################
+const SLVector = LVector{T,SVector{N,T},Syms} where {T,N,Syms}
+
 """
     @SLVector ElementType Names
 
 Creates an anonymous function that builds a labelled static vector with eltype
-`ElementType` with names determined from the `Names`.
+`ElementType` with names determined from the `Names`. The labbeled static vector
+is just an `LVector` whose entries are `SVector{ElementType}`.
 
 For example:
 
@@ -116,4 +122,17 @@ macro SLVector(E,syms)
             return LVector{$(esc(E)),T,$syms}(v)
         end
     end
+end
+
+Base.copy(x::SLVector{T,N,Syms}) where {T,N,Syms} = LVector{Syms}(x.__x)
+function Base.similar(::SLVector{T,N,Syms}, ::Type{S}) where {T,N,Syms,S}
+    tmp = Vector{S}(undef, N)
+    LVector{Syms}(SVector{N}(tmp))
+end
+function Base.AbstractVector{S}(x::SLVector{T,N,Syms}) where {S,T,N,Syms}
+    LVector{Syms}(S.(x.__x))
+end
+function Base.broadcast(f, xs::SLVector{T,N,Syms}...) where {T,N,Syms}
+    result = broadcast(f, (x.__x for x in xs)...)
+    LVector{Syms}(result)
 end

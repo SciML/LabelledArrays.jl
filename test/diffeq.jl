@@ -1,7 +1,7 @@
 using LabelledArrays, OrdinaryDiffEq, Test
 
-@SLVector LorenzVector Float64 [x,y,z]
-@SLVector LorenzParameterVector Float64 [σ,ρ,β]
+LorenzVector = @SLVector Float64 (:x,:y,:z)
+LorenzParameterVector = @SLVector Float64 (:σ,:ρ,:β)
 
 function f(u,p,t)
   x = p.σ*(u.y-u.x)
