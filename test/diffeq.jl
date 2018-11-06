@@ -15,6 +15,8 @@ p = LorenzParameterVector(10.0,28.0,8/3)
 tspan = (0.0,10.0)
 prob = ODEProblem(f,u0,tspan,p)
 sol = solve(prob,Tsit5())
+@test typeof(prob.u0) == eltype(sol.u) == LorenzVector
+@test typeof(prob.p) == LorenzParameterVector
 @test sol[10].x > 0
 
 function iip_f(du,u,p,t)
@@ -32,4 +34,6 @@ prob = ODEProblem(iip_f,u0,tspan,p)
 @test zero(u0) isa LVector
 
 sol = solve(prob,Tsit5())
+@test typeof(prob.u0) == eltype(sol.u) == typeof(u0)
+@test typeof(prob.p) == LorenzParameterVector
 @test sol[10].x > 0

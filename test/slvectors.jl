@@ -16,11 +16,10 @@ b = ABC(1,2,3)
 
 # Type stability tests
 ABC_fl = @SLVector Float64 (:a, :b, :c)
-b_fl = ABC_fl(1.0, 2.0, 3.0)
-@test similar_type(b, Float64) == typeof(b_fl)
-@test typeof(copy(b)) == typeof(b)
-@test typeof(Float64.(b)) == typeof(b_fl)
-@test typeof(b .+ b) == typeof(b)
-@test typeof(b .+ 1.0) == typeof(b_fl)
-@test typeof(zero(b)) == typeof(b)
+@test similar_type(b, Float64) == ABC_fl
+@test typeof(copy(b)) == ABC
+@test typeof(Float64.(b)) == ABC_fl
+@test typeof(b .+ b) == ABC
+@test typeof(b .+ 1.0) == ABC_fl
+@test typeof(zero(b)) == ABC
 @test similar(b) isa MArray # similar should return a mutable copy

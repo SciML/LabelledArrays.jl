@@ -43,9 +43,7 @@ x.c == x[3]
 
 """
 macro SLVector(E,syms)
-    return quote
-        function (vals...,)
-            SLVector{$(length(syms.args)),$(esc(E)),$syms}(vals)
-        end
+    quote
+        SLVector{$(length(syms.args)),$(esc(E)),$syms}
     end
 end
