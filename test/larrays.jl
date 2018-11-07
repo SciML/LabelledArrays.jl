@@ -12,7 +12,7 @@ for (i,s) in enumerate(syms)
     @test x[i] == x[s]
 end
 
-x[Val(:a)]
+x[:a]
 
 f(x) = x[1]
 g(x) = x.a
@@ -21,8 +21,8 @@ g(x) = x.a
 @time g(x)
 @time g(x)
 
-@code_warntype getindex(x,Val(:a))
-@inferred getindex(x,Val(:a))
+@code_warntype getindex(x,:a)
+@inferred getindex(x,:a)
 @code_warntype g(x)
 @inferred g(x)
 

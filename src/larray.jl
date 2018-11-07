@@ -16,32 +16,24 @@ symnames(::Type{LArray{T,N,Syms}}) where {T,N,Syms} = Syms
     if s == :__x
         return getfield(x,:__x)
     end
-    x[Val(s)]
+    x[s]
 end
 
 @inline function Base.setproperty!(x::LArray,s::Symbol,y)
     if s == :__x
         return setfield!(x,:__x,y)
     end
-    x[Val(s)] = y
+    x[s] = y
 end
 
 @inline function Base.getindex(x::LArray,s::Symbol)
-    getindex(x,Val(s))
-end
-
-@inline @generated function Base.getindex(x::LArray,::Val{s}) where s
-    idx = findfirst(y->y==s,symnames(x))
-    :(x.__x[$idx])
+  idx = findfirst(y->y==s,symnames(typeof(x)))
+  getfield(x,:__x)[idx]
 end
 
 @inline function Base.setindex!(x::LArray,y,s::Symbol)
-    setindex!(x,y,Val(s))
-end
-
-@inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
-    idx = findfirst(y->y==s,symnames(x))
-    :(x.__x[$idx] = y)
+  idx = findfirst(y->y==s,symnames(typeof(x)))
+  getfield(x,:__x)[idx] = y
 end
 
 function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}

@@ -14,16 +14,14 @@ function StaticArrays.similar_type(::Type{SLArray{S,T,N,Syms}}, ::Type{NewElType
   SLArray{S,NewElType,N,Syms}
 end
 
-# Fast indexing by labels (x.a or x[:a], internally x[Val(:a)])
 Base.propertynames(::SLArray{S,T,N,Syms}) where {S,N,T,Syms} = Syms
 symnames(::Type{SLArray{S,T,N,Syms}}) where {S,N,T,Syms} = Syms
 @inline function Base.getproperty(x::SLArray,s::Symbol)
-    s == :__x ? getfield(x,:__x) : x[Val(s)]
+  s == :__x ? getfield(x,:__x) : x[s]
 end
-@inline Base.getindex(x::SLArray,s::Symbol) = x[Val(s)]
-@inline @generated function Base.getindex(x::SLArray,::Val{s}) where {s}
-    idx = findfirst(==(s),symnames(x))
-    :(x.__x[$idx])
+@inline function Base.getindex(x::SLArray,s)
+  idx = findfirst(==(s),symnames(typeof(x)))
+  getfield(x,:__x)[idx]
 end
 
 """
