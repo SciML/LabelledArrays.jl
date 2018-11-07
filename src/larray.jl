@@ -57,13 +57,12 @@ function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType})
 end
 
 """
-    @LArray Type Names
-    @LArray Type Names Values
+    @LArray Eltype Size Names
+    @LArray Values Names
 
 Creates an `LArray` with names determined from the `Names`
-vector and values determined from the `Values` vector (if no values are provided,
-it defaults to not setting the values to zero). All of the values are converted
-to the type of the `Type` input.
+vector and values determined from the `Values` array. Otherwise, and eltype
+and size are used to make an LArray with undefined values.
 
 For example:
 
@@ -84,17 +83,13 @@ end
 
 """
     @LVector Type Names
-    @LArray Type Names Values
 
-Creates an `LArray` with names determined from the `Names`
-vector and values determined from the `Values` vector (if no values are provided,
-it defaults to not setting the values to zero). All of the values are converted
-to the type of the `Type` input.
+Creates an `LArray` of dimension 1 with eltype and undefined values.
+Length is via the number of names given.
 
 For example:
 
-    a = @LVector Float64 (:a,:b,:c)
-    b = @LArray [1,2,3] (:a,:b,:c)
+    b = @LVector [1,2,3] (:a,:b,:c)
 """
 macro LVector(type,syms)
   return quote

@@ -9,30 +9,56 @@ arrays which `map`, `broadcast`, and all of that good stuff, but their component
 are labelled. Thus for instance you can set that the second component is named
 `:second` and retrieve it with `A.second`.
 
-## SLVectors
+## SLArrays
 
-The `SLVector` macros are for creating static LabelledArrays. First you create
-the type and then you can use that type.
+The `SLArray` and `SLVector` macros are for creating static LabelledArrays.
+First you create the type and then you can use that constructor to generate
+instances of the labelled array.
 
 ```julia
-# Constructor 1
-@SLVector ABC Int [a,b,c]
+ABC = @SLVector (:a,:b,:c)
 A = ABC(1,2,3)
+A.a == 1
+
+ABCD = @SLArray (2,2) (:a,:b,:c,:d)
+B = ABCD(1,2,3,4)
+B.c == 3
+B[2,2] = B.d
+```
+
+Here we have that `A == [1,2,3]` and for example `A.b == 2`. We can create a
+typed `SLArray` via:
+
+```julia
+SVType = @SLVector Float64 (:a,:b,:c)
+```
+
+## LArrays
+
+The `LArrayz`s are fully mutable arrays with labels. There is no performance
+loss by using the labelled instead of indexing. Using the macro with values
+and labels generates the labelled array with the given values:
+
+```julia
+A = @LArray [1,2,3] (:a,:b,:c)
 A.a == 1
 ```
 
-Here we have that `A == [1,2,3]` and for example `A.b == 2`. `SLVector`s are just
-`FieldVectors`.
-
-## LVectors
-
-The `LVectors`s are fully mutable vectors with labels. There is no performance
-loss by using the labelled instead of indexing.
+One can generate a labelled array with undefined values by instead giving
+the dimensions:
 
 ```julia
-# Constructor 1
-A = @LVector [1,2,3] (:a,:b,:c)
-A.a == 1
+A = @LArray Float64 (2,2) (:a,:b,:c,:d)
+W = rand(2,2)
+A .= W
+A.d == W[2,2]
+```
+
+or using an `@LVector` shorthand:
+
+```julia
+A = @LVector Float64 (:a,:b,:c,:d)
+A .= rand(4)
 ```
 
 ## Example: Nice DiffEq Syntax Without A DSL
@@ -52,10 +78,10 @@ function lorenz_f(du,u,p,t)
   du.z = u.x*u.y - p.β*u.z
 end
 
-u0 = @LVector [1.0,0.0,0.0] (:x,:y,:z)
+u0 = @LArray [1.0,0.0,0.0] (:x,:y,:z)
 p = (σ = 10.0,ρ = 28.0,β = 8/3)
 tspan = (0.0,10.0)
-prob = ODEProblem(iip_f,u0,tspan,p)
+prob = ODEProblem(lorenz_f,u0,tspan,p)
 sol = solve(prob,Tsit5())
 # Now the solution can be indexed as .x/y/z as well!
 sol[10].x
@@ -64,8 +90,8 @@ sol[10].x
 We can also make use of `@SLVector`:
 
 ```julia
-@SLVector LorenzVector Float64 [x,y,z]
-@SLVector LorenzParameterVector Float64 [σ,ρ,β]
+LorenzVector = @SLVector (:x,:y,:z)
+LorenzParameterVector = @SLVector (:σ,:ρ,:β)
 
 function f(u,p,t)
   x = p.σ*(u.y-u.x)
@@ -91,11 +117,11 @@ p = (σ = 10.0,ρ = 28.0,β = 8/3)
 
 and they support `p[1]` and `p.σ` as well. However, there are some
 crucial differences between a labelled array and static array.
-But `@SLVector` also differs from a NamedTuple due to how the 
-type information is stored. A NamedTuple can have different types 
-on each element, while an `@SLVector` can only have one element 
-type and has the actions of a static vector. Thus `@SLVector` 
-has less element type information, improving compilation speed, 
-while giving more vector functionality than a NamedTuple. 
-`@LVector` also only has a single element type and, a crucial 
+But `@SLVector` also differs from a NamedTuple due to how the
+type information is stored. A NamedTuple can have different types
+on each element, while an `@SLVector` can only have one element
+type and has the actions of a static vector. Thus `@SLVector`
+has less element type information, improving compilation speed,
+while giving more vector functionality than a NamedTuple.
+`@LVector` also only has a single element type and, a crucial
 difference, is mutable.

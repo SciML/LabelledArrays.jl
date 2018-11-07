@@ -1,7 +1,7 @@
 using LabelledArrays
 using Test
 
-ABC = @SLVector Int (:a,:b,:c)
+ABC = @SLVector (:a,:b,:c)
 b = ABC(1,2,3)
 
 @test b.a == 1
@@ -16,10 +16,11 @@ b = ABC(1,2,3)
 
 # Type stability tests
 ABC_fl = @SLVector Float64 (:a, :b, :c)
+ABC_int = @SLVector Int (:a, :b, :c)
 @test similar_type(b, Float64) == ABC_fl
-@test typeof(copy(b)) == ABC
+@test typeof(copy(b)) == ABC_int
 @test typeof(Float64.(b)) == ABC_fl
-@test typeof(b .+ b) == ABC
+@test typeof(b .+ b) == ABC_int
 @test typeof(b .+ 1.0) == ABC_fl
-@test typeof(zero(b)) == ABC
+@test typeof(zero(b)) == ABC_int
 @test similar(b) isa MArray # similar should return a mutable copy
