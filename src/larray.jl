@@ -67,8 +67,34 @@ function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,A,L}}, ::Type{ElType})
 end
 
 """
+    @LArray Type Names
+    @LArray Type Names Values
+
+Creates an `LArray` with names determined from the `Names`
+vector and values determined from the `Values` vector (if no values are provided,
+it defaults to not setting the values to zero). All of the values are converted
+to the type of the `Type` input.
+
+For example:
+
+    a = @LArray Float64 (2,2) (:a,:b,:c,:d)
+    b = @LArray [1,2,3] (:a,:b,:c)
+"""
+macro LArray(vals,syms)
+  return quote
+      LArray{$syms}($vals)
+  end
+end
+
+macro LArray(type,size,syms)
+  return quote
+      LArray{$syms}(Array{$type}(undef,$size...))
+  end
+end
+
+"""
     @LVector Type Names
-    @LVector Type Names Values
+    @LArray Type Names Values
 
 Creates an `LArray` with names determined from the `Names`
 vector and values determined from the `Values` vector (if no values are provided,
@@ -78,16 +104,10 @@ to the type of the `Type` input.
 For example:
 
     a = @LVector Float64 (:a,:b,:c)
-    b = @LVector [1,2,3] (:a,:b,:c)
+    b = @LArray [1,2,3] (:a,:b,:c)
 """
-macro LVector(vals,syms)
-    if typeof(vals) <: Symbol
-        return quote
-            LArray{$vals,1,Vector{$vals},$syms}(Vector{$vals}(undef,length($syms)))
-        end
-    else
-        return quote
-            LArray{eltype($vals),1,typeof($vals),$syms}($vals)
-        end
-    end
+macro LVector(type,syms)
+  return quote
+      LArray{$syms}(Vector{$type}(undef,length($syms)))
+  end
 end
