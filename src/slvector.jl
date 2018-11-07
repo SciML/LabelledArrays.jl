@@ -1,7 +1,7 @@
 struct SLVector{N,T,Syms} <: StaticVector{N,T}
     __x::SVector{N,T} # allow general StaticVector?
-    SLVector{N,T,Syms}(__x::SVector{N,T}) where {N,T,Syms} = new{N,T,Syms}(__x)
-    SLVector{N,T,Syms}(x::NTuple{N,T}) where {N,T,Syms} = new{N,T,Syms}(SVector{N}(x))
+    SLVector{N,T,Syms}(__x::SVector) where {N,T,Syms} = new{N,T,Syms}(T.(__x))
+    SLVector{N,T,Syms}(x::Tuple) where {N,T,Syms} = new{N,T,Syms}(SVector{N}(T.(x)))
 end
 
 # Implement the StaticVector interface
