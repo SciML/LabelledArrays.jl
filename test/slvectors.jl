@@ -1,7 +1,7 @@
 using LabelledArrays
 using Test
 
-ABC = @SLArray Int (:a,:b,:c)
+ABC = @SLVector Int (:a,:b,:c)
 b = ABC(1,2,3)
 
 @test b.a == 1
@@ -15,7 +15,7 @@ b = ABC(1,2,3)
 @test typeof(b.__x) == SVector{3,Int}
 
 # Type stability tests
-ABC_fl = @SLArray Float64 (:a, :b, :c)
+ABC_fl = @SLVector Float64 (:a, :b, :c)
 @test similar_type(b, Float64) == ABC_fl
 @test typeof(copy(b)) == ABC
 @test typeof(Float64.(b)) == ABC_fl

@@ -3,9 +3,9 @@ module LabelledArrays
 using Reexport, LinearAlgebra
 @reexport using StaticArrays
 
-include("slvector.jl")
-include("lvector.jl")
+include("slarray.jl")
+include("larray.jl")
 
-export SLVector, LVector, @SLVector, @LVector
+export SLArray, LArray, @SLVector, @LVector
 
 end # module

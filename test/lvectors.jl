@@ -1,7 +1,7 @@
 using LabelledArrays, Test, InteractiveUtils
 
-x = @LArray [1.0,2.0,3.0] (:a,:b,:c)
-y = @LArray Float64 (:a,:b,:c)
+x = @LVector [1.0,2.0,3.0] (:a,:b,:c)
+y = @LVector Float64 (:a,:b,:c)
 y .= [1,2,3.]
 @test x == y
 
@@ -26,7 +26,7 @@ g(x) = x.a
 @code_warntype g(x)
 @inferred g(x)
 
-x = @LArray [1,2,3] (:a,:b,:c)
+x = @LVector [1,2,3] (:a,:b,:c)
 x .* x isa LArray
 x .+ 1 isa LArray
 x .+ 1. isa LArray
