@@ -27,6 +27,30 @@ end
 end
 
 """
+    @SLArray ElementType Size Names
+
+Creates an anonymous function that builds a labelled static vector with eltype
+`ElementType` with names determined from the `Names`.
+
+For example:
+
+```julia
+ABC = @SLArray Float64 (2,2) (:a,:b,:c,:d)
+x = ABC(1.0,2.5,3.0,5.0)
+x.a == 1.0
+x.b == 2.5
+x.c == x[3]
+x.d == x[2,2]
+```
+
+"""
+macro SLArray(E,size,dims,syms)
+    quote
+        SLArray{$dims,$(esc(E)),$(length(dims)),$syms}
+    end
+end
+
+"""
     @SLVector ElementType Names
 
 Creates an anonymous function that builds a labelled static vector with eltype
