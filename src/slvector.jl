@@ -1,32 +1,32 @@
-struct SLVector{N,T,Syms} <: StaticVector{N,T}
-    __x::SVector{N,T} # allow general StaticVector?
-    SLVector{N,T,Syms}(__x::SVector) where {N,T,Syms} = new{N,T,Syms}(T.(__x))
-    SLVector{N,T,Syms}(x::Tuple) where {N,T,Syms} = new{N,T,Syms}(SVector{N}(T.(x)))
+struct SLArray{S,T,N,A <: StaticArray{S,T,N},Syms} <: StaticArray{S,T,N}
+    __x::A
+    SLArray{S,T,Syms}(__x::SVector) where {N,T,Syms} = new{S,T,N,Syms}(T.(__x))
+    SLArray{S,T,Syms}(x::Tuple) where {N,T,Syms} = new{S,T,N,Syms}(SVector{S}(T.(x)))
 end
 
 # Implement the StaticVector interface
-@inline Base.getindex(x::SLVector, i::Int) = getfield(x,:__x)[i]
-@inline Base.Tuple(x::SLVector) = Tuple(x.__x)
-function StaticArrays.similar_type(::Type{SLVector{N,T,Syms}}, ::Type{NewElType},
+@inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
+@inline Base.Tuple(x::SLArray) = Tuple(x.__x)
+function StaticArrays.similar_type(::Type{SLArray{N,T,Syms}}, ::Type{NewElType},
     ::Size{NewSize}) where {N,T,Syms,NewElType,NewSize}
     @assert length(NewSize) == 1 && NewSize[1] == N
-    SLVector{N,NewElType,Syms}
+    SLArray{N,NewElType,Syms}
 end
 
 # Fast indexing by labels (x.a or x[:a], internally x[Val(:a)])
-Base.propertynames(::SLVector{N,T,Syms}) where {N,T,Syms} = Syms
-symnames(::Type{SLVector{N,T,Syms}}) where {N,T,Syms} = Syms
-@inline function Base.getproperty(x::SLVector,s::Symbol)
+Base.propertynames(::SLArray{N,T,Syms}) where {N,T,Syms} = Syms
+symnames(::Type{SLArray{N,T,Syms}}) where {N,T,Syms} = Syms
+@inline function Base.getproperty(x::SLArray,s::Symbol)
     s == :__x ? getfield(x,:__x) : x[Val(s)]
 end
-@inline Base.getindex(x::SLVector,s::Symbol) = x[Val(s)]
-@inline @generated function Base.getindex(x::SLVector,::Val{s}) where {s}
+@inline Base.getindex(x::SLArray,s::Symbol) = x[Val(s)]
+@inline @generated function Base.getindex(x::SLArray,::Val{s}) where {s}
     idx = findfirst(==(s),symnames(x))
     :(x.__x[$idx])
 end
 
 """
-    @SLVector ElementType Names
+    @SLArray ElementType Names
 
 Creates an anonymous function that builds a labelled static vector with eltype
 `ElementType` with names determined from the `Names`.
@@ -34,7 +34,7 @@ Creates an anonymous function that builds a labelled static vector with eltype
 For example:
 
 ```julia
-ABC = @SLVector Float64 (:a,:b,:c)
+ABC = @SLArray Float64 (:a,:b,:c)
 x = ABC(1.0,2.5,3.0)
 x.a == 1.0
 x.b == 2.5
@@ -42,8 +42,8 @@ x.c == x[3]
 ```
 
 """
-macro SLVector(E,syms)
+macro SLArray(E,syms)
     quote
-        SLVector{$(length(syms.args)),$(esc(E)),$syms}
+        SLArray{$(length(syms.args)),$(esc(E)),$syms}
     end
 end

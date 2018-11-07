@@ -1,56 +1,57 @@
-struct LVector{T,A <: AbstractVector{T},Syms} <: AbstractVector{T}
+struct LArray{N,T,A <: AbstractArray{N,T},Syms} <: AbstractArray{N,T}
     __x::A
-    LVector{Syms}(__x) where {T,A,Syms} = new{eltype(__x),typeof(__x),Syms}(__x)
-    LVector{T,Syms}(__x) where {T,Syms} = new{T,typeof(__x),Syms}(__x)
-    LVector{T,A,Syms}(__x) where {T,A,Syms} = new{T,A,Syms}(__x)
+    LArray{Syms}(__x) where {T,A,Syms} = new{ndims(__x),eltype(__x),
+                                              typeof(__x),Syms}(__x)
+    LArray{N,T,Syms}(__x) where {T,Syms} = new{N,T,typeof(__x),Syms}(__x)
+    LArray{N,T,A,Syms}(__x) where {T,A,Syms} = new{N,T,A,Syms}(__x)
 end
 #
 
-Base.size(x::LVector) = size(getfield(x,:__x))
-@inline Base.getindex(x::LVector,i...) = getfield(x,:__x)[i...]
-@inline Base.setindex!(x::LVector,y,i...) = getfield(x,:__x)[i...] = y
+Base.size(x::LArray) = size(getfield(x,:__x))
+@inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
+@inline Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
 
-Base.propertynames(::LVector{T,A,Syms}) where {T,A,Syms} = Syms
-symnames(::Type{LVector{T,A,Syms}}) where {T,A,Syms} = Syms
+Base.propertynames(::LArray{T,A,Syms}) where {T,A,Syms} = Syms
+symnames(::Type{LArray{T,A,Syms}}) where {T,A,Syms} = Syms
 
-@inline function Base.getproperty(x::LVector,s::Symbol)
+@inline function Base.getproperty(x::LArray,s::Symbol)
     if s == :__x
         return getfield(x,:__x)
     end
     x[Val(s)]
 end
 
-@inline function Base.setproperty!(x::LVector,s::Symbol,y)
+@inline function Base.setproperty!(x::LArray,s::Symbol,y)
     if s == :__x
         return setfield!(x,:__x,y)
     end
     x[Val(s)] = y
 end
 
-@inline function Base.getindex(x::LVector,s::Symbol)
+@inline function Base.getindex(x::LArray,s::Symbol)
     getindex(x,Val(s))
 end
 
-@inline @generated function Base.getindex(x::LVector,::Val{s}) where s
+@inline @generated function Base.getindex(x::LArray,::Val{s}) where s
     idx = findfirst(y->y==s,symnames(x))
     :(x.__x[$idx])
 end
 
-@inline function Base.setindex!(x::LVector,y,s::Symbol)
+@inline function Base.setindex!(x::LArray,y,s::Symbol)
     setindex!(x,y,Val(s))
 end
 
-@inline @generated function Base.setindex!(x::LVector,y,::Val{s}) where s
+@inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
     idx = findfirst(y->y==s,symnames(x))
     :(x.__x[$idx] = y)
 end
 
-function Base.similar(x::LVector{T,A,Syms},::Type{S},dims::NTuple{N,Int}) where {T,A,Syms,S,N}
+function Base.similar(x::LArray{T,A,Syms},::Type{S},dims::NTuple{N,Int}) where {T,A,Syms,S,N}
     tmp = similar(x.__x,S,dims)
-    LVector{S,typeof(tmp),Syms}(tmp)
+    LArray{S,typeof(tmp),Syms}(tmp)
 end
 
-function LinearAlgebra.ldiv!(Y::LVector, A::Factorization, B::LVector)
+function LinearAlgebra.ldiv!(Y::LArray, A::Factorization, B::LArray)
   ldiv!(Y.__x,A,B.__x)
 end
 
@@ -59,34 +60,34 @@ end
 #####################################
 struct LVStyle{T,A,L} <: Broadcast.AbstractArrayStyle{1} end
 LVStyle{T,A,L}(x::Val{1}) where {T,A,L} = LVStyle{T,A,L}()
-Base.BroadcastStyle(::Type{LVector{T,A,L}}) where {T,A,L} = LVStyle{T,A,L}()
+Base.BroadcastStyle(::Type{LArray{T,A,L}}) where {T,A,L} = LVStyle{T,A,L}()
 
 function Base.similar(bc::Broadcast.Broadcasted{LVStyle{T,A,L}}, ::Type{ElType}) where {T,A,L,ElType}
-    return LVector{ElType,Vector{ElType},L}(similar(Vector{ElType},axes(bc)))
+    return LArray{ElType,Vector{ElType},L}(similar(Vector{ElType},axes(bc)))
 end
 
 """
-    @LVector Type Names
-    @LVector Type Names Values
+    @LArray Type Names
+    @LArray Type Names Values
 
-Creates an `LVector` with names determined from the `Names`
+Creates an `LArray` with names determined from the `Names`
 vector and values determined from the `Values` vector (if no values are provided,
 it defaults to not setting the values to zero). All of the values are converted
 to the type of the `Type` input.
 
 For example:
 
-    a = @LVector Float64 (:a,:b,:c)
-    b = @LVector [1,2,3] (:a,:b,:c)
+    a = @LArray Float64 (:a,:b,:c)
+    b = @LArray [1,2,3] (:a,:b,:c)
 """
-macro LVector(vals,syms)
+macro LArray(vals,syms)
     if typeof(vals) <: Symbol
         return quote
-            LVector{$vals,Vector{$vals},$syms}(Vector{$vals}(undef,length($syms)))
+            LArray{$vals,Vector{$vals},$syms}(Vector{$vals}(undef,length($syms)))
         end
     else
         return quote
-            LVector{eltype($vals),typeof($vals),$syms}($vals)
+            LArray{eltype($vals),typeof($vals),$syms}($vals)
         end
     end
 end
