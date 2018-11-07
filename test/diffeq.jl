@@ -1,9 +1,11 @@
 using LabelledArrays, OrdinaryDiffEq, Test
 
-LorenzVector = @SLArray Float64 (3,) (:x,:y,:z)
-LorenzParameterVector = @SLArray Float64 (3,) (:σ,:ρ,:β)
+LorenzVector = @SLArray (3,) (:x,:y,:z)
+LorenzParameterVector = @SLArray (3,) (:σ,:ρ,:β)
 
 function f(u,p,t)
+  u = convert(LorenzVector, u)
+  p = convert(LorenzParameterVector, p)
   x = p.σ*(u.y-u.x)
   y = u.x*(p.ρ-u.z) - u.y
   z = u.x*u.y - p.β*u.z
@@ -14,10 +16,11 @@ u0 = LorenzVector(1.0,0.0,0.0)
 p = LorenzParameterVector(10.0,28.0,8/3)
 tspan = (0.0,10.0)
 prob = ODEProblem(f,u0,tspan,p)
-@test_broken sol = solve(prob,Rosenbrock23())
+sol = solve(prob,Rosenbrock23())
+@test sol.retcode === :Success
 sol = solve(prob,Tsit5())
-@test typeof(prob.u0) == eltype(sol.u) == LorenzVector
-@test typeof(prob.p) == LorenzParameterVector
+@test typeof(prob.u0) == eltype(sol.u) <: LorenzVector
+@test typeof(prob.p) <: LorenzParameterVector
 @test sol[10].x > 0
 
 function iip_f(du,u,p,t)
@@ -37,5 +40,5 @@ prob = ODEProblem(iip_f,u0,tspan,p)
 sol = solve(prob,Rosenbrock23())
 sol = solve(prob,Tsit5())
 @test typeof(prob.u0) == eltype(sol.u) == typeof(u0)
-@test typeof(prob.p) == LorenzParameterVector
+@test typeof(prob.p) <: LorenzParameterVector
 @test sol[10].x > 0
