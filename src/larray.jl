@@ -1,9 +1,8 @@
-struct LArray{T,N,Syms} <: AbstractArray{T,N}
+struct LArray{T,N,Syms} <: DenseArray{T,N}
   __x::Array{T,N}
   LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),Syms}(__x)
   LArray{T,N,Syms}(__x) where {T,N,Syms} = new{T,N,Syms}(__x)
 end
-#
 
 Base.size(x::LArray) = size(getfield(x,:__x))
 @inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
@@ -41,9 +40,8 @@ function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {
     LArray{S,N,Syms}(tmp)
 end
 
-function LinearAlgebra.ldiv!(Y::LArray, A::Factorization, B::LArray)
-  ldiv!(Y.__x,A,B.__x)
-end
+# enable the usage of LAPACK
+Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,S}) where {T,N,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
 
 #####################################
 # Broadcast

@@ -14,6 +14,7 @@ u0 = LorenzVector(1.0,0.0,0.0)
 p = LorenzParameterVector(10.0,28.0,8/3)
 tspan = (0.0,10.0)
 prob = ODEProblem(f,u0,tspan,p)
+@test_broken sol = solve(prob,Rosenbrock23())
 sol = solve(prob,Tsit5())
 @test typeof(prob.u0) == eltype(sol.u) == LorenzVector
 @test typeof(prob.p) == LorenzParameterVector
@@ -33,6 +34,7 @@ prob = ODEProblem(iip_f,u0,tspan,p)
 @test similar(u0) isa LArray
 @test zero(u0) isa LArray
 
+sol = solve(prob,Rosenbrock23())
 sol = solve(prob,Tsit5())
 @test typeof(prob.u0) == eltype(sol.u) == typeof(u0)
 @test typeof(prob.p) == LorenzParameterVector
