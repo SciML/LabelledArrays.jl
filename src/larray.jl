@@ -1,9 +1,7 @@
-struct LArray{T,N,A <: AbstractArray{T,N},Syms} <: AbstractArray{T,N}
-    __x::A
-    LArray{Syms}(__x) where {T,A,Syms} = new{eltype(__x),ndims(__x),
-                                              typeof(__x),Syms}(__x)
-    LArray{T,N,Syms}(__x) where {T,N,Syms} = new{T,N,typeof(__x),Syms}(__x)
-    LArray{T,N,A,Syms}(__x) where {T,N,A,Syms} = new{T,N,A,Syms}(__x)
+struct LArray{T,N,Syms} <: AbstractArray{T,N}
+  __x::Array{T,N}
+  LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),Syms}(__x)
+  LArray{T,N,Syms}(__x) where {T,N,Syms} = new{T,N,Syms}(__x)
 end
 #
 
@@ -11,8 +9,8 @@ Base.size(x::LArray) = size(getfield(x,:__x))
 @inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
 @inline Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
 
-Base.propertynames(::LArray{T,N,A,Syms}) where {T,N,A,Syms} = Syms
-symnames(::Type{LArray{T,N,A,Syms}}) where {T,N,A,Syms} = Syms
+Base.propertynames(::LArray{T,N,Syms}) where {T,N,Syms} = Syms
+symnames(::Type{LArray{T,N,Syms}}) where {T,N,Syms} = Syms
 
 @inline function Base.getproperty(x::LArray,s::Symbol)
     if s == :__x
@@ -46,9 +44,9 @@ end
     :(x.__x[$idx] = y)
 end
 
-function Base.similar(x::LArray{T,A,Syms},::Type{S},dims::NTuple{N,Int}) where {T,A,Syms,S,N}
+function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}
     tmp = similar(x.__x,S,dims)
-    LArray{S,typeof(tmp),Syms}(tmp)
+    LArray{S,N,Syms}(tmp)
 end
 
 function LinearAlgebra.ldiv!(Y::LArray, A::Factorization, B::LArray)
@@ -58,12 +56,12 @@ end
 #####################################
 # Broadcast
 #####################################
-struct LAStyle{T,A,L} <: Broadcast.AbstractArrayStyle{1} end
-LAStyle{T,A,L}(x::Val{1}) where {T,A,L} = LAStyle{T,A,L}()
-Base.BroadcastStyle(::Type{LArray{T,A,L}}) where {T,A,L} = LAStyle{T,A,L}()
+struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
+LAStyle{T,N,L}(x::Val{1}) where {T,N,L} = LAStyle{T,N,L}()
+Base.BroadcastStyle(::Type{LArray{T,N,L}}) where {T,N,L} = LAStyle{T,N,L}()
 
-function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,A,L}}, ::Type{ElType}) where {T,A,L,ElType}
-    return LArray{ElType,Vector{ElType},L}(similar(Vector{ElType},axes(bc)))
+function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
+    return LArray{ElType,N,L}(similar(Array{ElType,N},axes(bc)))
 end
 
 """

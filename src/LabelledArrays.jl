@@ -6,6 +6,6 @@ using Reexport, LinearAlgebra
 include("slarray.jl")
 include("larray.jl")
 
-export SLArray, LArray, @SLVector, @LArray, @LVector
+export SLArray, LArray, @SLVector, @LArray, @LVector, @SLArray
 
 end # module

@@ -1,22 +1,22 @@
-struct SLArray{S,T,N,A <: StaticArray{S,T,N},Syms} <: StaticArray{S,T,N}
-    __x::A
-    SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,T,N,Syms} = new{S,T,N,StaticArray{S,T,N},Syms}(T.(__x))
-    SLArray{S,T,N,Syms}(__x::SVector) where {S,T,N,Syms} = new{S,T,N,typeof(__x),Syms}(T.(__x))
-    SLArray{S,T,N,Syms}(x::Tuple) where {S,T,N,Syms} = new{S,T,N,typeof(__x),Syms}(SVector{S}(T.(x)))
+struct SLArray{S,T,N,Syms} <: StaticArray{S,T,N}
+  __x::SArray{S,T,N}
+  #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,T,N,Syms} = new{S,T,N,Syms}(__x)
+  SLArray{S,T,N,Syms}(__x::SVector) where {S,T,N,Syms} = new{S,T,N,Syms}(T.(__x))
+  SLArray{S,T,N,Syms}(x::Tuple) where {S,T,N,Syms} = new{S,T,N,Syms}(SArray{S,T,N}(T.(x)))
 end
 
 # Implement the StaticVector interface
 @inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
-function StaticArrays.similar_type(::Type{SLArray{N,T,Syms}}, ::Type{NewElType},
-    ::Size{NewSize}) where {N,T,Syms,NewElType,NewSize}
-    @assert length(NewSize) == 1 && NewSize[1] == N
-    SLArray{N,NewElType,Syms}
+function StaticArrays.similar_type(::Type{SLArray{S,T,N,Syms}}, ::Type{NewElType},
+    ::Size{NewSize}) where {S,T,N,Syms,NewElType,NewSize}
+  @assert length(NewSize) == N
+  SLArray{S,NewElType,N,Syms}
 end
 
 # Fast indexing by labels (x.a or x[:a], internally x[Val(:a)])
-Base.propertynames(::SLArray{N,T,Syms}) where {N,T,Syms} = Syms
-symnames(::Type{SLArray{N,T,Syms}}) where {N,T,Syms} = Syms
+Base.propertynames(::SLArray{S,T,N,Syms}) where {S,N,T,Syms} = Syms
+symnames(::Type{SLArray{S,T,N,Syms}}) where {S,N,T,Syms} = Syms
 @inline function Base.getproperty(x::SLArray,s::Symbol)
     s == :__x ? getfield(x,:__x) : x[Val(s)]
 end
@@ -44,10 +44,11 @@ x.d == x[2,2]
 ```
 
 """
-macro SLArray(E,size,dims,syms)
-    quote
-        SLArray{$dims,$(esc(E)),$(length(dims)),$syms}
-    end
+macro SLArray(E,dims,syms)
+  dims isa Expr && (dims = dims.args)
+  quote
+    SLArray{Tuple{$dims...,},$(esc(E)),$(length(dims)),$syms}
+  end
 end
 
 """
@@ -68,7 +69,8 @@ x.c == x[3]
 
 """
 macro SLVector(E,syms)
-    quote
-        SLArray{($(length(syms.args)),),$(esc(E)),1,$syms}
-    end
+  n = syms isa Expr ? length(syms.args) : length(syms)
+  quote
+    SLArray{Tuple{$n},$(esc(E)),1,$syms}
+  end
 end
