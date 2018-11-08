@@ -27,10 +27,14 @@ g(x) = x.a
 @inferred g(x)
 
 x = @LArray [1,2,3] (:a,:b,:c)
-x .* x isa LArray
-x .+ 1 isa LArray
-x .+ 1. isa LArray
-eltype(x .+ 1.) === Float64
+@test x .* x isa LArray
+@test x .+ 1 isa LArray
+@test x .+ 1. isa LArray
+z = x .+ ones(Int, 3)
+@test z isa LArray && eltype(z) === Int
+z = x .+ ones(Float64, 3)
+@test z isa LArray && eltype(z) === Float64
+@test eltype(x .+ 1.) === Float64
 
 z = @LArray Float64 (2,2) (:a,:b,:c,:d)
 w = rand(2,2)

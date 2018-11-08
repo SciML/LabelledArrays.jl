@@ -49,6 +49,7 @@ Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,S}) where {T,N,S} = Base.unsaf
 struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T,N,L}(x::Val{1}) where {T,N,L} = LAStyle{T,N,L}()
 Base.BroadcastStyle(::Type{LArray{T,N,L}}) where {T,N,L} = LAStyle{T,N,L}()
+Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} = LAStyle{promote_type(T,E),N,L}()
 
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
     return LArray{ElType,N,L}(similar(Array{ElType,N},axes(bc)))
