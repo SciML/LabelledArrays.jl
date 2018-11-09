@@ -70,7 +70,7 @@ labelled arrays, and always refer to the components by name instead of index.
 Let's solve the Lorenz equation. Using `@LVector`s, we can do:
 
 ```julia
-using LabelledArrays, OrdinaryDiffEq, Test
+using LabelledArrays, OrdinaryDiffEq
 
 function lorenz_f(du,u,p,t)
   du.x = p.σ*(u.y-u.x)
@@ -79,7 +79,7 @@ function lorenz_f(du,u,p,t)
 end
 
 u0 = @LArray [1.0,0.0,0.0] (:x,:y,:z)
-p = (σ = 10.0,ρ = 28.0,β = 8/3)
+p = @LArray [10.0, 28.0, 8/3]  (:σ,:ρ,:β)
 tspan = (0.0,10.0)
 prob = ODEProblem(lorenz_f,u0,tspan,p)
 sol = solve(prob,Tsit5())
