@@ -1,5 +1,6 @@
 using LabelledArrays
 using Test
+using StaticArrays
 
 @time begin
 @time @testset "SLArrays Macros" begin include("slarrays.jl") end
