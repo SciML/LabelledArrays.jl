@@ -23,7 +23,7 @@ A.a == 1
 ABCD = @SLArray (2,2) (:a,:b,:c,:d)
 B = ABCD(1,2,3,4)
 B.c == 3
-B[2,2] = B.d
+B[2,2] == B.d
 ```
 
 Here we have that `A == [1,2,3]` and for example `A.b == 2`. We can create a
