@@ -27,13 +27,21 @@ end
 end
 
 @inline function Base.getindex(x::LArray,s::Symbol)
-  idx = findfirst(y->y==s,symnames(typeof(x)))
-  getfield(x,:__x)[idx]
+    getindex(x,Val(s))
 end
 
-@inline function Base.setindex!(x::LArray,y,s::Symbol)
+@inline @generated function Base.getindex(x::LArray,::Val{s}) where s
+    idx = findfirst(y->y==s,symnames(x))
+    :(getfield(x,:__x)[$idx])
+end
+
+@inline function Base.setindex!(x::LArray,v,s::Symbol)
+    setindex!(x,v,Val(s))
+end
+
+@inline @generated function Base.setindex!(x::LArray,y,s::Symbol)
   idx = findfirst(y->y==s,symnames(typeof(x)))
-  getfield(x,:__x)[idx] = y
+  :(getfield(x,:__x)[idx] = y)
 end
 
 function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}
