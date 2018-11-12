@@ -21,8 +21,8 @@ g(x) = x.a
 @time g(x)
 @time g(x)
 
-@code_warntype getindex(x,:a)
-@inferred getindex(x,:a)
+#@code_warntype x.a
+#@inferred getindex(x,:a)
 @code_warntype g(x)
 @inferred g(x)
 

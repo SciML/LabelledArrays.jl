@@ -39,9 +39,9 @@ end
     setindex!(x,v,Val(s))
 end
 
-@inline @generated function Base.setindex!(x::LArray,y,s::Symbol)
-  idx = findfirst(y->y==s,symnames(typeof(x)))
-  :(getfield(x,:__x)[idx] = y)
+@inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
+  idx = findfirst(y->y==s,symnames(x))
+  :(setindex!(getfield(x,:__x),y,$idx))
 end
 
 function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}

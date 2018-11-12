@@ -25,7 +25,7 @@ end
 end
 @inline @generated function Base.getindex(x::SLArray,::Val{s}) where s
     idx = findfirst(y->y==s,symnames(x))
-    :(x.__x[$idx])
+    :(getfield(x,:__x)[$idx])
 end
 
 """
