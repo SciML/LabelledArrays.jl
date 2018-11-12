@@ -20,9 +20,12 @@ symnames(::Type{SLArray{S,N,Syms,T}}) where {S,N,T,Syms} = Syms
 @inline function Base.getproperty(x::SLArray,s::Symbol)
   s == :__x ? getfield(x,:__x) : x[s]
 end
-@inline function Base.getindex(x::SLArray,s)
-  idx = findfirst(==(s),symnames(typeof(x)))
-  getfield(x,:__x)[idx]
+@inline function Base.getindex(x::SLArray,s::Symbol)
+    getindex(x,Val(s))
+end
+@inline @generated function Base.getindex(x::SLArray,::Val{s}) where s
+    idx = findfirst(y->y==s,symnames(x))
+    :(getfield(x,:__x)[$idx])
 end
 
 """
