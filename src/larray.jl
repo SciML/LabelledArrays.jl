@@ -48,6 +48,10 @@ function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {
     LArray{S,N,Syms}(tmp)
 end
 
+# Allow copying LArray of uninitialized data, as with regular Array
+Base.copy(x::LArray) = typeof(x)(copy(getfield(x,:__x)))
+Base.deepcopy(x::LArray) = typeof(x)(deepcopy(getfield(x,:__x)))
+
 # enable the usage of LAPACK
 Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,S}) where {T,N,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
 
