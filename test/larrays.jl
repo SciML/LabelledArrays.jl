@@ -44,3 +44,8 @@ z .= w
 @test z[:b] == w[2,1]
 @test z[:c] == w[1,2]
 @test z[:d] == w[2,2]
+
+t = similar(z, String) # t's elements are uninitialized
+@test_throws UndefRefError t[1]
+copy(t) # should be ok
+deepcopy(t) # should also be ok
