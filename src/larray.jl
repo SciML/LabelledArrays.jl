@@ -30,7 +30,8 @@ LVector(;kwargs...) = LVector(kwargs.data)
 
 ## pairs iterator
 Base.pairs(x::LArray{T,N,Syms}) where {T,N,Syms} =
-    (label => getproperty(x, label) for label in Syms)
+    # (label => getproperty(x, label) for label in Syms) # not type stable?
+    (Syms[i] => x[i] for i in 1:length(Syms))
 
 #####################################
 # Array Interface

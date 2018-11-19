@@ -32,7 +32,8 @@ SLVector(;kwargs...) = SLVector(kwargs.data)
 
 ## pairs iterator
 Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
-    (label => getproperty(x, label) for label in Syms)
+    # (label => getproperty(x, label) for label in Syms) # not type stable?
+    (Syms[i] => x[i] for i in 1:length(Syms))
 
 #####################################
 # StaticArray Interface
