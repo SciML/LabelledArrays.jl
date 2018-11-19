@@ -4,6 +4,33 @@ struct LArray{T,N,Syms} <: DenseArray{T,N}
   LArray{T,N,Syms}(__x) where {T,N,Syms} = new{T,N,Syms}(__x)
 end
 
+#####################################
+# NamedTuple compatibility
+#####################################
+## LArray to named tuple
+function Base.convert(::Type{NamedTuple}, x::LArray{T,N,Syms}) where {T,N,Syms}
+    tup = NTuple{length(Syms),T}(x)
+    NamedTuple{Syms,typeof(tup)}(tup)
+end
+
+## Named tuple to LArray
+#=
+    1. `LArray((2,2), (a=1, b=2, c=3, d=4))` (need to specify size)
+    2. `LArray((2,2); a=1, b=2, c=3, d=4)` : alternative form using kwargs
+    3. `LVector((a=1, b=2))` : can infer size for vectors
+    4. `LVector(a=1, b=2)` : alternative form using kwargs
+=#
+function LArray(size::NTuple{S,Int}, tup::NamedTuple{Syms,Tup}) where {S,Syms,Tup}
+    __x = reshape(collect(tup), size)
+    LArray{Syms}(__x)
+end
+LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, kwargs.data)
+LVector(tup::NamedTuple) = LArray((length(tup),), tup)
+LVector(;kwargs...) = LVector(kwargs.data)
+
+#####################################
+# Array Interface
+#####################################
 Base.size(x::LArray) = size(getfield(x,:__x))
 @inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
 @inline Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
