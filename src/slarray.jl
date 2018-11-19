@@ -30,6 +30,10 @@ SLArray{Size}(;kwargs...) where {Size} = SLArray{Size}(kwargs.data)
 SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
 SLVector(;kwargs...) = SLVector(kwargs.data)
 
+## pairs iterator
+Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
+    (label => getproperty(x, label) for label in Syms)
+
 #####################################
 # StaticArray Interface
 #####################################

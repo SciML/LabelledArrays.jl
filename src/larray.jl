@@ -28,6 +28,10 @@ LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, kwargs.data)
 LVector(tup::NamedTuple) = LArray((length(tup),), tup)
 LVector(;kwargs...) = LVector(kwargs.data)
 
+## pairs iterator
+Base.pairs(x::LArray{T,N,Syms}) where {T,N,Syms} =
+    (label => getproperty(x, label) for label in Syms)
+
 #####################################
 # Array Interface
 #####################################
