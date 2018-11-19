@@ -6,7 +6,33 @@ struct SLArray{S,N,Syms,T} <: StaticArray{S,T,N}
   SLArray{S,N,Syms,T}(x::Tuple) where {S,N,Syms,T} = new{S,N,Syms,T}(SArray{S,T,N}(T.(x)))
 end
 
-# Implement the StaticVector interface
+#####################################
+# NamedTuple compatibility
+#####################################
+## SLArray to named tuple
+function Base.convert(::Type{NamedTuple}, x::SLArray{S,N,Syms,T}) where {S,N,Syms,T}
+  tup = NTuple{length(Syms),T}(x)
+  NamedTuple{Syms,typeof(tup)}(tup)
+end
+
+## Named tuple to SLArray
+#=
+  1. `SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4))` (need to specify size)
+  2. `SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)` : alternative form using kwargs
+  3. `SLVector((a=1, b=2))` : infer size for vectors
+  4. `SLVector(a=1, b=2)` : alternative form using kwargs
+=#
+function SLArray{Size}(tup::NamedTuple{Syms,Tup}) where {Size,Syms,Tup}
+  __x = Tup(tup) # drop symbols
+  SLArray{Size,length(Size.parameters),Syms}(__x)
+end
+SLArray{Size}(;kwargs...) where {Size} = SLArray{Size}(kwargs.data)
+SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
+SLVector(;kwargs...) = SLVector(kwargs.data)
+
+#####################################
+# StaticArray Interface
+#####################################
 @inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
 function StaticArrays.similar_type(::Type{SLArray{S,N,Syms,T}}, ::Type{NewElType},
