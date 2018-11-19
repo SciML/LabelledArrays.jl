@@ -1,26 +1,43 @@
-using LabelledArrays
-using Test
+using LabelledArrays, StaticArrays
+using Test, InteractiveUtils
 
-ABC = @SLVector (:a,:b,:c)
-b = ABC(1,2,3)
+@testset "Basic interface" begin
+    ABC = @SLVector (:a,:b,:c)
+    b = ABC(1,2,3)
 
-@test b.a == 1
-@test b.b == 2
-@test b.c == 3
-@test b[1] == b.a
-@test b[2] == b.b
-@test b[3] == b.c
+    @test b.a == 1
+    @test b.b == 2
+    @test b.c == 3
+    @test b[1] == b.a
+    @test b[2] == b.b
+    @test b[3] == b.c
 
-@test_throws UndefVarError fill!(a,1)
-@test typeof(b.__x) == SVector{3,Int}
+    @test_throws UndefVarError fill!(a,1)
+    @test typeof(b.__x) == SVector{3,Int}
 
-# Type stability tests
-ABC_fl = @SLVector Float64 (:a, :b, :c)
-ABC_int = @SLVector Int (:a, :b, :c)
-@test similar_type(b, Float64) == ABC_fl
-@test typeof(copy(b)) == ABC_int
-@test typeof(Float64.(b)) == ABC_fl
-@test typeof(b .+ b) == ABC_int
-@test typeof(b .+ 1.0) == ABC_fl
-@test typeof(zero(b)) == ABC_int
-@test similar(b) isa MArray # similar should return a mutable copy
+    # Type stability tests
+    ABC_fl = @SLVector Float64 (:a, :b, :c)
+    ABC_int = @SLVector Int (:a, :b, :c)
+    @test similar_type(b, Float64) == ABC_fl
+    @test typeof(copy(b)) == ABC_int
+    @test typeof(Float64.(b)) == ABC_fl
+    @test typeof(b .+ b) == ABC_int
+    @test typeof(b .+ 1.0) == ABC_fl
+    @test typeof(zero(b)) == ABC_int
+    @test similar(b) isa MArray # similar should return a mutable copy
+end
+
+@testset "NamedTuple conversion" begin
+    x_tup = (a=1, b=2)
+    y_tup = (a=1, b=2, c=3, d=4)
+    x = SLVector(a=1, b=2)
+    y = SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+    @test convert(NamedTuple, x) == x_tup
+    @test convert(NamedTuple, y) == y_tup
+    @test collect(pairs(x)) == collect(pairs(x_tup))
+    @test collect(pairs(y)) == collect(pairs(y_tup))
+
+    @code_warntype SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+    @code_warntype convert(NamedTuple, y)
+    @code_warntype collect(pairs(y))
+end
