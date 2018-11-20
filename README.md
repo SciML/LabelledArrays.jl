@@ -33,6 +33,27 @@ typed `SLArray` via:
 SVType = @SLVector Float64 (:a,:b,:c)
 ```
 
+Alternatively, you can also construct a static labelled array using the
+`SLVector` constructor by writing out the entries as keyword arguments:
+
+```julia
+julia> SLVector(a=1, b=2, c=3)
+3-element SLArray{Tuple{3},1,(:a, :b, :c),Int64}:
+ 1
+ 2
+ 3
+```
+
+For general N-dimensional labelled arrays, you need to specify the size
+(`Tuple{dim1,dim2,...}`) as the type parameter to the `SLArray` constructor:
+
+```julia
+julia> SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+2×2 SLArray{Tuple{2,2},2,(:a, :b, :c, :d),Int64}:
+ 1  3
+ 2  4
+```
+
 ## LArrays
 
 The `LArrayz`s are fully mutable arrays with labels. There is no performance
@@ -59,6 +80,22 @@ or using an `@LVector` shorthand:
 ```julia
 A = @LVector Float64 (:a,:b,:c,:d)
 A .= rand(4)
+```
+
+As with `SLArray`, alternative constructors exist that use the keyword argument
+form:
+
+```julia
+julia> LVector(a=1, b=2, c=3)
+3-element LArray{Int64,1,(:a, :b, :c)}:
+ 1
+ 2
+ 3
+
+julia> LArray((2,2); a=1, b=2, c=3, d=4) # need to specify size as first argument
+2×2 LArray{Int64,2,(:a, :b, :c, :d)}:
+ 1  3
+ 2  4
 ```
 
 ## Example: Nice DiffEq Syntax Without A DSL
@@ -115,32 +152,26 @@ Julia's Base has NamedTuples in v0.7+. They are constructed as:
 p = (σ = 10.0,ρ = 28.0,β = 8/3)
 ```
 
-and they support `p[1]` and `p.σ` as well. LabelledArrays provides
-the `LVector` and `SLVector` function for constructing a 1D array
-from a named tuple:
+and they support `p[1]` and `p.σ` as well. The `LVector`, `SLVector`, `LArray`
+and `SLArray` constructors also support named tuples as their arguments:
 
 ```julia
-julia> x = LVector((a=1, b=2)) # LVector(a=1, b=2) also works
+julia> LVector((a=1, b=2))
 2-element LArray{Int64,1,(:a, :b)}:
  1
  2
 
-julia> x_static = SLVector((a=1, b=2)) # SLVector(a=1, b=2) also works
+julia> SLVector((a=1, b=2))
 2-element SLArray{Tuple{2},1,(:a, :b),Int64}:
  1
  2
-```
 
-You can also create N-dimentional arrays from named tuples using
-the `LArray` and `SLArray` constructors, but you need to specify the size:
-
-```julia
-julia> LArray((2,2), (a=1, b=2, c=3, d=4)) # LArray((2,2); a=1, b=2, c=3, d=4)
+julia> LArray((2,2), (a=1, b=2, c=3, d=4))
 2×2 LArray{Int64,2,(:a, :b, :c, :d)}:
  1  3
  2  4
 
-julia> SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4)) # SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+julia> SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4))
 2×2 SLArray{Tuple{2,2},2,(:a, :b, :c, :d),Int64}:
  1  3
  2  4
