@@ -1,9 +1,9 @@
-struct SLArray{S,N,Syms,T} <: StaticArray{S,T,N}
-  __x::SArray{S,T,N}
+struct SLArray{S,N,L,Syms,T} <: StaticArray{S,T,N}
+  __x::SArray{S,T,N,L}
   #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,N,Syms,T} = new{S,N,Syms,T}(__x)
-  SLArray{S,N,Syms,T}(__x::SArray) where {S,N,Syms,T} = new{S,N,Syms,T}(T.(__x))
-  SLArray{S,N,Syms}(x::Tuple) where {S,N,Syms} = new{S,N,Syms,eltype(x)}(SArray{S,eltype(x),N}(x))
-  SLArray{S,N,Syms,T}(x::Tuple) where {S,N,Syms,T} = new{S,N,Syms,T}(SArray{S,T,N}(T.(x)))
+  Base.@pure SLArray{S,N,Syms,T}(__x::SArray) where {S,N,Syms,T} = new{S,N,length(__x),Syms,T}(convert.(T,__x))
+  Base.@pure SLArray{S,N,Syms}(x::Tuple) where {S,N,Syms} = new{S,N,ndims(x),Syms,eltype(x)}(SArray{S,eltype(x),N}(x))
+  Base.@pure SLArray{S,N,Syms,T}(x::Tuple) where {S,N,Syms,T} = new{S,N,ndims(x),Syms,T}(SArray{S,T,N}(T.(x)))
 end
 
 #####################################
