@@ -10,7 +10,7 @@ end
 # NamedTuple compatibility
 #####################################
 ## SLArray to named tuple
-function Base.convert(::Type{NamedTuple}, x::SLArray{S,N,Syms,T}) where {S,N,Syms,T}
+function Base.convert(::Type{NamedTuple}, x::SLArray{S,N,L,Syms,T}) where {S,N,L,Syms,T}
   tup = NTuple{length(Syms),T}(x)
   NamedTuple{Syms,typeof(tup)}(tup)
 end
@@ -31,7 +31,7 @@ SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
 SLVector(;kwargs...) = SLVector(kwargs.data)
 
 ## pairs iterator
-Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
+Base.pairs(x::SLArray{S,N,L,Syms,T}) where {S,N,L,Syms,T} =
     # (label => getproperty(x, label) for label in Syms) # not type stable?
     (Syms[i] => x[i] for i in 1:length(Syms))
 
@@ -40,14 +40,14 @@ Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
 #####################################
 @inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
-function StaticArrays.similar_type(::Type{SLArray{S,N,Syms,T}}, ::Type{NewElType},
-    ::Size{NewSize}) where {S,T,N,Syms,NewElType,NewSize}
+function StaticArrays.similar_type(::Type{SLArray{S,N,L,Syms,T}}, ::Type{NewElType},
+    ::Size{NewSize}) where {S,N,L,Syms,T,NewElType,NewSize}
   @assert length(NewSize) == N
   SLArray{S,N,Syms,NewElType}
 end
 
-Base.propertynames(::SLArray{S,N,Syms,T}) where {S,N,T,Syms} = Syms
-symnames(::Type{SLArray{S,N,Syms,T}}) where {S,N,T,Syms} = Syms
+Base.propertynames(::SLArray{S,N,L,Syms,T}) where {S,N,L,Syms,T} = Syms
+symnames(::Type{SLArray{S,N,L,Syms,T}}) where {S,N,L,Syms,T} = Syms
 @inline function Base.getproperty(x::SLArray,s::Symbol)
   s == :__x ? getfield(x,:__x) : x[s]
 end
