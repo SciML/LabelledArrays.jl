@@ -16,7 +16,7 @@ function Base.show(io::IO, x::LArray{T,N,Syms}) where {T,N,Syms}
     show(io, cells)
 end
 
-function Base.show(io::IO, x::SLArray{S,N,Syms,T}) where {S,N,Syms,T}
+function Base.show(io::IO, x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms}
     cells = Array{DisplayCell{T}, N}(undef, size(x)...)
     for (i, label) in enumerate(Syms)
         cells[i] = DisplayCell(label, x[i])
