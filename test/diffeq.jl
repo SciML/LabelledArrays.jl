@@ -19,8 +19,8 @@ prob = ODEProblem(f,u0,tspan,p)
 sol = solve(prob,Rosenbrock23())
 @test sol.retcode === :Success
 sol = solve(prob,Tsit5())
-@test typeof(prob.u0) == eltype(sol.u) <: LorenzVector
-@test typeof(prob.p) <: LorenzParameterVector
+@test prob.u0 === sol.u[1] === u0
+@test prob.p === p
 @test sol[10].x > 0
 
 function iip_f(du,u,p,t)
@@ -40,5 +40,5 @@ prob = ODEProblem(iip_f,u0,tspan,p)
 sol = solve(prob,Rosenbrock23())
 sol = solve(prob,Tsit5())
 @test typeof(prob.u0) == eltype(sol.u) == typeof(u0)
-@test typeof(prob.p) <: LorenzParameterVector
+@test prob.p === p
 @test sol[10].x > 0

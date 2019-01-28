@@ -1,16 +1,28 @@
-struct SLArray{S,N,Syms,T} <: StaticArray{S,T,N}
-  __x::SArray{S,T,N}
+struct SLArray{S,T,N,L,Syms} <: StaticArray{S,T,N}
+  __x::SArray{S,T,N,L}
   #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,N,Syms,T} = new{S,N,Syms,T}(__x)
-  SLArray{S,N,Syms,T}(__x::SArray) where {S,N,Syms,T} = new{S,N,Syms,T}(T.(__x))
-  SLArray{S,N,Syms}(x::Tuple) where {S,N,Syms} = new{S,N,Syms,eltype(x)}(SArray{S,eltype(x),N}(x))
-  SLArray{S,N,Syms,T}(x::Tuple) where {S,N,Syms,T} = new{S,N,Syms,T}(SArray{S,T,N}(T.(x)))
+  SLArray{S,T,N,Syms}(__x::SArray) where {S,T,N,Syms} = new{S,T,N,length(__x),Syms}(convert.(T,__x))
+  SLArray{S,Syms}(__x::SArray{S,T,N,L}) where {S,T,N,L,Syms} = new{S,T,N,L,Syms}(__x)
+  SLArray{S,T,Syms}(__x::SArray{S,T,N,L}) where {S,T,N,L,Syms} = new{S,T,N,L,Syms}(__x)
+  function SLArray{S,Syms}(x::Tuple) where {S,Syms}
+    __x = SArray{S}(x)
+    SLArray{S,Syms}(__x)
+  end
+  function SLArray{S,T,Syms}(x::Tuple) where {S,T,Syms}
+    __x = SArray{S,T}(x)
+    SLArray{S,T,Syms}(__x)
+  end
+  function SLArray{S,T,N,L,Syms}(x::Tuple) where {S,T,N,L,Syms}
+    __x = SArray{S,T,N,L}(x)
+    new{S,T,N,L,Syms}(__x)
+  end
 end
 
 #####################################
 # NamedTuple compatibility
 #####################################
 ## SLArray to named tuple
-function Base.convert(::Type{NamedTuple}, x::SLArray{S,N,Syms,T}) where {S,N,Syms,T}
+function Base.convert(::Type{NamedTuple}, x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms}
   tup = NTuple{length(Syms),T}(x)
   NamedTuple{Syms,typeof(tup)}(tup)
 end
@@ -24,14 +36,14 @@ end
 =#
 function SLArray{Size}(tup::NamedTuple{Syms,Tup}) where {Size,Syms,Tup}
   __x = Tup(tup) # drop symbols
-  SLArray{Size,length(Size.parameters),Syms}(__x)
+  SLArray{Size,Syms}(__x)
 end
 SLArray{Size}(;kwargs...) where {Size} = SLArray{Size}(kwargs.data)
 SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
 SLVector(;kwargs...) = SLVector(kwargs.data)
 
 ## pairs iterator
-Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
+Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
     # (label => getproperty(x, label) for label in Syms) # not type stable?
     (Syms[i] => x[i] for i in 1:length(Syms))
 
@@ -40,14 +52,14 @@ Base.pairs(x::SLArray{S,N,Syms,T}) where {S,N,Syms,T} =
 #####################################
 @inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
-function StaticArrays.similar_type(::Type{SLArray{S,N,Syms,T}}, ::Type{NewElType},
-    ::Size{NewSize}) where {S,T,N,Syms,NewElType,NewSize}
+function StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType},
+    ::Size{NewSize}) where {S,T,N,L,Syms,NewElType,NewSize}
   @assert length(NewSize) == N
-  SLArray{S,N,Syms,NewElType}
+  SLArray{S,NewElType,Syms}
 end
 
-Base.propertynames(::SLArray{S,N,Syms,T}) where {S,N,T,Syms} = Syms
-symnames(::Type{SLArray{S,N,Syms,T}}) where {S,N,T,Syms} = Syms
+Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
 @inline function Base.getproperty(x::SLArray,s::Symbol)
   s == :__x ? getfield(x,:__x) : x[s]
 end
@@ -82,14 +94,14 @@ x.d == x[2,2]
 macro SLArray(dims,syms)
   dims isa Expr && (dims = dims.args)
   quote
-    SLArray{Tuple{$dims...,},$(length(dims)),$syms}
+    SLArray{Tuple{$dims...,},$syms}
   end
 end
 
 macro SLArray(T,dims,syms)
   dims isa Expr && (dims = dims.args)
   quote
-    SLArray{Tuple{$dims...,},$(length(dims)),$syms,$T}
+    SLArray{Tuple{$dims...,},$T,$syms}
   end
 end
 
@@ -115,13 +127,13 @@ x.c == x[3]
 macro SLVector(syms)
   n = syms isa Expr ? length(syms.args) : length(syms)
   quote
-    SLArray{Tuple{$n},1,$syms}
+    SLArray{Tuple{$n},$syms}
   end
 end
 
 macro SLVector(T,syms)
   n = syms isa Expr ? length(syms.args) : length(syms)
   quote
-    SLArray{Tuple{$n},1,$syms,$T}
+    SLArray{Tuple{$n},$T,$syms}
   end
 end
