@@ -2,15 +2,15 @@ struct SLArray{S,T,N,L,Syms} <: StaticArray{S,T,N}
   __x::SArray{S,T,N,L}
   #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,N,Syms,T} = new{S,N,Syms,T}(__x)
   SLArray{S,T,N,Syms}(__x::SArray) where {S,T,N,Syms} = new{S,T,N,length(__x),Syms}(convert.(T,__x))
+  SLArray{S,Syms}(__x::SArray{S,T,N,L}) where {S,T,N,L,Syms} = new{S,T,N,L,Syms}(__x)
+  SLArray{S,T,Syms}(__x::SArray{S,T,N,L}) where {S,T,N,L,Syms} = new{S,T,N,L,Syms}(__x)
   function SLArray{S,Syms}(x::Tuple) where {S,Syms}
     __x = SArray{S}(x)
-    TT = typeof(__x).parameters
-    new{TT[1],TT[2],TT[3],TT[4],Syms}(__x)
+    SLArray{S,Syms}(__x)
   end
   function SLArray{S,T,Syms}(x::Tuple) where {S,T,Syms}
     __x = SArray{S,T}(x)
-    TT = typeof(__x).parameters
-    new{TT[1],TT[2],TT[3],TT[4],Syms}(__x)
+    SLArray{S,T,Syms}(__x)
   end
   function SLArray{S,T,N,L,Syms}(x::Tuple) where {S,T,N,L,Syms}
     __x = SArray{S,T,N,L}(x)
