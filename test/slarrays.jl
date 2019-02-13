@@ -18,13 +18,15 @@ using Test, InteractiveUtils
     # Type stability tests
     ABC_fl = @SLVector Float64 (:a, :b, :c)
     ABC_int = @SLVector Int (:a, :b, :c)
-    @test similar_type(b, Float64) === ABC_fl
-    @test copy(b) === ABC_int(Tuple(b))
-    @test Float64.(b) === ABC_fl(Tuple(b))
-    @test b .+ b === ABC_int(Tuple(b.__x .+ b.__x))
-    @test b .+ 1.0 === ABC_fl(Tuple(b.__x .+ 1.0))
-    @test zero(b) === ABC_int(zero(b))
-    @test typeof(similar(b)) === MArray{Tuple{3}, Int, 1, 3} # similar should return a mutable copy
+    @test @inferred(similar_type(b, Float64)) === ABC_fl
+    @test @inferred(similar_type(b, Float64, Size(1,3))) === @SLArray Float64 (1,3) (:a, :b, :c)
+    @test @inferred(similar_type(b, Float64, Size(3,3))) === SArray{Tuple{3,3},Float64,2,9}
+    @test @inferred(copy(b)) === ABC_int(Tuple(b))
+    @test @inferred(broadcast(Float64, b)) === ABC_fl(Tuple(b))
+    @test @inferred(broadcast(+, b, b)) === ABC_int(Tuple(b.__x .+ b.__x))
+    @test @inferred(broadcast(+, b, 1.0)) === ABC_fl(Tuple(b.__x .+ 1.0))
+    @test @inferred(zero(b)) === ABC_int(zero(b))
+    @test typeof(@inferred(similar(b))) === MArray{Tuple{3}, Int, 1, 3} # similar should return a mutable copy
 end
 
 @testset "NamedTuple conversion" begin
@@ -32,12 +34,12 @@ end
     y_tup = (a=1, b=2, c=3, d=4)
     x = SLVector(a=1, b=2)
     y = SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
-    @test convert(NamedTuple, x) == x_tup
-    @test convert(NamedTuple, y) == y_tup
-    @test collect(pairs(x)) == collect(pairs(x_tup))
-    @test collect(pairs(y)) == collect(pairs(y_tup))
+    @test @inferred(convert(NamedTuple, x)) == x_tup
+    @test @inferred(convert(NamedTuple, y)) == y_tup
+    @test @inferred(collect(pairs(x))) == collect(pairs(x_tup))
+    @test @inferred(collect(pairs(y))) == collect(pairs(y_tup))
 
-    @code_warntype SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
-    @code_warntype convert(NamedTuple, y)
-    @code_warntype collect(pairs(y))
+    @inferred(SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4))
+    @inferred(convert(NamedTuple, y))
+    @inferred(collect(pairs(y)))
 end
