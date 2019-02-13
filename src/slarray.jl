@@ -54,8 +54,12 @@ Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
 function StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType},
     ::Size{NewSize}) where {S,T,N,L,Syms,NewElType,NewSize}
-  @assert length(NewSize) == N
-  SLArray{S,NewElType,Syms}
+  n = prod(NewSize)
+  if n == L
+    SLArray{Tuple{NewSize...},NewElType,length(NewSize),L,Syms}
+  else
+    SArray{Tuple{NewSize...},NewElType,length(NewSize),n}
+  end
 end
 
 Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
@@ -94,14 +98,14 @@ x.d == x[2,2]
 macro SLArray(dims,syms)
   dims isa Expr && (dims = dims.args)
   quote
-    SLArray{Tuple{$dims...,},$syms}
+    SLArray{Tuple{$dims...},$syms}
   end
 end
 
 macro SLArray(T,dims,syms)
   dims isa Expr && (dims = dims.args)
   quote
-    SLArray{Tuple{$dims...,},$T,$syms}
+    SLArray{Tuple{$dims...},$T,$(length(dims)),$(prod(dims)),$syms}
   end
 end
 
@@ -134,6 +138,6 @@ end
 macro SLVector(T,syms)
   n = syms isa Expr ? length(syms.args) : length(syms)
   quote
-    SLArray{Tuple{$n},$T,$syms}
+    SLArray{Tuple{$n},$T,1,$n,$syms}
   end
 end
