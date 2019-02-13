@@ -52,6 +52,7 @@ Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
 #####################################
 @inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
+
 function StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType},
     ::Size{NewSize}) where {S,T,N,L,Syms,NewElType,NewSize}
   n = prod(NewSize)
@@ -59,6 +60,15 @@ function StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElTy
     SLArray{Tuple{NewSize...},NewElType,length(NewSize),L,Syms}
   else
     SArray{Tuple{NewSize...},NewElType,length(NewSize),n}
+  end
+end
+
+function Base.similar(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType}, ::Size{NewSize}) where {S,T,N,L,Syms,NewElType,NewSize}
+  n = prod(NewSize)
+  if n == L
+    LArray{NewElType,length(NewSize),Syms}(Array{NewElType}(undef, NewSize))
+  else
+    MArray{Tuple{NewSize...},NewElType,length(NewSize),n}(undef)
   end
 end
 
