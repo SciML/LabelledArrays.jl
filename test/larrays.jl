@@ -47,6 +47,13 @@ using LabelledArrays, Test, InteractiveUtils
     @test z[:d] == w[2,2]
 end
 
+@testset "Alternate array backends" begin
+    v = view([1 2 3 4 5 6 7 8], 3:6)
+    x = LArray{(:a,:b,:c,:d)}(v)
+    @test x.b == 4
+    @test x[:d] == 6
+end
+
 @testset "NameTuple conversion" begin
     x_tup = (a=1, b=2)
     y_tup = (a=1, b=2, c=3, d=4)
