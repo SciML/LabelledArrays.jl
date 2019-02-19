@@ -1,14 +1,14 @@
-struct LArray{T,N,Syms} <: DenseArray{T,N}
-  __x::Array{T,N}
-  LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),Syms}(__x)
-  LArray{T,N,Syms}(__x) where {T,N,Syms} = new{T,N,Syms}(__x)
+struct LArray{T,N,D<:AbstractArray{T,N},Syms} <: DenseArray{T,N}
+  __x::D
+  LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),typeof(__x),Syms}(__x)
+  LArray{T,N,D,Syms}(__x) where {T,N,D,Syms} = new{T,N,D,Syms}(__x)
 end
 
 #####################################
 # NamedTuple compatibility
 #####################################
 ## LArray to named tuple
-function Base.convert(::Type{NamedTuple}, x::LArray{T,N,Syms}) where {T,N,Syms}
+function Base.convert(::Type{NamedTuple}, x::LArray{T,N,D,Syms}) where {T,N,D,Syms}
     tup = NTuple{length(Syms),T}(x)
     NamedTuple{Syms,typeof(tup)}(tup)
 end
@@ -29,7 +29,7 @@ LVector(tup::NamedTuple) = LArray((length(tup),), tup)
 LVector(;kwargs...) = LVector(kwargs.data)
 
 ## pairs iterator
-Base.pairs(x::LArray{T,N,Syms}) where {T,N,Syms} =
+Base.pairs(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} =
     # (label => getproperty(x, label) for label in Syms) # not type stable?
     (Syms[i] => x[i] for i in 1:length(Syms))
 
@@ -40,8 +40,8 @@ Base.size(x::LArray) = size(getfield(x,:__x))
 @inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
 @inline Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
 
-Base.propertynames(::LArray{T,N,Syms}) where {T,N,Syms} = Syms
-symnames(::Type{LArray{T,N,Syms}}) where {T,N,Syms} = Syms
+Base.propertynames(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
+symnames(::Type{LArray{T,N,D,Syms}}) where {T,N,D,Syms} = Syms
 
 @inline function Base.getproperty(x::LArray,s::Symbol)
     if s == :__x
@@ -77,7 +77,7 @@ end
 
 function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}
     tmp = similar(x.__x,S,dims)
-    LArray{S,N,Syms}(tmp)
+    LArray{S,N,typeof(tmp),Syms}(tmp)
 end
 
 # Allow copying LArray of uninitialized data, as with regular Array
@@ -92,11 +92,13 @@ Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,S}) where {T,N,S} = Base.unsaf
 #####################################
 struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T,N,L}(x::Val{1}) where {T,N,L} = LAStyle{T,N,L}()
-Base.BroadcastStyle(::Type{LArray{T,N,L}}) where {T,N,L} = LAStyle{T,N,L}()
-Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} = LAStyle{promote_type(T,E),N,L}()
+Base.BroadcastStyle(::Type{LArray{T,N,D,L}}) where {T,N,D,L} = LAStyle{T,N,L}()
+Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} = 
+    LAStyle{promote_type(T,E),N,L}()
 
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
-    return LArray{ElType,N,L}(similar(Array{ElType,N},axes(bc)))
+    tmp = similar(Array{ElType,N},axes(bc))
+    return LArray{ElType,N,typeof(tmp),L}(tmp)
 end
 
 """

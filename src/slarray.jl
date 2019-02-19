@@ -66,7 +66,8 @@ end
 function Base.similar(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType}, ::Size{NewSize}) where {S,T,N,L,Syms,NewElType,NewSize}
   n = prod(NewSize)
   if n == L
-    LArray{NewElType,length(NewSize),Syms}(Array{NewElType}(undef, NewSize))
+    tmp = Array{NewElType}(undef, NewSize)
+    LArray{NewElType,length(NewSize),typeof(tmp),Syms}(tmp)
   else
     MArray{Tuple{NewSize...},NewElType,length(NewSize),n}(undef)
   end
