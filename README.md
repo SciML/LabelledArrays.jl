@@ -54,6 +54,8 @@ julia> SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
  2  4
 ```
 
+
+
 ## LArrays
 
 The `LArrayz`s are fully mutable arrays with labels. There is no performance
@@ -96,6 +98,29 @@ julia> LArray((2,2); a=1, b=2, c=3, d=4) # need to specify size as first argumen
 2×2 LArray{Int64,2,(:a, :b, :c, :d)}:
  1  3
  2  4
+```
+
+## Labelled slices
+
+For a labelled array where the row and column slices are labeled, use `@SLSlice`
+and `@LSlice`, similar to `@SLArray` and `@LArray` but passing a _tuple_ of label
+tuples.
+
+For static arrays with labeled rows and columns:
+
+```
+ABC = @SLSliced (3,2) (:a,:b,:c), (:x, :y)
+A = ABC([1 2; 3 4; 5 6])
+A.a.x == 1
+A[:c, :y] == 6
+```
+
+For regular arrays with labeled rows and columns:
+
+```
+A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+A.a.x == 1
+A[:c, :y] == 6
 ```
 
 ## Example: Nice DiffEq Syntax Without A DSL
