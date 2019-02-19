@@ -35,6 +35,6 @@ end
 macro SLSliced(T,dims,syms)
   dims isa Expr && (dims = dims.args)
   quote
-      SLArray{Tuple{$dims...,},$T,Tuple{$syms...,}}
+      SLArray{Tuple{$dims...},$T,$(length(dims)),$(prod(dims)),Tuple{$syms...}}
   end
 end
