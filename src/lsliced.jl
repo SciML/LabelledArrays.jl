@@ -97,13 +97,18 @@ For example:
     b = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x,:y)
 """
 macro LSliced(vals,syms)
+  vals = esc(vals)
+  syms = esc(syms)
   return quote
-    LArray{Tuple{$syms...,}}($vals)
+      LArray{Tuple{$syms...,}}($vals)
   end
 end
 
 macro LSliced(type,size,syms)
+  type = esc(type)
+  size = esc(size)
+  syms = esc(syms)
   return quote
-    LArray{Tuple{$syms...,}}(Array{$type}(undef,$size...))
+      LArray{Tuple{$syms...,}}(Array{$type}(undef,$size...))
   end
 end
