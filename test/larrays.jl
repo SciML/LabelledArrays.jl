@@ -1,7 +1,9 @@
 using LabelledArrays, Test, InteractiveUtils
 
 @testset "Basic interface" begin
-    x = @LArray [1.0,2.0,3.0] (:a,:b,:c)
+    vals = [1.0,2.0,3.0] 
+    syms = (:a,:b,:c)
+    x = @LArray vals syms
     y = @LVector Float64 (:a,:b,:c)
     y .= [1,2,3.]
     @test x == y
@@ -27,7 +29,9 @@ using LabelledArrays, Test, InteractiveUtils
     @code_warntype g(x)
     @inferred g(x)
 
-    x = @LArray [1,2,3] (:a,:b,:c)
+    vals = [1,2,3]
+    syms = (:a,:b,:c)
+    x = @LArray vals syms
     @test x .* x isa LArray
     @test x .+ 1 isa LArray
     @test x .+ 1. isa LArray
@@ -37,7 +41,10 @@ using LabelledArrays, Test, InteractiveUtils
     @test z isa LArray && eltype(z) === Float64
     @test eltype(x .+ 1.) === Float64
 
-    z = @LArray Float64 (2,2) (:a,:b,:c,:d)
+    type = Float64 
+    dims = (2,2) 
+    syms = (:a,:b,:c,:d)
+    z = @LArray type dims syms
     w = rand(2,2)
     z .= w
 

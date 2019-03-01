@@ -42,7 +42,9 @@ using LabelledArrays, Test, InteractiveUtils
     @test z[:a,:d] == w[1,2]
     @test z[:b,:d] == w[2,2]
 
-    x = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+    vals = [1 2; 3 4; 5 6]
+    syms = (:a,:b,:c), (:x, :y)
+    x = @LSliced vals syms  
     x.a.x = 33
     x.b.y = 99
     x[:a,:y] = 44

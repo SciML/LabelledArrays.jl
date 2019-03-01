@@ -26,15 +26,18 @@ x.d.y == x[4,2]
 
 """
 macro SLSliced(dims,syms)
-  dims isa Expr && (dims = dims.args)
+  dims = esc(dims)
+  syms = esc(syms)
   quote
     SLArray{Tuple{$dims...,},Tuple{$syms...,}}
   end
 end
 
 macro SLSliced(T,dims,syms)
-  dims isa Expr && (dims = dims.args)
+  T = esc(T)
+  dims = esc(dims)
+  syms = esc(syms)
   quote
-      SLArray{Tuple{$dims...},$T,$(length(dims)),$(prod(dims)),Tuple{$syms...}}
+      SLArray{Tuple{$dims...},$T,length($dims),prod($dims),Tuple{$syms...}}
   end
 end

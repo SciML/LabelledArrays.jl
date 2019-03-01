@@ -140,15 +140,18 @@ x.c == x[3]
 
 """
 macro SLVector(syms)
-  n = syms isa Expr ? length(syms.args) : length(syms)
+  syms = esc(syms)
   quote
-    SLArray{Tuple{$n},$syms}
+    n = length($syms)
+    SLArray{Tuple{n},$syms}
   end
 end
 
 macro SLVector(T,syms)
-  n = syms isa Expr ? length(syms.args) : length(syms)
+  T = esc(T)
+  syms = esc(syms)
   quote
-    SLArray{Tuple{$n},$T,1,$n,$syms}
+    n = length($syms)
+    SLArray{Tuple{n},$T,1,n,$syms}
   end
 end

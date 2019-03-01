@@ -115,12 +115,17 @@ For example:
     b = @LArray [1,2,3] (:a,:b,:c)
 """
 macro LArray(vals,syms)
+  vals = esc(vals)
+  syms = esc(syms)
   return quote
       LArray{$syms}($vals)
   end
 end
 
 macro LArray(type,size,syms)
+  type = esc(type)
+  size = esc(size)
+  syms = esc(syms)
   return quote
       LArray{$syms}(Array{$type}(undef,$size...))
   end
@@ -137,6 +142,8 @@ For example:
     b = @LVector [1,2,3] (:a,:b,:c)
 """
 macro LVector(type,syms)
+  type = esc(type)
+  syms = esc(syms)
   return quote
       LArray{$syms}(Vector{$type}(undef,length($syms)))
   end
