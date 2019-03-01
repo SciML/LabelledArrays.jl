@@ -53,6 +53,18 @@ using LabelledArrays, Test, InteractiveUtils
     @test x[2,1] == 77
 end
 
+@testset "Alternate array backends" begin
+    v = view([1 2 3; 4 5 6; 7 8 9], 2:3, 2:3)
+    x = LArray{Tuple{(:a,:b),(:c,:d)}}(v)
+    @test x.a.c == 5
+    @test x[:b, :d] == 9
+
+    s = similar(x)
+    @test size(s) == size(x)
+    @test typeof(s.__x) == Array{Int64,2}
+    @test LabelledArrays.symnames(typeof(s)) == ((:a,:b), (:c,:d))
+end
+
 
 @testset "undef copy" begin
     z = @LSliced Float64 (4,2) (:a,:b,:c,:d), (:x, :y)

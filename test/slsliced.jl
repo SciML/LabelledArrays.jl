@@ -21,9 +21,9 @@ using LabelledArrays, Test, StaticArrays
     @test @inferred(similar_type(b, Float64, Size(3,2))) === @SLSliced Float64 (3,2) (:a, :b, :c), (:x, :y)
     @test @inferred(similar_type(b, Float64, Size(3,3))) === SArray{Tuple{3,3},Float64,2,9}
 
-    @test typeof(@inferred(similar(b))) === LArray{Int,2,Tuple{(:a,:b,:c),(:x,:y)}}
-    @test typeof(@inferred(similar(b, Float64))) === LArray{Float64,2,Tuple{(:a,:b,:c),(:x,:y)}}
-    @test typeof(@inferred(similar(b, Size(3,2)))) === LArray{Int,2,Tuple{(:a, :b, :c),(:x,:y)}}
+    @test typeof(@inferred(similar(b))) === LArray{Int,2,Array{Int,2},Tuple{(:a,:b,:c),(:x,:y)}}
+    @test typeof(@inferred(similar(b, Float64))) === LArray{Float64,2,Array{Float64,2},Tuple{(:a,:b,:c),(:x,:y)}}
+    @test typeof(@inferred(similar(b, Size(3,2)))) === LArray{Int,2,Array{Int,2},Tuple{(:a, :b, :c),(:x,:y)}}
     @test typeof(@inferred(similar(b, Size(3,3)))) === MArray{Tuple{3,3},Int,2,9}
 
     @test @inferred(copy(b)) === ABC_int(Tuple(b))
