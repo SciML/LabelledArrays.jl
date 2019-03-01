@@ -75,7 +75,7 @@ end
   :(setindex!(getfield(x,:__x),y,$idx))
 end
 
-function Base.similar(x::LArray{T,K,Syms},::Type{S},dims::NTuple{N,Int}) where {T,Syms,S,N,K}
+function Base.similar(x::LArray{T,K,D,Syms},::Type{S},dims::NTuple{N,Int}) where {T,K,D,Syms,S,N}
     tmp = similar(x.__x,S,dims)
     LArray{S,N,typeof(tmp),Syms}(tmp)
 end
@@ -85,7 +85,7 @@ Base.copy(x::LArray) = typeof(x)(copy(getfield(x,:__x)))
 Base.deepcopy(x::LArray) = typeof(x)(deepcopy(getfield(x,:__x)))
 
 # enable the usage of LAPACK
-Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,S}) where {T,N,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
+Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
 
 #####################################
 # Broadcast

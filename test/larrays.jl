@@ -52,6 +52,11 @@ end
     x = LArray{(:a,:b,:c,:d)}(v)
     @test x.b == 4
     @test x[:d] == 6
+
+    s = similar(x)
+    @test size(s) == size(x)
+    @test typeof(s.__x) == Array{Int64,1}
+    @test LabelledArrays.symnames(typeof(s)) == (:a,:b,:c,:d)
 end
 
 @testset "NameTuple conversion" begin
