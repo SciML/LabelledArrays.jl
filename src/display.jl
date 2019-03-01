@@ -8,7 +8,7 @@ function Base.typeinfo_prefix(io::IO, x::AbstractArray{DisplayCell{T}}) where {T
     Base.typeinfo_prefix(io, similar(x, T))
 end
 
-function Base.show(io::IO, x::LArray{T,N,Syms}) where {T,N,Syms}
+function Base.show(io::IO, x::LArray{T,N,D,Syms}) where {T,N,D,Syms}
     cells = Array{DisplayCell{T}, N}(undef, size(x)...)
     for (i, label) in enumerate(Syms)
         cells[i] = DisplayCell(label, x[i])
