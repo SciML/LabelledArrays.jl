@@ -128,8 +128,8 @@ A[:c, :y] == 6
 ```
 
 The labels of LSliced and SLScliced can be accessed 
-by function `symbols`, which returns a `Tuple{(rowSymbols),(colSymobls),...}`
-Convenience functions `dimSymobls`, `rowSymbols`, and `colSymbols` 
+by function `symbols`, which returns a `Tuple{(rowSymbols),(colSymbols),...}`
+Convenience functions `dimSymbols`, `rowSymbols`, and `colSymbols` 
 return a tuple of symbols of the
 labels associated to the respective dimension.
 
