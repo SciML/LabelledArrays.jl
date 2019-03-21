@@ -75,3 +75,23 @@ end
     copy(t) # should be ok
     deepcopy(t) # should also be ok
 end
+
+@testset "accessing labels, i.e. symbols" begin
+    ABC = @SLSliced (3,2) (:a,:b,:c), (:x, :y)
+    A = ABC([1 2; 3 4; 5 6])
+    ret = symbols(A)
+    @test ret == Tuple{(:a,:b,:c),(:x,:y)}
+end
+
+@testset "accessing dimensions symbols of LSliced" begin
+    A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+    dim = 1
+    rows = dimSymbols(A,dim)
+    @test rows == (:a,:b,:c)
+    cols = dimSymbols(A,2)
+    @test cols == (:x,:y)
+    rows = rowSymbols(A)
+    @test rows == (:a,:b,:c)
+    cols = colSymbols(A)
+    @test cols == (:x,:y)
+end
