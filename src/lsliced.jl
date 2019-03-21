@@ -110,3 +110,46 @@ macro LSliced(type,size,syms)
       LArray{Tuple{$syms...,}}(Array{$type}(undef,$size...))
   end
 end
+
+
+"""
+dimSymbols(dimSymbols(::LArray{T,N,D,Syms}, dim::Int) where {Syms<:Tuple}
+
+Returns the labels of the `LArray` associated with dimension `dim`.
+
+For example:
+
+    A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+    dimSymbols(A,1)  # (:a, :b, :c)
+"""
+dimSymbols(::LArray{T,N,D,Syms}, dim::Int) where 
+{T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[dim]
+
+"""
+    dimSymbols(::SLArray{S,T,N,L,Syms}, dim::Int) where {Syms<:Tuple}
+
+Returns the labels of the `SLArray` associated with dimension `dim`.
+
+For example:
+
+    A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+    dimSymbols(A,2)  # (:x, :y)
+"""
+dimSymbols(::SLArray{S,T,N,L,Syms}, dim::Int) where 
+{S,T,N,L,Syms<:Tuple} = Syms.parameters[dim]
+
+"returns dimSymbols(,1)"
+rowSymbols(::LArray{T,N,D,Syms}) where 
+{T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[1]
+
+"returns dimSymbols(,1)"
+rowSymbols(::SLArray{S,T,N,L,Syms}) where 
+{S,T,N,L,Syms<:Tuple} = Syms.parameters[1]
+
+"returns dimSymbols(,2)"
+colSymbols(::LArray{T,N,D,Syms}) where 
+{T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[2]
+
+"returns dimSymbols(,2)"
+colSymbols(::SLArray{S,T,N,L,Syms}) where 
+{S,T,N,L,Syms<:Tuple} = Syms.parameters[2]

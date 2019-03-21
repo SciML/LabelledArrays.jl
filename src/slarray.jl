@@ -155,3 +155,17 @@ macro SLVector(T,syms)
     SLArray{Tuple{n},$T,1,n,$syms}
   end
 end
+
+"""
+    symbols(::SLArray{T,N,D,Syms})
+
+Returns the labels of the `SLArray` .
+
+For example:
+
+    z = SLVector(a=1, b=2, c=3)
+    symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
+"""
+symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+
+

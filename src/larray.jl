@@ -148,3 +148,19 @@ macro LVector(type,syms)
       LArray{$syms}(Vector{$type}(undef,length($syms)))
   end
 end
+
+#the following gives errror: TypeError: in <:, expected Type, got TypeVar
+#symbols(::LArray{T,N,D<:AbstractArray{T,N},Syms}) where {T,N,D,Syms} = Syms
+
+"""
+    symbols(::LArray{T,N,D,Syms})
+
+Returns the labels of the `LArray` .
+
+For example:
+
+    z = @LVector Float64 (:a,:b,:c,:d)
+    symbols(z)  # NTuple{4,Symbol} == (:a, :b, :c, :d)
+"""
+symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
+

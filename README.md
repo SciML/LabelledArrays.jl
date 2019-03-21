@@ -100,6 +100,10 @@ julia> LArray((2,2); a=1, b=2, c=3, d=4) # need to specify size as first argumen
  2  4
 ```
 
+The labels of LArray and SLArray can be accessed 
+by function `symbols`, which returns a tuple of symbols.
+
+
 ## Labelled slices
 
 For a labelled array where the row and column slices are labeled, use `@SLSlice`
@@ -122,6 +126,13 @@ A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
 A.a.x == 1
 A[:c, :y] == 6
 ```
+
+The labels of LSliced and SLScliced can be accessed 
+by function `symbols`, which returns a `Tuple{(rowSymbols),(colSymobls),...}`
+Convenience functions `dimSymobls`, `rowSymbols`, and `colSymbols` 
+return a tuple of symbols of the
+labels associated to the respective dimension.
+
 
 ## Example: Nice DiffEq Syntax Without A DSL
 
