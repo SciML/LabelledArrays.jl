@@ -38,13 +38,7 @@ end
 @testset "accessing dimensions symbols of SLSliced" begin
     ABC = @SLSliced (3,2) (:a,:b,:c), (:x, :y)
     A = ABC([1 2; 3 4; 5 6])
-    rows = dimSymbols(A,1)
-    @test rows == (:a,:b,:c)
-    cols = dimSymbols(A,2)
-    @test cols == (:x,:y)
-    rows = rowSymbols(A)
-    @test rows == (:a,:b,:c)
-    cols = colSymbols(A)
-    @test cols == (:x,:y)
+    ret = symbols(A)
+    @test ret == ((:a,:b,:c),(:x,:y))
 end
 

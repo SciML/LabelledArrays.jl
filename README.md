@@ -128,11 +128,16 @@ A[:c, :y] == 6
 ```
 
 The labels of LSliced and SLScliced can be accessed 
-by function `symbols`, which returns a `Tuple{(rowSymbols),(colSymbols),...}`
-Convenience functions `dimSymbols`, `rowSymbols`, and `colSymbols` 
-return a tuple of symbols of the
-labels associated to the respective dimension.
+by function `symbols`.
+For a two-dimensional LSliced or SLSliced, it returns a tuple
+with first entry a tuple of row symbols and second entry a tuple of column symbols.
+For higher-dimensional slices, it returns a Tuple-Type object with
+parameters referring to the names of the dimensions.
 
+```
+A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+symbols(A)[1] == (:a, :b, :c)
+```
 
 ## Example: Nice DiffEq Syntax Without A DSL
 
