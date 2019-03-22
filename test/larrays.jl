@@ -88,3 +88,11 @@ end
     copy(t) # should be ok
     deepcopy(t) # should also be ok
 end
+
+@testset "accessing labels, i.e. symbols" begin
+    z = @LArray Float64 (2,2) (:a,:b,:c,:d)
+    ret = symbols(z)
+    @test ret == (:a,:b,:c,:d)
+    #ret2 = dimSymbols(z,1) # no method defined if Syms is not a tuple
+end
+

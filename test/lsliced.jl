@@ -75,3 +75,27 @@ end
     copy(t) # should be ok
     deepcopy(t) # should also be ok
 end
+
+@testset "accessing labels, i.e. symbols" begin
+    A2 = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+    ret = symbols(A2)
+    @test ret == ((:a, :b, :c), (:x, :y))
+    #
+    # higher dimensional still returns a tuple-Type object
+    A3 = @LSliced cat(A2,10*A2;dims = 3) (:a,:b,:c), (:x, :y), (:u,:v)
+    ret = symbols(A3)
+    @test ret == Tuple{(:a, :b, :c),(:x, :y),(:u, :v)}
+end
+
+# @testset "accessing dimensions symbols of LSliced" begin
+#     A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
+#     dim = 1
+#     rows = dimSymbols(A,dim)
+#     @test rows == (:a,:b,:c)
+#     cols = dimSymbols(A,2)
+#     @test cols == (:x,:y)
+#     rows = rowSymbols(A)
+#     @test rows == (:a,:b,:c)
+#     cols = colSymbols(A)
+#     @test cols == (:x,:y)
+# end

@@ -34,3 +34,11 @@ using LabelledArrays, Test, StaticArrays
 
     @test @inferred(zero(b)) === ABC_int(zero(b))
 end
+
+@testset "accessing dimensions symbols of SLSliced" begin
+    ABC = @SLSliced (3,2) (:a,:b,:c), (:x, :y)
+    A = ABC([1 2; 3 4; 5 6])
+    ret = symbols(A)
+    @test ret == ((:a,:b,:c),(:x,:y))
+end
+

@@ -51,3 +51,9 @@ end
     @inferred(convert(NamedTuple, y))
     @inferred(collect(pairs(y)))
 end
+
+@testset "accessing labels, i.e. symbols" begin
+    z = SLVector(a=1, b=2, c=3)
+    ret = symbols(z)
+    @test ret == (:a,:b,:c)
+end
