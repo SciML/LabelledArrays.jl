@@ -54,11 +54,20 @@ julia> SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
  2  4
 ```
 
-
+Constructing copies with some items changed is supported by
+a keyword constructor:
+```julia
+julia> v1 = SLVector(a=1.1, b=2.2, c=3.3);
+julia> v2 = SLVector(v1; c=30.30 )
+3-element SLArray{Tuple{3},Float64,1,3,(:a, :b, :c)}:
+  1.1
+  2.2
+ 30.3
+```
 
 ## LArrays
 
-The `LArrayz`s are fully mutable arrays with labels. There is no performance
+The `LArrays`s are fully mutable arrays with labels. There is no performance
 loss by using the labelled instead of indexing. Using the macro with values
 and labels generates the labelled array with the given values:
 
