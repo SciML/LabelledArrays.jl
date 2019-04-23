@@ -178,7 +178,7 @@ For example:
     z = SLVector(a=1, b=2, c=3)
     z2 = SLVector(z; c=30)
 """
-function SLVector(v1::SLArray{S,T,N,L,Syms}; kwargs...) where {S,T,N,L,Syms}
+function SLVector(v1::Union{SLArray,LArray}; kwargs...) 
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLVector(t2)
 end
@@ -194,7 +194,7 @@ For example:
     B = ABCD(1,2,3,4);
     B2 = SLArray(B; c=30 )
 """
-function SLArray(v1::SLArray{S,T,N,L,Syms}; kwargs...) where {S,T,N,L,Syms}
+function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...) where {S,T,N,L,Syms,D}
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
 end

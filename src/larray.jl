@@ -164,3 +164,35 @@ For example:
 """
 symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 
+"""
+SLVector(v1::Union{SLArray,LArray}; kwargs...)
+
+Creates a 1D copy of v1 with corresponding items in kwargs replaced.
+
+For example:
+
+    z = SLVector(a=1, b=2, c=3)
+    z2 = LVector(z; c=30)
+"""
+function LVector(v1::Union{SLArray,LArray}; kwargs...) 
+  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  LVector(t2)
+end
+
+
+"""
+LVector(v1::Union{SLArray,LArray}; kwargs...)
+
+Creates a copy of v1 with corresponding items in kwargs replaced.
+
+For example:
+
+    ABCD = @SLArray (2,2) (:a,:b,:c,:d);
+    B = ABCD(1,2,3,4);
+    B2 = LArray(B; c=30 )
+"""
+function LArray(v1::Union{SLArray,LArray}; kwargs...) 
+  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  LArray(size(v1),t2)
+end
+
