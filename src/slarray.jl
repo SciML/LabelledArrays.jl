@@ -168,4 +168,3 @@ For example:
 """
 symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 
-
