@@ -96,3 +96,18 @@ end
     #ret2 = dimSymbols(z,1) # no method defined if Syms is not a tuple
 end
 
+@testset "several indices as vector" begin
+    z = @LArray [1.,2.,3.] (:a,:b,:c);
+    @test z[[3,1]] == [3.,1.]
+    @test z[[:c,:a]] == [3.,1.]
+    #i = LabelledArrays.symToInd(z, (:c,:a)) # also works with Tuples
+    zs = SLVector(a=1.0,b=2.0,c=3.0); 
+    @test zs[[3,1]] == [3.,1.]
+    @test zs[[:c,:a]] == [3.,1.]
+end
+
+
+
+
+
+

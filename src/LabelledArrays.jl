@@ -14,4 +14,6 @@ export @SLSliced, @LSliced
 
 export symbols, dimSymbols, rowSymbols, colSymbols
 
+export subset
+
 end # module
