@@ -1,3 +1,5 @@
+using StaticArrays
+
 struct LArray{T,N,D<:AbstractArray{T,N},Syms} <: DenseArray{T,N}
   __x::D
   LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),typeof(__x),Syms}(__x)
@@ -236,3 +238,24 @@ function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
 end
+
+
+# allow using several symbols in index
+@inline symToInd(::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, sym::Symbol) where {S,T,N,L,Syms,D} =
+findfirst(y->y==sym,Syms)
+
+@inline symToInd(x::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, itr) where {S,T,N,L,Syms,D} = 
+[symToInd(x,s) for s::Symbol in itr]
+
+#@inline function Base.getindex(x::Union{SLArray,LArray},s::AbstractArray{Symbol,1}) 
+function Base.getindex(x::LArray,s::AbstractArray{Symbol,1}) 
+    i = symToInd(x,s)
+    getindex(x,i)
+end
+function Base.getindex(x::SLArray,i::AbstractArray{I,1}) where I<:Integer
+    [getindex(x,ii) for ii in i]
+end
+function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1}) 
+    [getindex(x,si) for si in s]
+end
+
