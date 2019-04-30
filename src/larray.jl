@@ -92,13 +92,18 @@ Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.u
 #####################################
 struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T,N,L}(x::Val{1}) where {T,N,L} = LAStyle{T,N,L}()
+LAStyle{T,N,L}(x::Val{2}) where {T,N,L} = LAStyle{T,N,L}()
 Base.BroadcastStyle(::Type{LArray{T,N,D,L}}) where {T,N,D,L} = LAStyle{T,N,L}()
-Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} = 
+Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} =
     LAStyle{promote_type(T,E),N,L}()
 
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
-    tmp = similar(Array{ElType,N},axes(bc))
-    return LArray{ElType,N,typeof(tmp),L}(tmp)
+    tmp = similar(Array{ElType},axes(bc))
+    if axes(bc) != axes(L)
+        return tmp
+    else
+        return LArray{ElType,N,typeof(tmp),L}(tmp)
+    end
 end
 
 """
@@ -177,7 +182,7 @@ For example:
     z = LVector(a=1, b=2, c=3);
     z2 = LVector(z; c=30)
 """
-function LVector(v1::Union{SLArray,LArray}; kwargs...) 
+function LVector(v1::Union{SLArray,LArray}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   LVector(t2)
 end
@@ -194,7 +199,7 @@ For example:
     B = ABCD(1,2,3,4);
     B2 = LArray(B; c=30 )
 """
-function LArray(v1::Union{SLArray,LArray}; kwargs...) 
+function LArray(v1::Union{SLArray,LArray}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   LArray(size(v1),t2)
 end
@@ -212,7 +217,7 @@ For example:
     z = SLVector(a=1, b=2, c=3);
     z2 = SLVector(z; c=30)
 """
-function SLVector(v1::Union{SLArray,LArray}; kwargs...) 
+function SLVector(v1::Union{SLArray,LArray}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLVector(t2)
 end
