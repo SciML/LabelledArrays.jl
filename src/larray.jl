@@ -252,8 +252,11 @@ function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
     i = symToInd(x,s)
     getindex(x,i)
 end
-function Base.getindex(x::SLArray,i::AbstractArray{I,1}) where I<:Integer
-    [getindex(x,ii) for ii in i]
+function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
+    getindex(x.__x,inds)
+end
+function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
+    getindex(x.__x,inds)
 end
 function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1}) 
     [getindex(x,si) for si in s]
