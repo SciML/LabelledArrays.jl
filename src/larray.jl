@@ -75,6 +75,10 @@ end
   :(setindex!(getfield(x,:__x),y,$idx))
 end
 
+function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
+    [getindex(x,si) for si in s]
+end
+
 function Base.similar(x::LArray{T,K,D,Syms},::Type{S},dims::NTuple{N,Int}) where {T,K,D,Syms,S,N}
     tmp = similar(x.__x,S,dims)
     LArray{S,N,typeof(tmp),Syms}(tmp)
@@ -235,27 +239,4 @@ For example:
 function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...) where {S,T,N,L,Syms,D}
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
-end
-
-
-# allow using several symbols in index
-@inline symToInd(::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, sym::Symbol) where {S,T,N,L,Syms,D} =
-findfirst(y->y==sym,Syms)
-
-@inline symToInd(x::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, itr) where {S,T,N,L,Syms,D} =
-[symToInd(x,s) for s::Symbol in itr]
-
-#@inline function Base.getindex(x::Union{SLArray,LArray},s::AbstractArray{Symbol,1})
-function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
-    i = symToInd(x,s)
-    getindex(x,i)
-end
-function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
-    getindex(x.__x,inds)
-end
-function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
-    getindex(x.__x,inds)
-end
-function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
-    [getindex(x,si) for si in s]
 end

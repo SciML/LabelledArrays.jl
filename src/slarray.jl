@@ -86,6 +86,19 @@ end
     :(getfield(x,:__x)[$idx])
 end
 
+function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
+    getindex(x.__x,inds)
+end
+function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
+    getindex(x.__x,inds)
+end
+
+# Note: This could in the future return an SLArray with the right names
+function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
+    @SVector [getindex(x,si) for si in s]
+end
+
+
 """
     @SLArray Size Names
     @SLArray Eltype Size Names
@@ -167,4 +180,3 @@ For example:
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
 symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
-
