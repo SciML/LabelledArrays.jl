@@ -106,6 +106,27 @@ end
     @test zs[[:c,:a]] == [3.,1.]
 end
 
+# using StaticArrays
+# @testset "several indices as SVector" begin
+#     z = @LArray [1.,2.,3.] (:a,:b,:c);
+#     @test z[@SVector[3,1]] == [3.,1.]
+#     @test z[@SVector[:c,:a]] == [3.,1.]
+#     #i = LabelledArrays.symToInd(z, (:c,:a)) # also works with Tuples
+#     zs = SLVector(a=1.0,b=2.0,c=3.0); 
+#     @test zs[@SVector[3,1]] == [3.,1.]
+#     @test zs[@SVector[:c,:a]] == [3.,1.]
+# end
+
+@testset "subset" begin
+    z = @LArray [1.,2.,3.] (:a,:b,:c);
+    zSub = subset(z, (:c,:a))
+    @test zSub == @LArray [3.,1.] (:c,:a)
+    zSub = subset(z, (3,1))
+    @test zSub == @LArray [3.,1.] (:c,:a)
+    zs = SLVector(a=1.0,b=2.0,c=3.0); 
+    zsSub = subset(zs, (:c,:a))
+    @test zSub == SLVector(c=3.0,a=1.0)
+end
 
 
 

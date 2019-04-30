@@ -180,3 +180,25 @@ For example:
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
 symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+
+
+"""
+    subset(::SLArray, indicesTuple)
+
+Creates a new SLArray containing only the given indices.
+The indices are given as a Tuple of symbols or a Tuple of Integer positions.
+
+Note, that this differs from subsetting a Labelled array by getindex or `[]`
+by retaining the labels, instead of returning an Array.
+
+For example:
+
+    zs = SLVector(a=1, b=2, c=3)
+    zsSub = subset(zs, (:c,:a))
+"""
+subset(lvec::SLArray, s::Tuple) = subset(lvec, Val(s))
+function subset(lvec::SLArray{S,T,1,L,Syms}, ::Val{SymSub}) where {S,T,L,Syms,SymSub}
+    subArr = lvec[SVector(SymSub)]
+    SLVector(NamedTuple{SymSub}(subArr))
+end
+   

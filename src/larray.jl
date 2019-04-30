@@ -240,3 +240,11 @@ function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
 end
+
+
+subset(lvec::LArray, s::Tuple) = subset(lvec, Val(s))
+function subset(lvec::LArray{T,1,D,Syms}, ::Val{SymSub}) where {T,D,Syms,SymSub}
+    subArr = lvec[SVector(SymSub)]
+    lsub =  LArray{T,1,D,SymSub}(subArr)
+end
+ 

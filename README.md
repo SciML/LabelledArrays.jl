@@ -76,6 +76,22 @@ julia> B2 = SLArray(B; c=30 )
  2   4
 ```
 
+Creating subsets is supported by function `subset`.
+It differs from slicing via `[]` by retaining the labels, instead of returning an Array.
+
+
+```julia
+julia> zs = SLVector(a=1.0,b=2.0,c=3.0);
+julia> zsSub = subset(zs, (:c,:a))
+2-element SLArray{Tuple{2},Float64,1,2,(:c, :a)}:
+ 3.0
+ 1.0
+julia> zs[[:c,:a]]
+2-element Array{Float64,1}:
+ 3.0
+ 1.0
+```
+
 ## LArrays
 
 The `LArrays`s are fully mutable arrays with labels. There is no performance

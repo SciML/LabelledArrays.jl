@@ -13,5 +13,6 @@ export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArra
 export @SLSliced, @LSliced
 
 export symbols, dimSymbols, rowSymbols, colSymbols
+export subset
 
 end # module
