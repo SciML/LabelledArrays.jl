@@ -95,7 +95,7 @@ end
 
 # Note: This could in the future return an SLArray with the right names
 function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
-    @SVector [getindex(x,si) for si in s]
+    [getindex(x,si) for si in s]
 end
 
 
