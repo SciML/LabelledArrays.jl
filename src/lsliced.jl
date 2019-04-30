@@ -25,7 +25,7 @@ end
 
 
 #####################################
-# Array Interface 
+# Array Interface
 # (getindex/getproperty methods are shared with SLArray
 #####################################
 Base.propertynames(::LArray{T,N,D,S}) where {T,N,D,S<:Tuple{Syms1,Syms2}} where {Syms1,Syms2} = Syms1, Syms2
@@ -79,7 +79,7 @@ end
 #####################################
 # Broadcast
 #####################################
-LAStyle{T,N,Syms}(x::Val{2}) where {T,N,Syms<:Tuple} = LAStyle{T,N,Syms}()
+LAStyle{T,N,Syms}(x::Val{i}) where {T,N,Syms<:Tuple,i} = LAStyle{T,N,Syms}()
 
 """
     @LSliced Eltype Size Names
@@ -122,16 +122,16 @@ end
 #     A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
 #     dimSymbols(A,1)  # (:a, :b, :c)
 # """
-# dimSymbols(::LArray{T,N,D,Syms}, dim::Int) where 
+# dimSymbols(::LArray{T,N,D,Syms}, dim::Int) where
 # {T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[dim]
 
 # "returns dimSymbols(,1)"
-# rowSymbols(::LArray{T,N,D,Syms}) where 
+# rowSymbols(::LArray{T,N,D,Syms}) where
 # {T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[1]
 
 # "returns dimSymbols(,2)"
-# colSymbols(::LArray{T,N,D,Syms}) where 
+# colSymbols(::LArray{T,N,D,Syms}) where
 # {T,N,D<:AbstractArray{T,N},Syms<:Tuple} = Syms.parameters[2]
 
-symbols(::LArray{T,N,D,Syms}) where 
+symbols(::LArray{T,N,D,Syms}) where
 {rows,cols,T,N,D,Syms<:Tuple{rows,cols}} = rows,cols
