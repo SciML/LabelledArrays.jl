@@ -94,6 +94,10 @@ Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.u
 #####################################
 struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T,N,L}(x::Val{1}) where {T,N,L} = LAStyle{T,N,L}()
+# same dimension -> keep labels
+LAStyle{T,N,L}(x::Val{N}) where {T,N,L} = LAStyle{T,N,L}()
+# different dimension -> convert to Array
+LAStyle{T,N,L}(x::Val{M}) where {T,N,L,M} = Base.Broadcast.DefaultArrayStyle{M}()
 Base.BroadcastStyle(::Type{LArray{T,N,D,L}}) where {T,N,D,L} = LAStyle{T,N,L}()
 Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} = 
     LAStyle{promote_type(T,E),N,L}()

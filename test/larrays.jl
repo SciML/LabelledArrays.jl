@@ -1,4 +1,5 @@
 using LabelledArrays, Test, InteractiveUtils
+using StaticArrays
 
 @testset "Basic interface" begin
     vals = [1.0,2.0,3.0] 
@@ -99,13 +100,22 @@ end
 @testset "several indices as vector" begin
     z = @LArray [1.,2.,3.] (:a,:b,:c);
     @test z[[3,1]] == [3.,1.]
+    @test z[@SVector[3,1]] == [3.,1.]
     @test z[[:c,:a]] == [3.,1.]
+    @test z[@SVector[:c,:a]] == [3.,1.]
     #i = LabelledArrays.symToInd(z, (:c,:a)) # also works with Tuples
     zs = SLVector(a=1.0,b=2.0,c=3.0); 
     @test zs[[3,1]] == [3.,1.]
+    @test zs[@SVector[3,1]] == [3.,1.]
     @test zs[[:c,:a]] == [3.,1.]
+    @test zs[@SVector[:c,:a]] == [3.,1.]
 end
 
+@testset "broadcasting to array for higher dimensions" begin
+    z = @LArray [1.,2.,3.] (:a,:b,:c);
+    J = vec(z) .* vec(z)' 
+    @test isa(J, Array{Float64,2})
+end
 
 
 

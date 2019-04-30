@@ -1,4 +1,4 @@
-using LabelledArrays, OrdinaryDiffEq, Test
+using LabelledArrays, OrdinaryDiffEq, Test, DifferentialEquations
 
 LorenzVector = @SLArray (3,) (:x,:y,:z)
 LorenzParameterVector = @SLArray (3,) (:σ,:ρ,:β)
