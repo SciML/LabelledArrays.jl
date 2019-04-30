@@ -1,5 +1,3 @@
-using StaticArrays
-
 struct LArray{T,N,D<:AbstractArray{T,N},Syms} <: DenseArray{T,N}
   __x::D
   LArray{Syms}(__x) where Syms = new{eltype(__x),ndims(__x),typeof(__x),Syms}(__x)
@@ -244,11 +242,11 @@ end
 @inline symToInd(::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, sym::Symbol) where {S,T,N,L,Syms,D} =
 findfirst(y->y==sym,Syms)
 
-@inline symToInd(x::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, itr) where {S,T,N,L,Syms,D} = 
+@inline symToInd(x::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}, itr) where {S,T,N,L,Syms,D} =
 [symToInd(x,s) for s::Symbol in itr]
 
-#@inline function Base.getindex(x::Union{SLArray,LArray},s::AbstractArray{Symbol,1}) 
-function Base.getindex(x::LArray,s::AbstractArray{Symbol,1}) 
+#@inline function Base.getindex(x::Union{SLArray,LArray},s::AbstractArray{Symbol,1})
+function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
     i = symToInd(x,s)
     getindex(x,i)
 end
@@ -258,7 +256,6 @@ end
 function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
     getindex(x.__x,inds)
 end
-function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1}) 
+function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
     [getindex(x,si) for si in s]
 end
-
