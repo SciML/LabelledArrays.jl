@@ -189,4 +189,4 @@ For example:
     z = SLVector(a=1, b=2, c=3)
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
-symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms

@@ -71,4 +71,5 @@ end
   z = Arr(1, 2)
   @test z.a === 1
   @test z.b === 2
+  @test symbols(z) === (:a, :b)
 end

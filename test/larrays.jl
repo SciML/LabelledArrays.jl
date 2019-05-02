@@ -120,4 +120,5 @@ end
   z = @LArray [1.,2.] (a = 1, b = 2)
   @test z.a === 1.0
   @test z.b === 2.0
+  @test symbols(z) === (:a, :b)
 end

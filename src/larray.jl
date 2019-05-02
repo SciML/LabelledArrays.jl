@@ -189,7 +189,7 @@ For example:
     z = @LVector Float64 (:a,:b,:c,:d)
     symbols(z)  # NTuple{4,Symbol} == (:a, :b, :c, :d)
 """
-symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
+symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
 
 
 # copy constructors
