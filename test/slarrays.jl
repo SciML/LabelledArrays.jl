@@ -57,3 +57,18 @@ end
     ret = symbols(z)
     @test ret == (:a,:b,:c)
 end
+
+@testset "Explicit indices" begin
+  Arr = @SLVector (a = 1:2, b = 3)
+  z = Arr(1.,2.,3.)
+  @test z.a isa SubArray
+  @test z.a == [1, 2.]
+  @test z.b === 3.
+  Arr = @SLVector (a = 1:2, b = 2:3)
+  z = Arr(1.,2.,3.)
+  @test z.b == [2, 3.]
+  Arr = @SLVector (a = 1, b = 2)
+  z = Arr(1, 2)
+  @test z.a === 1
+  @test z.b === 2
+end
