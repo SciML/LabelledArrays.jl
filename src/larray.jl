@@ -58,7 +58,13 @@ end
 end
 
 @inline function Base.getindex(x::LArray,s::Symbol)
-    getindex(x,Val(s))
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return @views x.__x[idxs]
+  else
+    return getindex(x,Val(s))
+  end
 end
 
 @inline @generated function Base.getindex(x::LArray,::Val{s}) where s
@@ -67,12 +73,24 @@ end
 end
 
 @inline function Base.setindex!(x::LArray,v,s::Symbol)
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return setindex!(x.__x, v, idxs)
+  else
     setindex!(x,v,Val(s))
+  end
 end
 
 @inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
-  idx = findfirst(y->y==s,symnames(x))
-  :(setindex!(getfield(x,:__x),y,$idx))
+  syms = symnames(x)
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return :(setindex!(view(getfield(x,:__x), y, $idxs)))
+  else # Tuple
+    idx = findfirst(y->y==s,symnames(x))
+    return :(setindex!(getfield(x,:__x),y,$idx))
+  end
 end
 
 function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})

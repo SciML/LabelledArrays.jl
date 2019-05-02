@@ -79,7 +79,13 @@ symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
   s == :__x ? getfield(x,:__x) : x[s]
 end
 @inline function Base.getindex(x::SLArray,s::Symbol)
-    getindex(x,Val(s))
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return @views x.__x[idxs]
+  else
+    return getindex(x,Val(s))
+  end
 end
 @inline @generated function Base.getindex(x::SLArray,::Val{s}) where s
     idx = findfirst(y->y==s,symnames(x))
@@ -155,7 +161,7 @@ x.c == x[3]
 macro SLVector(syms)
   syms = esc(syms)
   quote
-    n = length($syms)
+    n = $syms isa NamedTuple ? maximum(map(maximum, $syms)) : length($syms)
     SLArray{Tuple{n},$syms}
   end
 end
@@ -164,7 +170,7 @@ macro SLVector(T,syms)
   T = esc(T)
   syms = esc(syms)
   quote
-    n = length($syms)
+    n = $syms isa NamedTuple ? maximum(map(maximum, $syms)) : length($syms)
     SLArray{Tuple{n},$T,1,n,$syms}
   end
 end
