@@ -122,11 +122,14 @@ x.a == 1.0
 x.b == 2.5
 x.c == x[3]
 x.d == x[2,2]
+EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4)
+y = EFG(1.0,2.5,3.0,5.0)
 ```
 
 """
 macro SLArray(dims,syms)
   dims isa Expr && (dims = dims.args)
+  syms = esc(syms)
   quote
     SLArray{Tuple{$dims...},$syms}
   end
@@ -134,6 +137,7 @@ end
 
 macro SLArray(T,dims,syms)
   dims isa Expr && (dims = dims.args)
+  syms = esc(syms)
   quote
     SLArray{Tuple{$dims...},$T,$(length(dims)),$(prod(dims)),$syms}
   end

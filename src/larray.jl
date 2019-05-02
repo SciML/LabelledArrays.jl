@@ -139,6 +139,7 @@ For example:
 
     a = @LArray Float64 (2,2) (:a,:b,:c,:d)
     b = @LArray [1,2,3] (:a,:b,:c)
+    c = @LArray [1,2,3] (a=1:2,b=2:3)
 """
 macro LArray(vals,syms)
   vals = esc(vals)

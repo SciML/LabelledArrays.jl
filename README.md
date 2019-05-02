@@ -76,6 +76,21 @@ julia> B2 = SLArray(B; c=30 )
  2   4
 ```
 
+One can also specify the indices directly.
+```julia
+julia> EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4);
+julia> y = EFG(1.0,2.5,3.0,5.0)
+2×2 SLArray{Tuple{2,2},Float64,2,4,(e = 1:3, f = 4, g = 2:4)}:
+ 1.0  3.0
+ 2.5  5.0
+
+julia> y.g
+3-element view(reshape(::StaticArrays.SArray{Tuple{2,2},Float64,2,4}, 4), 2:4) with eltype Float64:
+ 2.5
+ 3.0
+ 5.0
+```
+
 ## LArrays
 
 The `LArrays`s are fully mutable arrays with labels. There is no performance
@@ -118,6 +133,15 @@ julia> LArray((2,2); a=1, b=2, c=3, d=4) # need to specify size as first argumen
 2×2 LArray{Int64,2,(:a, :b, :c, :d)}:
  1  3
  2  4
+```
+
+One can also specify the indices directly.
+```julia
+julia> z = @LArray [1.,2.,3.] (a = 1:2, b = 2:3);
+julia> z.b
+2-element view(::Array{Float64,1}, 2:3) with eltype Float64:
+ 2.0
+ 3.0
 ```
 
 The labels of LArray and SLArray can be accessed 
