@@ -89,6 +89,13 @@ julia> y.g
  2.5
  3.0
  5.0
+
+julia> Arr = @SLArray (2, 2) (a = (2, :), b = 3);
+julia> z = Arr(1, 2, 3, 4);
+julia> z.a
+2-element view(::StaticArrays.SArray{Tuple{2,2},Int64,2,4}, 2, :) with eltype Int64:
+ 2
+ 4
 ```
 
 ## LArrays
@@ -142,6 +149,11 @@ julia> z.b
 2-element view(::Array{Float64,1}, 2:3) with eltype Float64:
  2.0
  3.0
+julia> z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3);
+julia> z.a
+2-element view(::Array{Int64,2}, 2, :) with eltype Int64:
+ 3
+ 4
 ```
 
 The labels of LArray and SLArray can be accessed 

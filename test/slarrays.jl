@@ -72,4 +72,7 @@ end
   @test z.a === 1
   @test z.b === 2
   @test symbols(z) === (:a, :b)
+  Arr = @SLArray (2, 2) (a = (2, :), b = 3)
+  z = Arr(1, 2, 3, 4)
+  @test z.a == [2, 4]
 end

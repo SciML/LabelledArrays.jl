@@ -82,7 +82,7 @@ end
   syms = symnames(typeof(x))
   if syms isa NamedTuple
     idxs = syms[s]
-    return @views x.__x[idxs]
+    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
   else
     return getindex(x,Val(s))
   end
@@ -124,6 +124,7 @@ x.c == x[3]
 x.d == x[2,2]
 EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4)
 y = EFG(1.0,2.5,3.0,5.0)
+EFG = @SLArray (2,2) (e=(2, :), f=4, g=2:4)
 ```
 
 """

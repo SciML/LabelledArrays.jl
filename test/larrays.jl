@@ -121,4 +121,6 @@ end
   @test z.a === 1.0
   @test z.b === 2.0
   @test symbols(z) === (:a, :b)
+  z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3)
+  @test z.a == [3, 4]
 end

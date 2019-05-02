@@ -61,7 +61,7 @@ end
   syms = symnames(typeof(x))
   if syms isa NamedTuple
     idxs = syms[s]
-    return @views x.__x[idxs]
+    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
   else
     return getindex(x,Val(s))
   end
@@ -139,7 +139,8 @@ For example:
 
     a = @LArray Float64 (2,2) (:a,:b,:c,:d)
     b = @LArray [1,2,3] (:a,:b,:c)
-    c = @LArray [1,2,3] (a=1:2,b=2:3)
+    c = @LArray [1,2,3] (a=1:2, b=2:3)
+    d = @LArray [1 2; 3 4] (a=(2, :), b=2:3)
 """
 macro LArray(vals,syms)
   vals = esc(vals)
