@@ -106,8 +106,21 @@ end
     @test zs[[:c,:a]] == [3.,1.]
 end
 
-
-
-
-
-
+@testset "Explicit indices" begin
+  z = @LArray [1.,2.,3.] (a = 1:2, b = 3)
+  @test z.a isa SubArray
+  @test z.a == [1, 2.]
+  z.a = [100, 200.]
+  @test z.a == [100, 200.]
+  @test z.b === 3.
+  z.b = 1000.
+  @test z.b === 1000.
+  z = @LArray [1.,2.,3.] (a = 1:2, b = 1:3)
+  @test z.b === view(z.__x, 1:3)
+  z = @LArray [1.,2.] (a = 1, b = 2)
+  @test z.a === 1.0
+  @test z.b === 2.0
+  @test symbols(z) === (:a, :b)
+  z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3)
+  @test z.a == [3, 4]
+end
