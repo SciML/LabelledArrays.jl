@@ -12,6 +12,7 @@ function Base.convert(::Type{NamedTuple}, x::LArray{T,N,D,Syms}) where {T,N,D,Sy
     tup = NTuple{length(Syms),T}(x)
     NamedTuple{Syms,typeof(tup)}(tup)
 end
+Base.keys(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 
 ## Named tuple to LArray
 #=

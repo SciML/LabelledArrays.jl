@@ -26,6 +26,7 @@ function Base.convert(::Type{NamedTuple}, x::SLArray{S,T,N,L,Syms}) where {S,T,N
   tup = NTuple{length(Syms),T}(x)
   NamedTuple{Syms,typeof(tup)}(tup)
 end
+Base.keys(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 
 ## Named tuple to SLArray
 #=
