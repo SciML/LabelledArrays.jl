@@ -263,11 +263,16 @@ function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...)
 end
 
 
-subset(lvec::LArray, s::Tuple) = subset(lvec, Val(s))
-function subset(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
-  length(SymSub) == 0 && return(LVector())
-  symb = typeof(SymSub[1]) <: Integer ? Syms[collect(SymSub)] : SymSub 
-  #symb = SymSub
+@inline subset(lvec::LArray, s::Tuple{N,Symbol}) where N = subset(lvec, Val(s))
+@inline function subset(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
+  subArr = lvec[SVector(SymSub)]
+  #SLVector(NamedTuple{SymSub}(subArr)) # not type stable
+  LArray{T,1,D,SymSub}(subArr)
+end
+
+@inline subset(lvec::LArray, s::Tuple{N,I}) where {N,I<:Integer} = subsetInt(lvec, Val(s))
+@inline function subsetInt(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
+  symb = Syms[collect(SymSub)]
   subArr = lvec[SVector(symb)]
   LArray{T,1,D,symb}(subArr)
 end

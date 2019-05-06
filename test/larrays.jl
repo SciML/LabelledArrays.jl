@@ -131,9 +131,7 @@ end
     @test zSub == @LArray [3.,1.] (:c,:a)
     @test symbols(zSub) == (:c,:a)
     # 
-    # workaround with checking types in subset
     zSub = subset(z, (3,1))
-    #@which subset(z, Val((3,1)))
     @test zSub == @LArray [3.,1.] (:c,:a)
     @test symbols(zSub) == (:c,:a)
     #
