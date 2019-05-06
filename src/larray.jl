@@ -264,11 +264,13 @@ end
 
 
 subset(lvec::LArray, s::Tuple) = subset(lvec, Val(s))
-function subset(lvec::LArray{T,1,D,Syms}, ::Val{SymSub}) where {T,D,Syms,SymSub}
-    subArr = lvec[SVector(SymSub)]
-    lsub =  LArray{T,1,D,SymSub}(subArr)
+function subset(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
+  length(SymSub) == 0 && return(LVector())
+  symb = typeof(SymSub[1]) <: Integer ? Syms[collect(SymSub)] : SymSub 
+  #symb = SymSub
+  subArr = lvec[SVector(symb)]
+  LArray{T,1,D,symb}(subArr)
 end
-
 
 function subset(lvec::Union{SLArray,LArray}, ind::SVector{N,I}) where {N,I <: Integer}
   labels = symbols(lvec)[ind]
