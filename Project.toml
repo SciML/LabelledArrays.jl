@@ -1,7 +1,7 @@
 name = "LabelledArrays"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "v0.6.0"
+version = "v0.7.1"
 
 [deps]
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"

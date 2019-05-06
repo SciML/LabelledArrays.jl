@@ -26,6 +26,7 @@ function Base.convert(::Type{NamedTuple}, x::SLArray{S,T,N,L,Syms}) where {S,T,N
   tup = NTuple{length(Syms),T}(x)
   NamedTuple{Syms,typeof(tup)}(tup)
 end
+Base.keys(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 
 ## Named tuple to SLArray
 #=
@@ -79,7 +80,13 @@ symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
   s == :__x ? getfield(x,:__x) : x[s]
 end
 @inline function Base.getindex(x::SLArray,s::Symbol)
-    getindex(x,Val(s))
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
+  else
+    return getindex(x,Val(s))
+  end
 end
 @inline @generated function Base.getindex(x::SLArray,::Val{s}) where s
     idx = findfirst(y->y==s,symnames(x))
@@ -116,11 +123,15 @@ x.a == 1.0
 x.b == 2.5
 x.c == x[3]
 x.d == x[2,2]
+EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4)
+y = EFG(1.0,2.5,3.0,5.0)
+EFG = @SLArray (2,2) (e=(2, :), f=4, g=2:4)
 ```
 
 """
 macro SLArray(dims,syms)
   dims isa Expr && (dims = dims.args)
+  syms = esc(syms)
   quote
     SLArray{Tuple{$dims...},$syms}
   end
@@ -128,6 +139,7 @@ end
 
 macro SLArray(T,dims,syms)
   dims isa Expr && (dims = dims.args)
+  syms = esc(syms)
   quote
     SLArray{Tuple{$dims...},$T,$(length(dims)),$(prod(dims)),$syms}
   end
@@ -155,7 +167,7 @@ x.c == x[3]
 macro SLVector(syms)
   syms = esc(syms)
   quote
-    n = length($syms)
+    n = $syms isa NamedTuple ? maximum(map(maximum, $syms)) : length($syms)
     SLArray{Tuple{n},$syms}
   end
 end
@@ -164,7 +176,7 @@ macro SLVector(T,syms)
   T = esc(T)
   syms = esc(syms)
   quote
-    n = length($syms)
+    n = $syms isa NamedTuple ? maximum(map(maximum, $syms)) : length($syms)
     SLArray{Tuple{n},$T,1,n,$syms}
   end
 end
@@ -179,7 +191,7 @@ For example:
     z = SLVector(a=1, b=2, c=3)
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
-symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
 
 
 """
@@ -201,4 +213,3 @@ function subset(lvec::SLArray{S,T,1,L,Syms}, ::Val{SymSub}) where {S,T,L,Syms,Sy
     subArr = lvec[SVector(SymSub)]
     SLVector(NamedTuple{SymSub}(subArr))
 end
-   

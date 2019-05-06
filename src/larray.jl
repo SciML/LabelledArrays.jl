@@ -12,6 +12,7 @@ function Base.convert(::Type{NamedTuple}, x::LArray{T,N,D,Syms}) where {T,N,D,Sy
     tup = NTuple{length(Syms),T}(x)
     NamedTuple{Syms,typeof(tup)}(tup)
 end
+Base.keys(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 
 ## Named tuple to LArray
 #=
@@ -58,7 +59,13 @@ end
 end
 
 @inline function Base.getindex(x::LArray,s::Symbol)
-    getindex(x,Val(s))
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
+  else
+    return getindex(x,Val(s))
+  end
 end
 
 @inline @generated function Base.getindex(x::LArray,::Val{s}) where s
@@ -67,12 +74,24 @@ end
 end
 
 @inline function Base.setindex!(x::LArray,v,s::Symbol)
+  syms = symnames(typeof(x))
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return setindex!(x.__x, v, idxs)
+  else
     setindex!(x,v,Val(s))
+  end
 end
 
 @inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
-  idx = findfirst(y->y==s,symnames(x))
-  :(setindex!(getfield(x,:__x),y,$idx))
+  syms = symnames(x)
+  if syms isa NamedTuple
+    idxs = syms[s]
+    return :(setindex!(view(getfield(x,:__x), y, $idxs)))
+  else # Tuple
+    idx = findfirst(y->y==s,symnames(x))
+    return :(setindex!(getfield(x,:__x),y,$idx))
+  end
 end
 
 function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
@@ -121,6 +140,8 @@ For example:
 
     a = @LArray Float64 (2,2) (:a,:b,:c,:d)
     b = @LArray [1,2,3] (:a,:b,:c)
+    c = @LArray [1,2,3] (a=1:2, b=2:3)
+    d = @LArray [1 2; 3 4] (a=(2, :), b=2:3)
 """
 macro LArray(vals,syms)
   vals = esc(vals)
@@ -170,7 +191,7 @@ For example:
     z = @LVector Float64 (:a,:b,:c,:d)
     symbols(z)  # NTuple{4,Symbol} == (:a, :b, :c, :d)
 """
-symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
+symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
 
 
 # copy constructors
