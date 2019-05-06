@@ -277,6 +277,10 @@ end
   LArray{T,1,D,symb}(subArr)
 end
 
+@inline subset(lvec::LArray{T,N,D,Syms}, ::Tuple{}) where {T,N,D,Syms} = 
+  LArray{T,1,D,()}(@SVector T[])
+
+
 function subset(lvec::Union{SLArray,LArray}, ind::SVector{N,I}) where {N,I <: Integer}
   labels = symbols(lvec)[ind]
   subset(lvec,labels)

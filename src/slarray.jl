@@ -234,4 +234,7 @@ end
   SLArray{Tuple{length(SymSub)},T,1,length(SymSub),symb}(subArr)
 end
 
+@inline subset(lvec::SLArray, ::Tuple{}) = SLVector()
+
+
 # for providing indices as SVector or SLVector see larrays.jl

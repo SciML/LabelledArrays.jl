@@ -104,6 +104,9 @@ end
     zsSub = subset(zs, ind)
     @test zsSub == SLVector(c=3.0,a=1.0)
 
+    zsSub = subset(zs, ())
+    @test zSub == SLVector()
+
     #subset(zs, Val((:c,:a)))
     #@code_warntype subset(zs, Val((:c,:a)))
     @inferred subset(zs, Val((:c,:a)))

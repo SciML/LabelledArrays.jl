@@ -151,6 +151,9 @@ end
     zSub = subset(z, ind)
     @test zSub == SLVector(c=3.0,a=1.0)
 
+    zSub = subset(z, ())
+    @test zSub == @SVector eltype(z)[]
+
     #zs[SVector(:c,:a)]
     #@inferred z[SVector(:c,:a)]
 
