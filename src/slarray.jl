@@ -181,6 +181,7 @@ macro SLVector(T,syms)
   end
 end
 
+
 """
     symbols(::SLArray{T,N,D,Syms})
 
@@ -213,3 +214,17 @@ function subset(lvec::SLArray{S,T,1,L,Syms}, ::Val{SymSub}) where {S,T,L,Syms,Sy
     subArr = lvec[SVector(SymSub)]
     SLVector(NamedTuple{SymSub}(subArr))
 end
+
+function subset(lvec::SLArray, ind::SVector{N,I}) where {N,I <: Integer}
+  labels = symbols(lvec)[ind]
+  subset(lvec,labels)
+end
+subset(lvec::SLArray, labels::SVector{N,T}) where {N,T <: Symbol} =
+  subset(lvec,Tuple(labels))
+subset(lvec::SLArray, labels::SLArray{T,Symbol,1,N,Sym}) where {T,N,Sym} =
+  subset(lvec,Tuple(labels))
+function subset(lvec::SLArray, ind::SLArray{T,I,1,N,Sym}) where {T,I<:Integer,N,Sym} 
+  labels = symbols(lvec)[ind]
+  subset(lvec,Tuple(labels))
+end  
+

@@ -76,3 +76,31 @@ end
   z = Arr(1, 2, 3, 4)
   @test z.a == [2, 4]
 end
+
+@testset "subset" begin
+    zs = SLVector(a=1.0,b=2.0,c=3.0); 
+    zsSub = subset(zs, (:c,:a))
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    # does not work yet: How to distingish Tuple{Symbols} vs Tuple{Integers}
+    #zsSub = subset(zs, (3,1))
+    #@test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = SVector(3,1)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = SVector(:c,:a)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    #ind = @SLVector (:n1,:n2) (:c,:a)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = (@SLVector (:n1,:n2))(3,1)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+end
+
+

@@ -268,4 +268,20 @@ function subset(lvec::LArray{T,1,D,Syms}, ::Val{SymSub}) where {T,D,Syms,SymSub}
     subArr = lvec[SVector(SymSub)]
     lsub =  LArray{T,1,D,SymSub}(subArr)
 end
+
+
+function subset(lvec::Union{SLArray,LArray}, ind::SVector{N,I}) where {N,I <: Integer}
+  labels = symbols(lvec)[ind]
+  subset(lvec,labels)
+end
+subset(lvec::Union{SLArray,LArray}, labels::SVector{N,T}) where {N,T <: Symbol} =
+  subset(lvec,Tuple(labels))
+subset(lvec::Union{SLArray,LArray}, labels::SLArray{T,Symbol,1,N,Sym}) where {T,N,Sym} =
+  subset(lvec,Tuple(labels))
+function subset(lvec::Union{SLArray,LArray}, ind::SLArray{T,I,1,N,Sym}) where {T,I<:Integer,N,Sym} 
+  labels = symbols(lvec)[ind]
+  subset(lvec,Tuple(labels))
+end  
+
+
  
