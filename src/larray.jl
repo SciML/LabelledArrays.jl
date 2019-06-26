@@ -261,3 +261,38 @@ function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
 end
+
+
+@inline subset(lvec::LArray, s::Tuple{N,Symbol}) where N = subset(lvec, Val(s))
+@inline function subset(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
+  subArr = lvec[SVector(SymSub)]
+  #SLVector(NamedTuple{SymSub}(subArr)) # not type stable
+  LArray{T,1,D,SymSub}(subArr)
+end
+
+@inline subset(lvec::LArray, s::Tuple{N,I}) where {N,I<:Integer} = subsetInt(lvec, Val(s))
+@inline function subsetInt(lvec::LArray{T,N,D,Syms}, ::Val{SymSub}) where {T,N,D,Syms,SymSub}
+  symb = Syms[collect(SymSub)]
+  subArr = lvec[SVector(symb)]
+  LArray{T,1,D,symb}(subArr)
+end
+
+@inline subset(lvec::LArray{T,N,D,Syms}, ::Tuple{}) where {T,N,D,Syms} = 
+  LArray{T,1,D,()}(@SVector T[])
+
+
+function subset(lvec::Union{SLArray,LArray}, ind::SVector{N,I}) where {N,I <: Integer}
+  labels = symbols(lvec)[ind]
+  subset(lvec,labels)
+end
+subset(lvec::Union{SLArray,LArray}, labels::SVector{N,T}) where {N,T <: Symbol} =
+  subset(lvec,Tuple(labels))
+subset(lvec::Union{SLArray,LArray}, labels::SLArray{T,Symbol,1,N,Sym}) where {T,N,Sym} =
+  subset(lvec,Tuple(labels))
+function subset(lvec::Union{SLArray,LArray}, ind::SLArray{T,I,1,N,Sym}) where {T,I<:Integer,N,Sym} 
+  labels = symbols(lvec)[ind]
+  subset(lvec,Tuple(labels))
+end  
+
+
+ 

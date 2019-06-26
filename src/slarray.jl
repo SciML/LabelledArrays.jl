@@ -101,6 +101,7 @@ function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
 end
 
 # Note: This could in the future return an SLArray with the right names
+# see issue #59 for rather using subset to return SLVector
 function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
     [getindex(x,si) for si in s]
 end
@@ -181,6 +182,7 @@ macro SLVector(T,syms)
   end
 end
 
+
 """
     symbols(::SLArray{T,N,D,Syms})
 
@@ -192,3 +194,48 @@ For example:
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
 symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
+
+
+"""
+    subset(::SLArray, indicesTuple)
+
+Creates a new SLArray containing only the given indices.
+The indices are given as a Tuple of symbols or a Tuple of Integer positions.
+
+Note, that this differs from subsetting a Labelled array by getindex or `[]`
+by retaining the labels, instead of returning an Array.
+
+It works with vectors and arrays, where each element is labelled, but not for 
+complex cases, where a label refers to several items.
+
+For example:
+
+    zs = SLVector(a=1, b=2, c=3)
+    zsSub = subset(zs, (:c,:a))
+    zsSub = subset(zs, Val((:c,:a))) # type safe version using Val()
+
+    zsSub = subset(zs, (3,1))
+    zsSub = subset(zs, @SVector[:c,:a]) # @SVector from StaticArrays
+    zsSub = subset(zs, @SVector[3,1])
+    zsSub = subset(zs, SLVector(i1=:c,i2=:a))
+    zsSub = subset(zs, SLVector(i1=3,i2=1))
+"""
+@inline subset(lvec::SLArray, s::Tuple{N,Symbol}) where N = subset(lvec, Val(s))
+@inline function subset(lvec::SLArray{S,T,N,L,Syms}, ::Val{SymSub}) where {S,T,N,L,Syms,SymSub}
+  subArr = lvec[SVector(SymSub)]
+  #SLVector(NamedTuple{SymSub}(subArr)) # not type stable
+  SLArray{Tuple{length(SymSub)},T,1,length(SymSub),SymSub}(subArr)
+end
+
+@inline subset(lvec::SLArray, s::Tuple{N,I}) where {N,I<:Integer} = subsetInt(lvec, Val(s))
+@inline function subsetInt(lvec::SLArray{S,T,N,L,Syms}, ::Val{SymSub}) where {S,T,N,L,Syms,SymSub}
+  symb = Syms[collect(SymSub)]
+  subArr = lvec[SVector(symb)]
+  SLArray{Tuple{length(SymSub)},T,1,length(SymSub),symb}(subArr)
+end
+
+@inline subset(lvec::SLArray{S,T,N,L,Syms}, ::Tuple{}) where {S,T,N,L,Syms} = 
+  SLArray{Tuple{0},T,1,0,()}( @SVector T[] )
+
+
+# for providing indices as SVector or SLVector see larrays.jl

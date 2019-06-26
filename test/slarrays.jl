@@ -76,3 +76,44 @@ end
   z = Arr(1, 2, 3, 4)
   @test z.a == [2, 4]
 end
+
+@testset "subset" begin
+    #zs = SLVector(a=1.0,b=2.0,c=3.0,d=4.0)
+    zs = SLArray{Tuple{2,2}}(a=1.0,b=2.0,c=3.0,d=4.0); 
+    zsSub = subset(zs, (:c,:a))
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    # workaround with testing type inside subset
+    zsSub = subset(zs, (3,1))
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    @test symbols(zsSub) == (:c,:a)
+    #
+    ind = SVector(3,1)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = SVector(:c,:a)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    #ind = @SLVector (:n1,:n2) (:c,:a)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = (@SLVector (:n1,:n2))(3,1)
+    zsSub = subset(zs, ind)
+    @test zsSub == SLVector(c=3.0,a=1.0)
+
+    zsSub = subset(zs, ())
+    #@test zsSub == SLVector()
+    @test length(zsSub) == 0
+    @test zsSub isa SLArray
+    @test symbols(zsSub) == ()
+    @test eltype(zsSub) == eltype(zs)
+
+
+    #subset(zs, Val((:c,:a)))
+    #@code_warntype subset(zs, Val((:c,:a)))
+    @inferred subset(zs, Val((:c,:a)))
+end
+

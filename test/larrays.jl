@@ -1,4 +1,4 @@
-using LabelledArrays, Test, InteractiveUtils
+using LabelledArrays, StaticArrays, Test, InteractiveUtils
 
 @testset "Basic interface" begin
     vals = [1.0,2.0,3.0] 
@@ -124,3 +124,42 @@ end
   z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3)
   @test z.a == [3, 4]
 end
+
+@testset "subset" begin
+    z = @LArray [1.,2.,3.] (:a,:b,:c);
+    zSub = subset(z, (:c,:a))
+    @test zSub == @LArray [3.,1.] (:c,:a)
+    @test symbols(zSub) == (:c,:a)
+    # 
+    zSub = subset(z, (3,1))
+    @test zSub == @LArray [3.,1.] (:c,:a)
+    @test symbols(zSub) == (:c,:a)
+    #
+    ind = @SVector[3,1]  #SVector(3,1)
+    zSub = subset(z, ind)
+    @test zSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = @SVector[:c,:a] #SVector(:c,:a)
+    zSub = subset(z, ind)
+    @test zSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = (@SLVector (:n1,:n2))([:c,:a])
+    zSub = subset(z, ind)
+    @test zSub == SLVector(c=3.0,a=1.0)
+    #
+    ind = (@SLVector (:n1,:n2))([3,1])
+    zSub = subset(z, ind)
+    @test zSub == SLVector(c=3.0,a=1.0)
+
+    zSub = subset(z, ())
+    @test zSub == @SVector eltype(z)[]
+
+    #zs[SVector(:c,:a)]
+    #@inferred z[SVector(:c,:a)]
+
+    #subset(z, Val((:c,:a)))
+    #@code_warntype subset(z, Val((:c,:a)))
+    @inferred subset(z, Val((:c,:a)))
+
+end
+
