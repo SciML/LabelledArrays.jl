@@ -44,59 +44,36 @@ Base.size(x::LArray) = size(getfield(x,:__x))
 Base.propertynames(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 symnames(::Type{LArray{T,N,D,Syms}}) where {T,N,D,Syms} = Syms
 
-@inline function Base.getproperty(x::LArray,s::Symbol)
+Base.@propagate_inbounds function Base.getproperty(x::LArray,s::Symbol)
     if s == :__x
         return getfield(x,:__x)
     end
-    x[s]
+    return getindex(x,Val(s))
 end
 
-@inline function Base.setproperty!(x::LArray,s::Symbol,y)
+Base.@propagate_inbounds function Base.setproperty!(x::LArray,s::Symbol,y)
     if s == :__x
         return setfield!(x,:__x,y)
     end
-    x[s] = y
+    setindex!(x,y,Val(s))
 end
 
-@inline function Base.getindex(x::LArray,s::Symbol)
-  syms = symnames(typeof(x))
-  if syms isa NamedTuple
-    idxs = syms[s]
-    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
-  else
-    return getindex(x,Val(s))
-  end
-end
+Base.@propagate_inbounds Base.getindex(x::LArray,s::Symbol) = getindex(x,Val(s))
+Base.@propagate_inbounds Base.getindex(x::LArray,s::Val) = __getindex(x, s)
+Base.@propagate_inbounds Base.setindex!(x::LArray,v,s::Symbol) = setindex!(x,v,Val(s))
 
-@inline @generated function Base.getindex(x::LArray,::Val{s}) where s
-    idx = findfirst(y->y==s,symnames(x))
-    :(getfield(x,:__x)[$idx])
-end
-
-@inline function Base.setindex!(x::LArray,v,s::Symbol)
-  syms = symnames(typeof(x))
-  if syms isa NamedTuple
-    idxs = syms[s]
-    return setindex!(x.__x, v, idxs)
-  else
-    setindex!(x,v,Val(s))
-  end
-end
-
-@inline @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
+@generated function Base.setindex!(x::LArray,y,::Val{s}) where s
   syms = symnames(x)
   if syms isa NamedTuple
     idxs = syms[s]
-    return :(setindex!(view(getfield(x,:__x), y, $idxs)))
+    return :(Base.@_propagate_inbounds_meta; setindex!(getfield(x,:__x), y, $idxs))
   else # Tuple
     idx = findfirst(y->y==s,symnames(x))
-    return :(setindex!(getfield(x,:__x),y,$idx))
+    return :(Base.@_propagate_inbounds_meta; setindex!(getfield(x,:__x),y,$idx))
   end
 end
 
-function Base.getindex(x::LArray,s::AbstractArray{Symbol,1})
-    [getindex(x,si) for si in s]
-end
+Base.getindex(x::LArray,s::AbstractArray{Symbol,1}) = [getindex(x,si) for si in s]
 
 function Base.similar(x::LArray{T,K,D,Syms},::Type{S},dims::NTuple{N,Int}) where {T,K,D,Syms,S,N}
     tmp = similar(x.__x,S,dims)
@@ -121,7 +98,7 @@ Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,
 
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
     tmp = similar(Array{ElType},axes(bc))
-    if prod(length.(axes(bc))) != prod(length.(axes(L)))
+    if prod(length.(axes(bc))) != prod(length.(axes(Tuple(L))))
         return tmp
     else
         return LArray{ElType,N,typeof(tmp),L}(tmp)

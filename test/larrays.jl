@@ -4,6 +4,7 @@ using LabelledArrays, Test, InteractiveUtils
     vals = [1.0,2.0,3.0] 
     syms = (:a,:b,:c)
     x = @LArray vals syms
+    @test_nowarn display(x)
     y = @LVector Float64 (:a,:b,:c)
     y .= [1,2,3.]
     @test x == y
@@ -19,6 +20,7 @@ using LabelledArrays, Test, InteractiveUtils
 
     f(x) = x[1]
     g(x) = x.a
+    g(x, y) = x.a = y
     @time f(x)
     @time f(x)
     @time g(x)
@@ -28,11 +30,13 @@ using LabelledArrays, Test, InteractiveUtils
     #@inferred getindex(x,:a)
     @code_warntype g(x)
     @inferred g(x)
+    @inferred g(x, 2)
 
     vals = [1,2,3]
     syms = (:a,:b,:c)
     x = @LArray vals syms
     @test x .* x isa LArray
+    @test x * x' isa Array
     @test x .+ 1 isa LArray
     @test x .+ 1. isa LArray
     z = x .+ ones(Int, 3)
@@ -91,6 +95,7 @@ end
 
 @testset "accessing labels, i.e. symbols" begin
     z = @LArray Float64 (2,2) (:a,:b,:c,:d)
+    @test_nowarn display(z)
     ret = symbols(z)
     @test ret == (:a,:b,:c,:d)
     #ret2 = dimSymbols(z,1) # no method defined if Syms is not a tuple
@@ -108,6 +113,12 @@ end
 
 @testset "Explicit indices" begin
   z = @LArray [1.,2.,3.] (a = 1:2, b = 3)
+  @test z * z' isa Array
+  g(x) = x.a
+  g(x,y) = x.a .= y
+  @inferred g(z)
+  @inferred g(z, [1, 2])
+  @test_nowarn display(z)
   @test z.a isa SubArray
   @test z.a == [1, 2.]
   z.a = [100, 200.]
@@ -116,11 +127,17 @@ end
   z.b = 1000.
   @test z.b === 1000.
   z = @LArray [1.,2.,3.] (a = 1:2, b = 1:3)
+  @inferred g(z)
+  @inferred g(z, [1,2.])
   @test z.b === view(z.__x, 1:3)
   z = @LArray [1.,2.] (a = 1, b = 2)
+  @test_nowarn display(z)
   @test z.a === 1.0
   @test z.b === 2.0
   @test symbols(z) === (:a, :b)
   z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3)
   @test z.a == [3, 4]
+  @test_nowarn display(z)
+  @inferred g(z)
+  @inferred g(z, [1,2])
 end
