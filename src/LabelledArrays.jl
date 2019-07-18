@@ -43,8 +43,12 @@ Base.show(io::IO, ::MIME"text/plain", x::Union{LArray,SLArray}) = show(io, x)
 function Base.show(io::IO, x::Union{LArray,SLArray})
     syms = symnames(typeof(x))
     n = length(syms)
-    PrintWrapper(lazypair, x)
-    Base.print_array(io, PrintWrapper(lazypair, x))
+    pwrapper = PrintWrapper(lazypair, x)
+    if io isa IOContext && get(io, :limit, false) && displaysize(io) isa Tuple{Integer, Integer}
+        io = IOContext(io, :limit => true, :displaysize => cld.(2 .*displaysize(io), 3))
+    end
+    println(io, summary(x), ':')
+    Base.print_array(io, pwrapper)
 end
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
