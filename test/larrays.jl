@@ -36,6 +36,7 @@ using LabelledArrays, Test, InteractiveUtils
     syms = (:a,:b,:c)
     x = @LArray vals syms
     @test x .* x isa LArray
+    @test x * x' isa Array
     @test x .+ 1 isa LArray
     @test x .+ 1. isa LArray
     z = x .+ ones(Int, 3)
@@ -112,6 +113,7 @@ end
 
 @testset "Explicit indices" begin
   z = @LArray [1.,2.,3.] (a = 1:2, b = 3)
+  @test z * z' isa Array
   g(x) = x.a
   g(x,y) = x.a .= y
   @inferred g(z)

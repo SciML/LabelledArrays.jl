@@ -98,7 +98,7 @@ Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,
 
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
     tmp = similar(Array{ElType},axes(bc))
-    if prod(length.(axes(bc))) != prod(length.(axes(L)))
+    if prod(length.(axes(bc))) != prod(length.(axes(Tuple(L))))
         return tmp
     else
         return LArray{ElType,N,typeof(tmp),L}(tmp)
