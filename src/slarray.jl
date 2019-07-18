@@ -76,32 +76,22 @@ end
 
 Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
-@inline function Base.getproperty(x::SLArray,s::Symbol)
-  s == :__x ? getfield(x,:__x) : x[s]
+Base.@propagate_inbounds function Base.getproperty(x::SLArray,s::Symbol)
+  s == :__x ? getfield(x,:__x) : getindex(x, Val(s))
 end
-@inline function Base.getindex(x::SLArray,s::Symbol)
-  syms = symnames(typeof(x))
-  if syms isa NamedTuple
-    idxs = syms[s]
-    return idxs isa Tuple ? @views(x.__x[idxs...]) : @views(x.__x[idxs])
-  else
-    return getindex(x,Val(s))
-  end
+Base.@propagate_inbounds function Base.getindex(x::SLArray,s::Symbol)
+  return getindex(x,Val(s))
 end
-@inline @generated function Base.getindex(x::SLArray,::Val{s}) where s
-    idx = findfirst(y->y==s,symnames(x))
-    :(getfield(x,:__x)[$idx])
-end
-
-function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
+Base.@propagate_inbounds Base.getindex(x::SLArray,s::Val) = __getindex(x, s)
+Base.@propagate_inbounds function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
     getindex(x.__x,inds)
 end
-function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
+Base.@propagate_inbounds function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
     getindex(x.__x,inds)
 end
 
 # Note: This could in the future return an SLArray with the right names
-function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
+Base.@propagate_inbounds function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
     [getindex(x,si) for si in s]
 end
 

@@ -59,17 +59,7 @@ Base.@propagate_inbounds function Base.setproperty!(x::LArray,s::Symbol,y)
 end
 
 Base.@propagate_inbounds Base.getindex(x::LArray,s::Symbol) = getindex(x,Val(s))
-
-@generated function Base.getindex(x::LArray,::Val{s}) where s
-    syms = symnames(x)
-    idx = syms isa NamedTuple ? syms[s] : findfirst(y->y==s,syms)
-    if idx isa Tuple
-        :(Base.@_propagate_inbounds_meta; view(getfield(x,:__x), $idx...))
-    else
-        :(Base.@_propagate_inbounds_meta; @views getfield(x,:__x)[$idx])
-    end
-end
-
+Base.@propagate_inbounds Base.getindex(x::LArray,s::Val) = __getindex(x, s)
 Base.@propagate_inbounds Base.setindex!(x::LArray,v,s::Symbol) = setindex!(x,v,Val(s))
 
 @generated function Base.setindex!(x::LArray,y,::Val{s}) where s

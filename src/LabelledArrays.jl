@@ -7,6 +7,17 @@ include("larray.jl")
 include("slsliced.jl")
 include("lsliced.jl")
 
+# Common
+@generated function __getindex(x::Union{LArray,SLArray},::Val{s}) where s
+    syms = symnames(x)
+    idx = syms isa NamedTuple ? syms[s] : findfirst(y->y==s,syms)
+    if idx isa Tuple
+        :(Base.@_propagate_inbounds_meta; view(getfield(x,:__x), $idx...))
+    else
+        :(Base.@_propagate_inbounds_meta; @views getfield(x,:__x)[$idx])
+    end
+end
+
 using MacroTools
 
 struct PrintWrapper{T,N,F,X<:AbstractArray{T,N}} <: AbstractArray{T,N}
