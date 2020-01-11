@@ -51,7 +51,7 @@ Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
 #####################################
 # StaticArray Interface
 #####################################
-@inline Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
+@inline Base.@propagate_inbounds Base.getindex(x::SLArray, i::Int) = getfield(x,:__x)[i]
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
 
 function StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType},
@@ -74,24 +74,24 @@ function Base.similar(::Type{SLArray{S,T,N,L,Syms}}, ::Type{NewElType}, ::Size{N
   end
 end
 
-Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
-symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
-Base.@propagate_inbounds function Base.getproperty(x::SLArray,s::Symbol)
+@inline Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
+@inline symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
+@inline Base.@propagate_inbounds function Base.getproperty(x::SLArray,s::Symbol)
   s == :__x ? getfield(x,:__x) : getindex(x, Val(s))
 end
-Base.@propagate_inbounds function Base.getindex(x::SLArray,s::Symbol)
+@inline Base.@propagate_inbounds function Base.getindex(x::SLArray,s::Symbol)
   return getindex(x,Val(s))
 end
-Base.@propagate_inbounds Base.getindex(x::SLArray,s::Val) = __getindex(x, s)
-Base.@propagate_inbounds function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
+@inline Base.@propagate_inbounds Base.getindex(x::SLArray,s::Val) = __getindex(x, s)
+@inline Base.@propagate_inbounds function Base.getindex(x::SLArray,inds::AbstractArray{I,1}) where I<:Integer
     getindex(x.__x,inds)
 end
-Base.@propagate_inbounds function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
+@inline Base.@propagate_inbounds function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
     getindex(x.__x,inds)
 end
 
 # Note: This could in the future return an SLArray with the right names
-Base.@propagate_inbounds function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
+@inline Base.@propagate_inbounds function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
     [getindex(x,si) for si in s]
 end
 
