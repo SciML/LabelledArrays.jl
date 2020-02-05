@@ -39,17 +39,26 @@ Base.@propagate_inbounds Base.getindex(x::Sliced,s1::Symbol,i2) = getindex(x,Val
 @generated function Base.getindex(x::Sliced,::Val{s1},::Val{s2}) where {s1,s2}
   idx1 = findfirst(y->y==s1,symnames(x)[1])
   idx2 = findfirst(y->y==s2,symnames(x)[2])
-  :(Base.@_propagate_inbounds_meta getfield(x,:__x)[$idx1, $idx2])
+  quote 
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[$idx1, $idx2]
+  end
 end
 
 @generated function Base.getindex(x::Sliced,i1::Number,::Val{s2}) where s2
   idx2 = findfirst(y->y==s2,symnames(x)[2])
-  :(Base.@_propagate_inbounds_meta getfield(x,:__x)[i1, $idx2])
+  quote
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[i1, $idx2]
+  end
 end
 
 @generated function Base.getindex(x::Sliced,::Val{s1},i2::Number) where s1
   idx1 = findfirst(y->y==s1,symnames(x)[1])
-  :(Base.@_propagate_inbounds_meta getfield(x,:__x)[$idx1, i2])
+  quote
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[$idx1, i2]
+  end
 end
 
 Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,i...) = getfield(x,:__x)[i...] = y
@@ -60,17 +69,26 @@ Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,i1,s2::Symbol) = seti
 @generated function Base.setindex!(x::LSliced,y,::Val{s1},::Val{s2}) where {s1, s2}
     idx1 = findfirst(y->y==s1,symnames(x)[1])
     idx2 = findfirst(y->y==s2,symnames(x)[2])
-    :(Base.@_propagate_inbounds_meta x.__x[$idx1, $idx2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[$idx1, $idx2] = y
+    end
 end
 
 @generated function Base.setindex!(x::LSliced,y,::Val{s1},i2::Number) where s1
     idx1 = findfirst(y->y==s1,symnames(x)[1])
-    :(Base.@_propagate_inbounds_meta x.__x[$idx1, i2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[$idx1, i2] = y
+    end
 end
 
 @generated function Base.setindex!(x::LSliced,y,i1::Number,::Val{s2}) where s2
     idx2 = findfirst(y->y==s2,symnames(x)[2])
-    :(Base.@_propagate_inbounds_meta x.__x[i1, $idx2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[i1, $idx2] = y
+    end
 end
 
 
