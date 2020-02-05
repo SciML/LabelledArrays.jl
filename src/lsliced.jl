@@ -61,10 +61,10 @@ end
   end
 end
 
-Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,i...) = getfield(x,:__x)[i...] = y
-Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,s1::Symbol,s2::Symbol) = setindex!(x,y,Val(s1),Val(s2))
-Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,s1::Symbol,i2) = setindex!(x,y,Val(s1),i2)
-Base.@_propagate_inbounds_meta Base.setindex!(x::LSliced,y,i1,s2::Symbol) = setindex!(x,y,i1,Val(s2))
+Base.@_propagate_inbounds Base.setindex!(x::LSliced,y,i...) = getfield(x,:__x)[i...] = y
+Base.@_propagate_inbounds Base.setindex!(x::LSliced,y,s1::Symbol,s2::Symbol) = setindex!(x,y,Val(s1),Val(s2))
+Base.@_propagate_inbounds Base.setindex!(x::LSliced,y,s1::Symbol,i2) = setindex!(x,y,Val(s1),i2)
+Base.@_propagate_inbounds Base.setindex!(x::LSliced,y,i1,s2::Symbol) = setindex!(x,y,i1,Val(s2))
 
 @generated function Base.setindex!(x::LSliced,y,::Val{s1},::Val{s2}) where {s1, s2}
     idx1 = findfirst(y->y==s1,symnames(x)[1])
