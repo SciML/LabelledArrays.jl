@@ -31,48 +31,64 @@ end
 Base.propertynames(::LArray{T,N,D,S}) where {T,N,D,S<:Tuple{Syms1,Syms2}} where {Syms1,Syms2} = Syms1, Syms2
 symnames(::Type{LArray{T,N,D,S}}) where {T,N,D,S<:Tuple{Syms1,Syms2}} where {Syms1,Syms2} = Syms1, Syms2
 
-@inline Base.getindex(x::Sliced,i::Int...) = getfield(x,:__x)[i...]
-@inline Base.getindex(x::Sliced,s1::Symbol,s2::Symbol) = getindex(x,Val(s1),Val(s2))
-@inline Base.getindex(x::Sliced,i1,s2::Symbol) = getindex(x,i1,Val(s2))
-@inline Base.getindex(x::Sliced,s1::Symbol,i2) = getindex(x,Val(s1),i2)
+Base.@propagate_inbounds Base.getindex(x::Sliced,i::Int...) = getfield(x,:__x)[i...]
+Base.@propagate_inbounds Base.getindex(x::Sliced,s1::Symbol,s2::Symbol) = getindex(x,Val(s1),Val(s2))
+Base.@propagate_inbounds Base.getindex(x::Sliced,i1,s2::Symbol) = getindex(x,i1,Val(s2))
+Base.@propagate_inbounds Base.getindex(x::Sliced,s1::Symbol,i2) = getindex(x,Val(s1),i2)
 
-@inline @generated function Base.getindex(x::Sliced,::Val{s1},::Val{s2}) where {s1,s2}
+@generated function Base.getindex(x::Sliced,::Val{s1},::Val{s2}) where {s1,s2}
   idx1 = findfirst(y->y==s1,symnames(x)[1])
   idx2 = findfirst(y->y==s2,symnames(x)[2])
-  :(getfield(x,:__x)[$idx1, $idx2])
+  quote 
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[$idx1, $idx2]
+  end
 end
 
-@inline @generated function Base.getindex(x::Sliced,i1::Number,::Val{s2}) where s2
+@generated function Base.getindex(x::Sliced,i1::Number,::Val{s2}) where s2
   idx2 = findfirst(y->y==s2,symnames(x)[2])
-  :(getfield(x,:__x)[i1, $idx2])
+  quote
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[i1, $idx2]
+  end
 end
 
-@inline @generated function Base.getindex(x::Sliced,::Val{s1},i2::Number) where s1
+@generated function Base.getindex(x::Sliced,::Val{s1},i2::Number) where s1
   idx1 = findfirst(y->y==s1,symnames(x)[1])
-  :(getfield(x,:__x)[$idx1, i2])
+  quote
+    Base.@_propagate_inbounds_meta
+    getfield(x,:__x)[$idx1, i2]
+  end
 end
 
+Base.@propagate_inbounds Base.setindex!(x::LSliced,y,i...) = getfield(x,:__x)[i...] = y
+Base.@propagate_inbounds Base.setindex!(x::LSliced,y,s1::Symbol,s2::Symbol) = setindex!(x,y,Val(s1),Val(s2))
+Base.@propagate_inbounds Base.setindex!(x::LSliced,y,s1::Symbol,i2) = setindex!(x,y,Val(s1),i2)
+Base.@propagate_inbounds Base.setindex!(x::LSliced,y,i1,s2::Symbol) = setindex!(x,y,i1,Val(s2))
 
-
-@inline Base.setindex!(x::LSliced,y,i...) = getfield(x,:__x)[i...] = y
-@inline Base.setindex!(x::LSliced,y,s1::Symbol,s2::Symbol) = setindex!(x,y,Val(s1),Val(s2))
-@inline Base.setindex!(x::LSliced,y,s1::Symbol,i2) = setindex!(x,y,Val(s1),i2)
-@inline Base.setindex!(x::LSliced,y,i1,s2::Symbol) = setindex!(x,y,i1,Val(s2))
-
-@inline @generated function Base.setindex!(x::LSliced,y,::Val{s1},::Val{s2}) where {s1, s2}
+@generated function Base.setindex!(x::LSliced,y,::Val{s1},::Val{s2}) where {s1, s2}
     idx1 = findfirst(y->y==s1,symnames(x)[1])
     idx2 = findfirst(y->y==s2,symnames(x)[2])
-    :(x.__x[$idx1, $idx2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[$idx1, $idx2] = y
+    end
 end
 
-@inline @generated function Base.setindex!(x::LSliced,y,::Val{s1},i2::Number) where s1
+@generated function Base.setindex!(x::LSliced,y,::Val{s1},i2::Number) where s1
     idx1 = findfirst(y->y==s1,symnames(x)[1])
-    :(x.__x[$idx1, i2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[$idx1, i2] = y
+    end
 end
 
-@inline @generated function Base.setindex!(x::LSliced,y,i1::Number,::Val{s2}) where s2
+@generated function Base.setindex!(x::LSliced,y,i1::Number,::Val{s2}) where s2
     idx2 = findfirst(y->y==s2,symnames(x)[2])
-    :(x.__x[i1, $idx2] = y)
+    quote
+        Base.@_propagate_inbounds_meta
+        x.__x[i1, $idx2] = y
+    end
 end
 
 

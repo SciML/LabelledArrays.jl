@@ -38,8 +38,8 @@ Base.pairs(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} =
 # Array Interface
 #####################################
 Base.size(x::LArray) = size(getfield(x,:__x))
-@inline Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
-@inline Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
+Base.@propagate_inbounds Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
+Base.@propagate_inbounds Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
 
 Base.propertynames(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 symnames(::Type{LArray{T,N,D,Syms}}) where {T,N,D,Syms} = Syms
@@ -73,7 +73,7 @@ Base.@propagate_inbounds Base.setindex!(x::LArray,v,s::Symbol) = setindex!(x,v,V
   end
 end
 
-Base.getindex(x::LArray,s::AbstractArray{Symbol,1}) = [getindex(x,si) for si in s]
+Base.@propagate_inbounds Base.getindex(x::LArray,s::AbstractArray{Symbol,1}) = [getindex(x,si) for si in s]
 
 function Base.similar(x::LArray{T,K,D,Syms},::Type{S},dims::NTuple{N,Int}) where {T,K,D,Syms,S,N}
     tmp = similar(x.__x,S,dims)
