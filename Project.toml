@@ -1,7 +1,7 @@
 name = "LabelledArrays"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "1.0.1"
+version = "1.0.2"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
