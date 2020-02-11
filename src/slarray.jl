@@ -23,7 +23,7 @@ end
 #####################################
 ## SLArray to named tuple
 function Base.convert(::Type{NamedTuple}, x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms}
-  tup = NTuple{length(Syms),T}(x)
+  tup = NTuple{length(Syms),T}(x.__x)
   NamedTuple{Syms,typeof(tup)}(tup)
 end
 Base.keys(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
@@ -47,6 +47,10 @@ SLVector(;kwargs...) = SLVector(kwargs.data)
 Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
     # (label => getproperty(x, label) for label in Syms) # not type stable?
     (Syms[i] => x[i] for i in 1:length(Syms))
+
+function Base.iterate(x::SLArray,args...)
+  iterate(convert(NamedTuple,x),args...)
+end
 
 #####################################
 # StaticArray Interface
@@ -93,6 +97,11 @@ end
 # Note: This could in the future return an SLArray with the right names
 Base.@propagate_inbounds function Base.getindex(x::SLArray,s::AbstractArray{Symbol,1})
     [getindex(x,si) for si in s]
+end
+
+function Base.vcat(x1::SLArray{S1,T,1,L1,Syms1},x2::SLArray{S2,T,1,L2,Syms2}) where {S1,S2,T,L1,L2,Syms1,Syms2}
+  __x = vcat(x1.__x,x2.__x)
+  SLArray{StaticArrays.size_tuple(Size(__x)),(Syms1...,Syms2...)}(__x)
 end
 
 
