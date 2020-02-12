@@ -83,3 +83,10 @@ end
   @test_nowarn display(z)
   @test z.a == [2, 4]
 end
+
+@testset "Concatenate and Iterate" begin
+    x = SLVector(a=1, b=2)
+    y = SLVector(c=1, d=2)
+    @test (x...,y...) == (1,2,1,2)
+    @test typeof(vcat(x,y)) <: SLArray
+end
