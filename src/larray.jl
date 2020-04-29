@@ -83,9 +83,16 @@ end
 # Allow copying LArray of uninitialized data, as with regular Array
 Base.copy(x::LArray) = typeof(x)(copy(getfield(x,:__x)))
 Base.deepcopy(x::LArray) = typeof(x)(deepcopy(getfield(x,:__x)))
+Base.copyto!(x::LArray,y::LArray) = copyto!(getfield(x,:__x),getfield(y,:__x))
 
 # enable the usage of LAPACK
 Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
+
+Base.convert(::Type{T},x) where {T<:LArray} = T(x)
+Base.convert(::Type{T},x::T) where {T<:LArray} = x
+Base.convert(::Type{<:Array},x::LArray) = convert(Array,getfield(x,:__x))
+
+ArrayInterface.restructure(x::LArray{T,N,D,Syms},y::LArray{T2,N2,D2,Syms}) where {T,N,D,T2,N2,D2,Syms} = reshape(y,size(x)...)
 
 #####################################
 # Broadcast
