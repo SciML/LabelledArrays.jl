@@ -92,6 +92,8 @@ Base.convert(::Type{T},x) where {T<:LArray} = T(x)
 Base.convert(::Type{T},x::T) where {T<:LArray} = x
 Base.convert(::Type{<:Array},x::LArray) = convert(Array,getfield(x,:__x))
 
+ArrayInterface.restructure(x::LArray{T,N,D,Syms},y::LArray{T2,N2,D2,Syms}) where {T,N,D,T2,N2,D2,Syms} = reshape(y,size(x)...)
+
 #####################################
 # Broadcast
 #####################################

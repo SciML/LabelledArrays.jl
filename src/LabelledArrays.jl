@@ -1,6 +1,6 @@
 module LabelledArrays
 
-using LinearAlgebra, StaticArrays
+using LinearAlgebra, StaticArrays, ArrayInterface
 
 include("slarray.jl")
 include("larray.jl")
