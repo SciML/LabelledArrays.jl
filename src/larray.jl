@@ -88,6 +88,10 @@ Base.copyto!(x::LArray,y::LArray) = copyto!(getfield(x,:__x),getfield(y,:__x))
 # enable the usage of LAPACK
 Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.unsafe_convert(Ptr{T}, getfield(a,:__x))
 
+Base.convert(::Type{T},x) where {T<:LArray} = T(x)
+Base.convert(::Type{T},x::T) where {T<:LArray} = x
+Base.convert(::Type{<:Array},x::LArray) = convert(Array,getfield(x,:__x))
+
 #####################################
 # Broadcast
 #####################################
