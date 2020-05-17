@@ -44,6 +44,7 @@ using LabelledArrays, Test, InteractiveUtils
     z = x .+ ones(Float64, 3)
     @test z isa LArray && eltype(z) === Float64
     @test eltype(x .+ 1.) === Float64
+    @test Base.dataids(vals) == Base.dataids(x)
 
     type = Float64 
     dims = (2,2) 
