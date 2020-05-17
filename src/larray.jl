@@ -112,6 +112,11 @@ function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType})
     end
 end
 
+# Broadcasting checks for aliasing with Base.dataids but the fallback
+# for AbstractArrays is very slow. Instead, we just call dataids on the
+# wrapped buffer
+Base.dataids(A::LArray) = Base.dataids(A.__x)
+
 """
     @LArray Eltype Size Names
     @LArray Values Names
