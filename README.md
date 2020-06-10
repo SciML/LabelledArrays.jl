@@ -1,8 +1,8 @@
 # LabelledArrays.jl
 
-[![Build Status](https://travis-ci.org/JuliaDiffEq/LabelledArrays.jl.svg?branch=master)](https://travis-ci.org/JuliaDiffEq/LabelledArrays.jl)
-[![Coverage Status](https://coveralls.io/repos/ChrisRackauckas/LabelledArrays.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/ChrisRackauckas/LabelledArrays.jl?branch=master)
-[![codecov.io](http://codecov.io/github/ChrisRackauckas/LabelledArrays.jl/coverage.svg?branch=master)](http://codecov.io/github/ChrisRackauckas/LabelledArrays.jl?branch=master)
+[![Build Status](https://travis-ci.org/SciML/LabelledArrays.jl.svg?branch=master)](https://travis-ci.org/SciML/LabelledArrays.jl)
+[![Coverage Status](https://coveralls.io/repos/SciML/LabelledArrays.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/SciML/LabelledArrays.jl?branch=master)
+[![codecov.io](http://codecov.io/github/SciML/LabelledArrays.jl/coverage.svg?branch=master)](http://codecov.io/github/SciML/LabelledArrays.jl?branch=master)
 
 LabelledArrays.jl is a package which provides arrays with labels, i.e. they are
 arrays which `map`, `broadcast`, and all of that good stuff, but their components

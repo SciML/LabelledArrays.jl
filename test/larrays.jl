@@ -142,3 +142,11 @@ end
   @inferred g(z)
   @inferred g(z, [1,2])
 end
+
+@testset "1x1 broadcasting" begin
+  x = @LArray [1,] (:a,)
+  @test x .* 1 == x
+  @test x .* 1 isa LArray
+  @test x .* x' == fill(1, 1, 1)
+  @test x .* x' isa Array
+end
