@@ -28,6 +28,8 @@ function Base.convert(::Type{NamedTuple}, x::SLArray{S,T,N,L,Syms}) where {S,T,N
 end
 Base.keys(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 
+StaticArrays.similar_type(::Type{SLArray{S,T,N,L,Syms}},T2,::Size{S}) where {S,T,N,L,Syms} = SLArray{S,T2,N,L,Syms}
+
 ## Named tuple to SLArray
 #=
   1. `SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4))` (need to specify size)
