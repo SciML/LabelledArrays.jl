@@ -160,40 +160,7 @@ The labels of LArray and SLArray can be accessed
 by function `symbols`, which returns a tuple of symbols.
 
 
-## Labelled slices
 
-For a labelled array where the row and column slices are labeled, use `@SLSlice`
-and `@LSlice`, similar to `@SLArray` and `@LArray` but passing a _tuple_ of label
-tuples.
-
-For static arrays with labeled rows and columns:
-
-```
-ABC = @SLSliced (3,2) (:a,:b,:c), (:x, :y)
-A = ABC([1 2; 3 4; 5 6])
-A.a.x == 1
-A[:c, :y] == 6
-```
-
-For regular arrays with labeled rows and columns:
-
-```
-A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
-A.a.x == 1
-A[:c, :y] == 6
-```
-
-The labels of LSliced and SLScliced can be accessed 
-by function `symbols`.
-For a two-dimensional LSliced or SLSliced, it returns a tuple
-with first entry a tuple of row symbols and second entry a tuple of column symbols.
-For higher-dimensional slices, it returns a Tuple-Type object with
-parameters referring to the names of the dimensions.
-
-```
-A = @LSliced [1 2; 3 4; 5 6] (:a,:b,:c), (:x, :y)
-symbols(A)[1] == (:a, :b, :c)
-```
 
 ## Example: Nice DiffEq Syntax Without A DSL
 
@@ -289,3 +256,10 @@ As a result `SLArray` has less element type information, which
 improves compilation speed while giving more vector functionality
 than a NamedTuple. `LArray` also only has a single element type and,
 unlike a named tuple, is mutable.
+
+
+## Note: Labelled slices
+
+This functionality has been removed from LabelledArrays.jl, but can 
+replicated with the same compile-time performance and indexing syntax 
+using [DimensionalData.jl](https://github.com/rafaqz/DimensionalData.jl).
