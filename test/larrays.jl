@@ -1,7 +1,7 @@
 using LabelledArrays, Test, InteractiveUtils
 
 @testset "Basic interface" begin
-    vals = [1.0,2.0,3.0] 
+    vals = [1.0,2.0,3.0]
     syms = (:a,:b,:c)
     x = @LArray vals syms
     @test_nowarn display(x)
@@ -46,8 +46,8 @@ using LabelledArrays, Test, InteractiveUtils
     @test eltype(x .+ 1.) === Float64
     @test Base.dataids(vals) == Base.dataids(x)
 
-    type = Float64 
-    dims = (2,2) 
+    type = Float64
+    dims = (2,2)
     syms = (:a,:b,:c,:d)
     z = @LArray type dims syms
     w = rand(2,2)
@@ -57,6 +57,10 @@ using LabelledArrays, Test, InteractiveUtils
     @test z[:b] == w[2,1]
     @test z[:c] == w[1,2]
     @test z[:d] == w[2,2]
+
+    @test setindex!(x, 2, :a) == LVector(a=2, b=2, c=3)
+    @test setindex!(x, 2, :a) == LVector(a=2, b=2, c=3)
+    @test setindex!(LArray((2,2), a=1, b=2, c=3, d=4), 1, :b)  == LArray((2,2), a=1, b=1, c=3, d=4)
 end
 
 @testset "Alternate array backends" begin
@@ -107,7 +111,7 @@ end
     @test z[[3,1]] == [3.,1.]
     @test z[[:c,:a]] == [3.,1.]
     #i = LabelledArrays.symToInd(z, (:c,:a)) # also works with Tuples
-    zs = SLVector(a=1.0,b=2.0,c=3.0); 
+    zs = SLVector(a=1.0,b=2.0,c=3.0);
     @test zs[[3,1]] == [3.,1.]
     @test zs[[:c,:a]] == [3.,1.]
 end
