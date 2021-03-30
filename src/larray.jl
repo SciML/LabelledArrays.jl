@@ -39,7 +39,10 @@ Base.pairs(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} =
 #####################################
 Base.size(x::LArray) = size(getfield(x,:__x))
 Base.@propagate_inbounds Base.getindex(x::LArray,i...) = getfield(x,:__x)[i...]
-Base.@propagate_inbounds Base.setindex!(x::LArray,y,i...) = getfield(x,:__x)[i...] = y
+Base.@propagate_inbounds function Base.setindex!(x::LArray, y, i...)
+  getfield(x,:__x)[i...] = y
+  return x
+end
 
 Base.propertynames(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
 symnames(::Type{LArray{T,N,D,Syms}}) where {T,N,D,Syms} = Syms
@@ -58,18 +61,26 @@ Base.@propagate_inbounds function Base.setproperty!(x::LArray,s::Symbol,y)
     setindex!(x,y,Val(s))
 end
 
-Base.@propagate_inbounds Base.getindex(x::LArray,s::Symbol) = getindex(x,Val(s))
-Base.@propagate_inbounds Base.getindex(x::LArray,s::Val) = __getindex(x, s)
-Base.@propagate_inbounds Base.setindex!(x::LArray,v,s::Symbol) = setindex!(x,v,Val(s))
+Base.@propagate_inbounds Base.getindex(x::LArray, s::Symbol) = getindex(x, Val(s))
+Base.@propagate_inbounds Base.getindex(x::LArray, s::Val) = __getindex(x, s)
+Base.@propagate_inbounds Base.setindex!(x::LArray, v, s::Symbol) = setindex!(x, v, Val(s))
 
 @generated function Base.setindex!(x::LArray,y,::Val{s}) where s
   syms = symnames(x)
   if syms isa NamedTuple
     idxs = syms[s]
-    return :(Base.@_propagate_inbounds_meta; setindex!(getfield(x,:__x), y, $idxs))
+    return quote
+      Base.@_propagate_inbounds_meta
+      setindex!(getfield(x, :__x), y, $idxs)
+      return x
+    end
   else # Tuple
-    idx = findfirst(y->y==s,symnames(x))
-    return :(Base.@_propagate_inbounds_meta; setindex!(getfield(x,:__x),y,$idx))
+    idx = findfirst(y -> y==s, symnames(x))
+    return quote
+      Base.@_propagate_inbounds_meta
+      setindex!(getfield(x, :__x), y, $idx)
+      return x
+    end
   end
 end
 
