@@ -49,7 +49,7 @@ function Base.show(io::IO, x::Union{LArray,SLArray})
     Base.print_array(io, pwrapper)
 end
 
-NamedTuple(x::Union{LArray,SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
+Base.NamedTuple(x::Union{LArray,SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
