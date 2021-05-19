@@ -82,8 +82,8 @@ end
     y = LArray((2,2); a=1, b=2, c=3, d=4)
     @test convert(NamedTuple, x) == x_tup
     @test convert(NamedTuple, y) == y_tup
-    @test NamedTuple(x) = x_tup
-    @test NamedTuple(y) = y_tup
+    @test NamedTuple(x) == x_tup
+    @test NamedTuple(y) == y_tup
     @test collect(pairs(x)) == collect(pairs(x_tup))
     @test collect(pairs(y)) == collect(pairs(y_tup))
 
