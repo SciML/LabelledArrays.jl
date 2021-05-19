@@ -45,6 +45,8 @@ end
     y = SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
     @test @inferred(convert(NamedTuple, x)) == x_tup
     @test @inferred(convert(NamedTuple, y)) == y_tup
+    @test NamedTuple(x) == x_tup
+    @test NamedTuple(y) == y_tup
     @test @inferred(collect(pairs(x))) == collect(pairs(x_tup))
     @test @inferred(collect(pairs(y))) == collect(pairs(y_tup))
 
