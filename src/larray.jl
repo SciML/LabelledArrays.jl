@@ -261,3 +261,7 @@ function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...)
   t2 = merge(convert(NamedTuple, v1), kwargs.data)
   SLArray{S}(t2)
 end
+
+function Base.vcat(x::LArray, y::LArray)
+    LArray{(LabelledArrays.symnames(typeof(x))...,LabelledArrays.symnames(typeof(y))...)}(vcat(x.__x,y.__x))
+end
