@@ -61,6 +61,11 @@ using LabelledArrays, Test, InteractiveUtils
     @test setindex!(x, 2, :a) == LVector(a=2, b=2, c=3)
     @test setindex!(x, 2, :a) == LVector(a=2, b=2, c=3)
     @test setindex!(LArray((2,2), a=1, b=2, c=3, d=4), 1, :b)  == LArray((2,2), a=1, b=1, c=3, d=4)
+
+    x = @LArray [1,2,3] (:a,:b,:c)
+    y = @LArray [4,5,6] (:d,:e,:f)
+    @test LabelledArrays.symnames(typeof(vcat(x,y))) == (:a,:b,:c,:d,:e,:f)
+    @test vcat(x,y) == [1,2,3,4,5,6]  
 end
 
 @testset "Alternate array backends" begin
