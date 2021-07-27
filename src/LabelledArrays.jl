@@ -50,7 +50,7 @@ function Base.show(io::IO, x::Union{LArray,SLArray})
 end
 
 Base.NamedTuple(x::Union{LArray,SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
-@inline Base.reshape(a::Union{LArray,SLArray}, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
+@inline Base.reshape(a::SLArray, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
