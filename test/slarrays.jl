@@ -5,7 +5,8 @@ using Test, InteractiveUtils
     ABC = @SLVector (:a,:b,:c)
     b = ABC(1,2,3)
     @test_nowarn display(b)
-
+    @test vec(b) === b
+  
     @test b.a == 1
     @test b.b == 2
     @test b.c == 3
@@ -43,6 +44,7 @@ end
     y_tup = (a=1, b=2, c=3, d=4)
     x = SLVector(a=1, b=2)
     y = SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+    @test vec(y) === SLVector(a=1, b=2, c=3, d=4)
     @test @inferred(convert(NamedTuple, x)) == x_tup
     @test @inferred(convert(NamedTuple, y)) == y_tup
     @test NamedTuple(x) == x_tup
