@@ -5,7 +5,8 @@ using Test, InteractiveUtils
     ABC = @SLVector (:a,:b,:c)
     b = ABC(1,2,3)
     @test_nowarn display(b)
-
+    @test vec(b) === b
+  
     @test b.a == 1
     @test b.b == 2
     @test b.c == 3

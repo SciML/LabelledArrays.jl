@@ -50,6 +50,7 @@ function Base.show(io::IO, x::Union{LArray,SLArray})
 end
 
 Base.NamedTuple(x::Union{LArray,SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
+Base.vec(x::Union{LArray{<:Any,1},SLArray{<:Any,<:Any,1}}) = x
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 

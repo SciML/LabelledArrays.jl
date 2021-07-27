@@ -8,7 +8,8 @@ using LabelledArrays, Test, InteractiveUtils
     y = @LVector Float64 (:a,:b,:c)
     y .= [1,2,3.]
     @test x == y
-
+    @test vec(x) === x
+    @test vec(y) === y
     syms = (:a,:b,:c)
 
     for (i,s) in enumerate(syms)
