@@ -9,7 +9,9 @@ include("larray.jl")
 @generated function __getindex(x::Union{LArray,SLArray},::Val{s}) where s
     syms = symnames(x)
     idx = syms isa NamedTuple ? syms[s] : findfirst(y->y==s,syms)
-    if idx isa Tuple
+    if idx === nothing
+        :(error("type $(typeof(x)) has no field $(s)"))
+    elseif idx isa Tuple
         :(Base.@_propagate_inbounds_meta; view(getfield(x,:__x), $idx...))
     else
         :(Base.@_propagate_inbounds_meta; @views getfield(x,:__x)[$idx])

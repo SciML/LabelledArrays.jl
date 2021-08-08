@@ -66,7 +66,9 @@ using LabelledArrays, Test, InteractiveUtils
     x = @LArray [1,2,3] (:a,:b,:c)
     y = @LArray [4,5,6] (:d,:e,:f)
     @test LabelledArrays.symnames(typeof(vcat(x,y))) == (:a,:b,:c,:d,:e,:f)
-    @test vcat(x,y) == [1,2,3,4,5,6]  
+    @test vcat(x,y) == [1,2,3,4,5,6]
+
+    @test_throws ErrorException x.z
 end
 
 @testset "Alternate array backends" begin
