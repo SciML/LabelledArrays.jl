@@ -83,7 +83,7 @@ end
 @inline Base.propertynames(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms
 @inline symnames(::Type{SLArray{S,T,N,L,Syms}}) where {S,T,N,L,Syms} = Syms
 Base.@propagate_inbounds function Base.getproperty(x::SLArray,s::Symbol)
-  s == :__x ? getfield(x,:__x) : getindex(x, Val(s))
+  s == :__x || s == :data ? getfield(x,:__x) : getindex(x, Val(s))
 end
 Base.@propagate_inbounds function Base.getindex(x::SLArray,s::Symbol)
   return getindex(x,Val(s))
@@ -193,3 +193,11 @@ For example:
     symbols(z)  # Tuple{Symbol,Symbol,Symbol} == (:a, :b, :c)
 """
 symbols(::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
+
+function Base.:\(A::StaticArrays.LU,b::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms}
+    SLArray{S,T,N,L,Syms}((A\b.__x).data)
+end
+
+function Base.reshape(x::SLArray{S,T,N,L,Syms},ax::Tuple{SOneTo, Vararg{SOneTo}}) where {S<:Tuple,T,N,L,Syms,SOneTo<:SOneTo}
+    SLArray{S,T,N,L,Syms}(reshape(x.__x,ax))
+end

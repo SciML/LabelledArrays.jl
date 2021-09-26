@@ -4,8 +4,6 @@ LorenzVector = @SLArray (3,) (:x,:y,:z)
 LorenzParameterVector = @SLArray (3,) (:σ,:ρ,:β)
 
 function f(u,p,t)
-  u = convert(LorenzVector, u)
-  p = convert(LorenzParameterVector, p)
   x = p.σ*(u.y-u.x)
   y = u.x*(p.ρ-u.z) - u.y
   z = u.x*u.y - p.β*u.z
