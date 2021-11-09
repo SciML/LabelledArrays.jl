@@ -25,9 +25,9 @@ function LArray(size::NTuple{S,Int}, tup::NamedTuple{Syms,Tup}) where {S,Syms,Tu
     __x = reshape(collect(tup), size)
     LArray{Syms}(__x)
 end
-LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, kwargs.data)
+LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, values(kwargs))
 LVector(tup::NamedTuple) = LArray((length(tup),), tup)
-LVector(;kwargs...) = LVector(kwargs.data)
+LVector(;kwargs...) = LVector(values(kwargs))
 
 ## pairs iterator
 Base.pairs(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} =
@@ -207,7 +207,7 @@ For example:
     z2 = LVector(z; c=30)
 """
 function LVector(v1::Union{SLArray,LArray}; kwargs...)
-  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  t2 = merge(convert(NamedTuple, v1), values(kwargs))
   LVector(t2)
 end
 
@@ -224,7 +224,7 @@ For example:
     B2 = LArray(B; c=30 )
 """
 function LArray(v1::Union{SLArray,LArray}; kwargs...)
-  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  t2 = merge(convert(NamedTuple, v1), values(kwargs))
   LArray(size(v1),t2)
 end
 
@@ -242,7 +242,7 @@ For example:
     z2 = SLVector(z; c=30)
 """
 function SLVector(v1::Union{SLArray,LArray}; kwargs...)
-  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  t2 = merge(convert(NamedTuple, v1), values(kwargs))
   SLVector(t2)
 end
 
@@ -258,7 +258,7 @@ For example:
     B2 = SLArray(B; c=30 )
 """
 function SLArray(v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}}; kwargs...) where {S,T,N,L,Syms,D}
-  t2 = merge(convert(NamedTuple, v1), kwargs.data)
+  t2 = merge(convert(NamedTuple, v1), values(kwargs))
   SLArray{S}(t2)
 end
 
