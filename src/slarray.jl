@@ -41,9 +41,9 @@ function SLArray{Size}(tup::NamedTuple{Syms,Tup}) where {Size,Syms,Tup}
   __x = Tup(tup) # drop symbols
   SLArray{Size,Syms}(__x)
 end
-SLArray{Size}(;kwargs...) where {Size} = SLArray{Size}(kwargs.data)
+SLArray{Size}(;kwargs...) where {Size} = SLArray{Size}(values(kwargs))
 SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
-SLVector(;kwargs...) = SLVector(kwargs.data)
+SLVector(;kwargs...) = SLVector(values(kwargs))
 
 ## pairs iterator
 Base.pairs(x::SLArray{S,T,N,L,Syms}) where {S,T,N,L,Syms} =
