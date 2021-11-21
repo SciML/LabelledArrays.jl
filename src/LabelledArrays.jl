@@ -4,6 +4,7 @@ using LinearAlgebra, StaticArrays, ArrayInterface
 
 include("slarray.jl")
 include("larray.jl")
+include("chainrules.jl")
 
 # Common
 @generated function __getindex(x::Union{LArray,SLArray},::Val{s}) where s
