@@ -16,7 +16,7 @@ function ChainRulesCore.rrule(::Type{LArray{S}}, x::AbstractArray) where {S}
     function LArray_adjoint(Δx_)
         Δx = ChainRulesCore.unthunk(Δx_)
         # Sometimes we're pulling back gradients which are not `LArray`.
-        return if Δ isa LArray
+        return if Δx isa LArray
             ChainRulesCore.NoTangent(), Δx.__x
         else
             ChainRulesCore.NoTangent(), Δx
@@ -32,7 +32,7 @@ function ChainRulesCore.rrule(::Type{SLArray{Size,S}}, x::AbstractArray) where {
     function SLArray_adjoint(Δx_)
         Δx = ChainRulesCore.unthunk(Δx_)
         # Sometimes we're pulling back gradients which are not `LArray`.
-        return if Δ isa SLArray
+        return if Δx isa SLArray
             ChainRulesCore.NoTangent(), Δx.__x
         else
             ChainRulesCore.NoTangent(), Δx
