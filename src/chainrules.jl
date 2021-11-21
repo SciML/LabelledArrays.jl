@@ -25,7 +25,6 @@ function ChainRulesCore.rrule(::Type{LArray{S}}, x::AbstractArray) where {S}
     return LArray{S}(x), LArray_adjoint
 end
 
-# TODO: Can this ruled be combined into the above definition?
 function ChainRulesCore.rrule(::Type{SLArray{Size,S}}, x::AbstractArray) where {Size,S}
     # This rule covers constructors of the form `SLArray{(2, ), (:a, :b)}(x)`
     # which, amongst other places, is also used in the `@LArray` macro.
