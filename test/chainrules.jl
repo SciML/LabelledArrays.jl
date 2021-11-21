@@ -1,4 +1,4 @@
-@begin "Vector" begin
+@testset "Vector" begin
     x = randn(2)
     syms = (:a, :b)
 
