@@ -102,6 +102,10 @@ Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} = Base.u
 Base.convert(::Type{T},x) where {T<:LArray} = T(x)
 Base.convert(::Type{T},x::T) where {T<:LArray} = x
 Base.convert(::Type{<:Array},x::LArray) = convert(Array,getfield(x,:__x))
+function Base.convert(::Type{AbstractArray{T,N}}, x::LArray{S,N,<:Any,Syms}) where {T,S,N,Syms}
+  LArray{Syms}(convert(AbstractArray{T,N},getfield(x,:__x)))
+end
+Base.convert(::Type{AbstractArray{T,N}}, x::LArray{T,N}) where {T,N} = x
 
 ArrayInterface.restructure(x::LArray{T,N,D,Syms},y::LArray{T2,N2,D2,Syms}) where {T,N,D,T2,N2,D2,Syms} = reshape(y,size(x)...)
 

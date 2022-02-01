@@ -95,3 +95,11 @@ end
     @test (x...,y...) == (1,2,1,2)
     @test typeof(vcat(x,y)) <: SLArray
 end
+
+@testset "convert" begin
+  A = (@SLVector (:a,:b,:c))(1,2,3)
+  @test convert(AbstractVector{Int}, A) === A
+  B = convert(AbstractVector{Float64}, A)
+  @test B.b === 2.0
+end
+

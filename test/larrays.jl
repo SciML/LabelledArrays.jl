@@ -164,3 +164,10 @@ end
   @test x .* x' == fill(1, 1, 1)
   @test x .* x' isa Array
 end
+
+@testset "convert" begin
+  A = @LArray [1,2,3] (:a,:b,:c)
+  @test convert(AbstractVector{Int}, A) === A
+  B = convert(AbstractVector{Float64}, A)
+  @test B.b === 2.0
+end
