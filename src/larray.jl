@@ -270,5 +270,5 @@ function Base.vcat(x::LArray, y::LArray)
     LArray{(LabelledArrays.symnames(typeof(x))...,LabelledArrays.symnames(typeof(y))...)}(vcat(x.__x,y.__x))
 end
 
-Base.elsize(::Type{<:LArray{T}}) where {T} = T
+Base.elsize(::Type{<:LArray{T}}) where {T} = sizeof(T)
 
