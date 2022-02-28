@@ -4,6 +4,7 @@ using LabelledArrays, Test, InteractiveUtils
     vals = [1.0,2.0,3.0]
     syms = (:a,:b,:c)
     x = @LArray vals syms
+    @test Base.elsize(x) == Base.elsize(vals) == 8
     @test_nowarn display(x)
     y = @LVector Float64 (:a,:b,:c)
     y .= [1,2,3.]
