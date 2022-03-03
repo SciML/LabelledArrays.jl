@@ -168,6 +168,15 @@ end
   @test x .* x' isa Array
 end
 
+@testset "broadcasting" begin
+    n = 2
+    lu_0 = @LArray fill(1000.0, 2 * n) (x = (1:n), y = (n+1:2*n))
+    @test lu_0 ./ 1.0 isa LArray
+
+    x = @LArray fill(1000.0, 2 * n) (:x1, :x2, :y1, :y2)
+    @test x ./ 1.0 isa LArray
+end
+
 @testset "convert" begin
   A = @LArray [1,2,3] (:a,:b,:c)
   @test convert(AbstractVector{Int}, A) === A

@@ -118,9 +118,18 @@ Base.BroadcastStyle(::Type{LArray{T,N,D,L}}) where {T,N,D,L} = LAStyle{T,N,L}()
 Base.BroadcastStyle(::LabelledArrays.LAStyle{T,N,L}, ::LabelledArrays.LAStyle{E,N,L}) where{T,E,N,L} =
     LAStyle{promote_type(T,E),N,L}()
 
+@generated function labels2axes(::Val{t}) where t
+    if t isa NamedTuple && all(x->x isa Union{Integer,UnitRange}, values(t)) # range labelling
+        (Base.OneTo(maximum(Iterators.flatten(v for v in values(t)))), )
+    elseif t isa NTuple{<:Any, Symbol}
+        axes(t)
+    else
+        error("$t label isn't supported for broadcasting. Try to formulate it in terms of linear indexing.")
+    end
+end
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T,N,L}}, ::Type{ElType}) where {T,N,L,ElType}
     tmp = similar(Array{ElType},axes(bc))
-    if axes(bc) != axes(Tuple(L))
+    if axes(bc) != labels2axes(Val(L))
         return tmp
     else
         return LArray{ElType,N,typeof(tmp),L}(tmp)
