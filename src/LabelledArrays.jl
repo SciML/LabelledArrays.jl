@@ -55,10 +55,10 @@ end
 Base.NamedTuple(x::Union{LArray,SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
 @inline Base.reshape(a::SLArray, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
 
-function ArrayInterfaceCore.ismutable(::Type{<:LArray{T,N,Syms}}) where {T,N,Syms}
-    ArrayInterfaceCore.ismutable(T)
+function ArrayInterface.ismutable(::Type{<:LArray{T,N,Syms}}) where {T,N,Syms}
+    ArrayInterface.ismutable(T)
 end
-ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
+ArrayInterface.can_setindex(::Type{<:SLArray}) = false
     
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
