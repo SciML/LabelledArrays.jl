@@ -11,7 +11,7 @@ MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
-ArrayInterface = "2.8, 3.0, 4, 5"
+ArrayInterface = "2.8, 3.0, 4, 5, 6"
 ChainRulesCore = "1"
 MacroTools = "0.5"
 StaticArrays = "0.10, 0.11, 0.12, 1.0"
