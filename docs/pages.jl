@@ -2,9 +2,9 @@
 
 pages=[
     "Home" => "index.md",
-    "SLArrays.md",
-    "LArrays.md",
-    "Example_dsl.md",
-    "NamedTuples.md",
+    "SLArrays" => "SLArrays.md",
+    "LArrays" => "LArrays.md",
+    "Example: Nice DiffEq Syntax Without A DSL" => "Example_dsl.md",
+    "Relation to NamedTuples" => "NamedTuples.md",
     "Note_labelled_slices"
 ]
