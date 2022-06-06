@@ -5,6 +5,6 @@ pages=[
     "SLArrays" => "SLArrays.md",
     "LArrays" => "LArrays.md",
     "Example: Nice DiffEq Syntax Without A DSL" => "Example_dsl.md",
-    "Relation to NamedTuples" => "NamedTuples.md",
+    "Relation to NamedTuples" => "NamedTuples_relation.md",
     "Note_labelled_slices"
 ]
