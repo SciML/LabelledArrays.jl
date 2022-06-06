@@ -2,6 +2,9 @@
 
 pages=[
     "Home" => "index.md",
-    "array_types.md",
-    "recursive_array_functions.md"
+    "SLArrays.md",
+    "LArrays.md",
+    "Example_dsl.md",
+    "NamedTuples.md",
+    "Note_labelled_slices"
 ]
