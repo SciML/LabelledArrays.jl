@@ -21,11 +21,40 @@ Base.keys(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
     3. `LVector((a=1, b=2))` : can infer size for vectors
     4. `LVector(a=1, b=2)` : alternative form using kwargs
 =#
+"""
+```julia
+LArray(::Tuple, ::NamedTuple)
+LArray(::Tuple, kwargs)
+```
+The standard constructors for `LArray`.
+
+For example:
+
+```julia
+LArray((2,2), (a=1, b=2, c=3, d=4))  # need to specify size
+LArray((2,2); a=1, b=2, c=3, d=4)
+```
+"""
 function LArray(size::NTuple{S,Int}, tup::NamedTuple{Syms,Tup}) where {S,Syms,Tup}
     __x = reshape(collect(tup), size)
     LArray{Syms}(__x)
 end
 LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, values(kwargs))
+
+
+"""
+```julia
+LVector(::NamedTuple)
+LVector(kwargs)
+```
+The standard constructor for `LVector`.
+
+For example:
+```julia
+LVector((a=1, b=2))
+LVector(a=1, b=2)
+```
+"""
 LVector(tup::NamedTuple) = LArray((length(tup),), tup)
 LVector(;kwargs...) = LVector(values(kwargs))
 
@@ -142,19 +171,49 @@ end
 Base.dataids(A::LArray) = Base.dataids(A.__x)
 
 """
-    @LArray Eltype Size Names
-    @LArray Values Names
+```julia
+@LArray Eltype Size Names
+@LArray Values Names
+```
+The `@LArray` macro creates an `LArray` with names determined from the `Names`
+vector and values determined from the `Values` vector. Otherwise, the eltype
+and size are used to make an `LArray` with undefined values.
 
-Creates an `LArray` with names determined from the `Names`
-vector and values determined from the `Values` array. Otherwise, and eltype
-and size are used to make an LArray with undefined values.
+```julia
+A = @LArray [1,2,3] (:a,:b,:c)
+A.a == 1
+```
 
-For example:
+Users can also generate a labelled array with undefined values by instead giving
+the dimensions. This approach is useful if the user intends to pre-allocate an 
+array for some later input. 
 
-    a = @LArray Float64 (2,2) (:a,:b,:c,:d)
-    b = @LArray [1,2,3] (:a,:b,:c)
-    c = @LArray [1,2,3] (a=1:2, b=2:3)
-    d = @LArray [1 2; 3 4] (a=(2, :), b=2:3)
+```julia
+A = @LArray Float64 (2,2) (:a,:b,:c,:d)
+W = rand(2,2)
+A .= W
+A.d == W[2,2]
+```
+
+Users may also use an alternative constructor to set the Names and Values
+and ranges at the same time.
+
+```julia
+julia> z = @LArray [1.,2.,3.] (a = 1:2, b = 2:3);
+julia> z.b
+2-element view(::Array{Float64,1}, 2:3) with eltype Float64:
+ 2.0
+ 3.0
+
+julia> z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3);
+julia> z.a
+2-element view(::Array{Int64,2}, 2, :) with eltype Int64:
+ 3
+ 4
+```
+
+The labels of LArray and SLArray can be accessed 
+by function `symbols`, which returns a tuple of symbols.
 """
 macro LArray(vals,syms)
   vals = esc(vals)
@@ -174,14 +233,25 @@ macro LArray(type,size,syms)
 end
 
 """
-    @LVector Type Names
+```julia
+@LVector Type Names
+```
 
-Creates an `LArray` of dimension 1 with eltype and undefined values.
-Length is via the number of names given.
+The `@LVector` macro creates an `LArray` of dimension 1 with eltype and undefined values.
+The vector's length is equal to the number of names given.
 
-For example:
+As with an `LArray`, the user can initialize the vector and set its values later.
+```julia
+A = @LVector Float64 (:a,:b,:c,:d)
+A .= rand(4)
+```
 
-    b = @LVector [1,2,3] (:a,:b,:c)
+On the other hand, users can also initialize the vector and set its values at the 
+same time:
+
+```julia
+b = @LVector [1,2,3] (:a,:b,:c)
+```
 """
 macro LVector(type,syms)
   type = esc(type)
@@ -195,14 +265,17 @@ end
 #symbols(::LArray{T,N,D<:AbstractArray{T,N},Syms}) where {T,N,D,Syms} = Syms
 
 """
-    symbols(::LArray{T,N,D,Syms})
+    symbols(::LArray)
 
 Returns the labels of the `LArray` .
 
 For example:
 
-    z = @LVector Float64 (:a,:b,:c,:d)
-    symbols(z)  # NTuple{4,Symbol} == (:a, :b, :c, :d)
+```julia
+julia> z = @LVector Float64 (:a, :b, :c, :d);
+julia> symbols(z)
+(:a, :b, :c, :d)
+````
 """
 symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
 
@@ -210,7 +283,7 @@ symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms isa NamedTuple ? keys(Sy
 # copy constructors
 
 """
-LVector(v1::Union{SLArray,LArray}; kwargs...)
+    LVector(v1::Union{SLArray,LArray}; kwargs...)
 
 Creates a 1D copy of v1 with corresponding items in kwargs replaced.
 
@@ -226,7 +299,7 @@ end
 
 
 """
-LVector(v1::Union{SLArray,LArray}; kwargs...)
+    LVector(v1::Union{SLArray,LArray}; kwargs...)
 
 Creates a copy of v1 with corresponding items in kwargs replaced.
 
@@ -245,7 +318,7 @@ end
 
 # moved vom slarray.js to here because LArray need to be known
 """
-SLVector(v1::SLArray; kwargs...)
+    SLVector(v1::SLArray; kwargs...)
 
 Creates a 1D copy of v1 with corresponding items in kwargs replaced.
 
@@ -260,7 +333,7 @@ function SLVector(v1::Union{SLArray,LArray}; kwargs...)
 end
 
 """
-SLVector(v1::SLArray; kwargs...)
+    SLVector(v1::SLArray; kwargs...)
 
 Creates a copy of v1 with corresponding items in kwargs replaced.
 
