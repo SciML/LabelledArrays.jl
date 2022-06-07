@@ -1,4 +1,3 @@
-using Revise; Revise.revise()
 using Documenter, LabelledArrays
 
 include("pages.jl")
