@@ -4,7 +4,7 @@
 
     # Constructors
     test_rrule(LArray{syms}, x)
-    constructor = @SLArray (2, ) syms
+    constructor = @SLArray (2,) syms
     test_rrule(constructor, x)
 
     # `getproperty`

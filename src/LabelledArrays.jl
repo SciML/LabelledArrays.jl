@@ -7,15 +7,15 @@ include("larray.jl")
 include("chainrules.jl")
 
 # Common
-@generated function __getindex(x::Union{LArray,SLArray},::Val{s}) where s
+@generated function __getindex(x::Union{LArray,SLArray}, ::Val{s}) where {s}
     syms = symnames(x)
-    idx = syms isa NamedTuple ? syms[s] : findfirst(y->y==s,syms)
+    idx = syms isa NamedTuple ? syms[s] : findfirst(y -> y == s, syms)
     if idx === nothing
         :(error("type $(typeof(x)) has no field $(s)"))
     elseif idx isa Tuple
-        :(Base.@_propagate_inbounds_meta; view(getfield(x,:__x), $idx...))
+        :(Base.@_propagate_inbounds_meta; view(getfield(x, :__x), $idx...))
     else
-        :(Base.@_propagate_inbounds_meta; @views getfield(x,:__x)[$idx])
+        :(Base.@_propagate_inbounds_meta; @views getfield(x, :__x)[$idx])
     end
 end
 
@@ -27,16 +27,25 @@ struct PrintWrapper{T,N,F,X<:AbstractArray{T,N}} <: AbstractArray{T,N}
 end
 
 import Base: eltype, length, ndims, size, axes, eachindex, stride, strides
-MacroTools.@forward PrintWrapper.x eltype, length, ndims, size, axes, eachindex, stride, strides
+MacroTools.@forward PrintWrapper.x eltype,
+length,
+ndims,
+size,
+axes,
+eachindex,
+stride,
+strides
 Base.getindex(A::PrintWrapper, idxs...) = A.f(A.x, A.x[idxs...], idxs)
 
 function lazypair(A, x, idxs)
     syms = symnames(typeof(A))
     II = LinearIndices(A)
-    key = eltype(syms) <: Symbol ? syms[II[idxs...]] : findfirst(syms) do sym
-        ii = idxs isa Tuple ? II[idxs...] : II[idxs]
-        sym isa Tuple ? ii in II[sym...] : ii in II[sym]
-    end
+    key =
+        eltype(syms) <: Symbol ? syms[II[idxs...]] :
+        findfirst(syms) do sym
+            ii = idxs isa Tuple ? II[idxs...] : II[idxs]
+            sym isa Tuple ? ii in II[sym...] : ii in II[sym]
+        end
     key => x
 end
 
@@ -45,8 +54,10 @@ function Base.show(io::IO, x::Union{LArray,SLArray})
     syms = symnames(typeof(x))
     n = length(syms)
     pwrapper = PrintWrapper(lazypair, x)
-    if io isa IOContext && get(io, :limit, false) && displaysize(io) isa Tuple{Integer, Integer}
-        io = IOContext(io, :limit => true, :displaysize => cld.(2 .*displaysize(io), 3))
+    if io isa IOContext &&
+       get(io, :limit, false) &&
+       displaysize(io) isa Tuple{Integer,Integer}
+        io = IOContext(io, :limit => true, :displaysize => cld.(2 .* displaysize(io), 3))
     end
     println(io, summary(x), ':')
     Base.print_array(io, pwrapper)
@@ -59,7 +70,7 @@ function ArrayInterface.ismutable(::Type{<:LArray{T,N,Syms}}) where {T,N,Syms}
     ArrayInterface.ismutable(T)
 end
 ArrayInterface.can_setindex(::Type{<:SLArray}) = false
-    
+
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
 export @SLSliced, @LSliced
