@@ -83,7 +83,7 @@ end
 
     s = similar(x)
     @test size(s) == size(x)
-    @test typeof(s.__x) == Array{Int64,1}
+    @test typeof(s.__x) == Array{Int64, 1}
     @test LabelledArrays.symnames(typeof(s)) == (:a, :b, :c, :d)
 end
 
@@ -171,7 +171,7 @@ end
 
 @testset "broadcasting" begin
     n = 2
-    lu_0 = @LArray fill(1000.0, 2 * n) (x = (1:n), y = (n+1:2*n))
+    lu_0 = @LArray fill(1000.0, 2 * n) (x = (1:n), y = ((n + 1):(2 * n)))
     @test lu_0 ./ 1.0 isa LArray
 
     x = @LArray fill(1000.0, 2 * n) (:x1, :x2, :y1, :y2)

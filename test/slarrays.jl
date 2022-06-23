@@ -16,7 +16,7 @@ using Test, InteractiveUtils
 
     @test_throws ErrorException b.d
     @test_throws UndefVarError fill!(a, 1)
-    @test typeof(b.__x) == SVector{3,Int}
+    @test typeof(b.__x) == SVector{3, Int}
 
     # Type stability tests
     ABC_fl = @SLVector Float64 (:a, :b, :c)
@@ -25,14 +25,15 @@ using Test, InteractiveUtils
     @test @inferred(similar_type(b, Float64)) === ABC_fl
     @test @inferred(similar_type(b, Float64, Size(1, 3))) ===
           @SLArray Float64 (1, 3) (:a, :b, :c)
-    @test @inferred(similar_type(b, Float64, Size(3, 3))) === SArray{Tuple{3,3},Float64,2,9}
+    @test @inferred(similar_type(b, Float64, Size(3, 3))) ===
+          SArray{Tuple{3, 3}, Float64, 2, 9}
 
-    @test typeof(@inferred(similar(b))) === LArray{Int,1,Array{Int64,1},(:a, :b, :c)}
+    @test typeof(@inferred(similar(b))) === LArray{Int, 1, Array{Int64, 1}, (:a, :b, :c)}
     @test typeof(@inferred(similar(b, Float64))) ===
-          LArray{Float64,1,Array{Float64,1},(:a, :b, :c)}
+          LArray{Float64, 1, Array{Float64, 1}, (:a, :b, :c)}
     @test typeof(@inferred(similar(b, Size(1, 3)))) ===
-          LArray{Int,2,Array{Int64,2},(:a, :b, :c)}
-    @test typeof(@inferred(similar(b, Size(3, 3)))) === MArray{Tuple{3,3},Int,2,9}
+          LArray{Int, 2, Array{Int64, 2}, (:a, :b, :c)}
+    @test typeof(@inferred(similar(b, Size(3, 3)))) === MArray{Tuple{3, 3}, Int, 2, 9}
 
     @test @inferred(copy(b)) === ABC_int(Tuple(b))
 
@@ -47,7 +48,7 @@ end
     x_tup = (a = 1, b = 2)
     y_tup = (a = 1, b = 2, c = 3, d = 4)
     x = SLVector(a = 1, b = 2)
-    y = SLArray{Tuple{2,2}}(a = 1, b = 2, c = 3, d = 4)
+    y = SLArray{Tuple{2, 2}}(a = 1, b = 2, c = 3, d = 4)
     @test vec(y) === SLVector(a = 1, b = 2, c = 3, d = 4)
     @test @inferred(convert(NamedTuple, x)) == x_tup
     @test @inferred(convert(NamedTuple, y)) == y_tup
@@ -56,7 +57,7 @@ end
     @test @inferred(collect(pairs(x))) == collect(pairs(x_tup))
     @test @inferred(collect(pairs(y))) == collect(pairs(y_tup))
 
-    @inferred(SLArray{Tuple{2,2}}(a = 1, b = 2, c = 3, d = 4))
+    @inferred(SLArray{Tuple{2, 2}}(a = 1, b = 2, c = 3, d = 4))
     @inferred(convert(NamedTuple, y))
     @inferred(collect(pairs(y)))
 end
@@ -105,4 +106,3 @@ end
     B = convert(AbstractVector{Float64}, A)
     @test B.b === 2.0
 end
-

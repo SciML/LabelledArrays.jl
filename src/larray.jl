@@ -1,18 +1,18 @@
-struct LArray{T,N,D<:AbstractArray{T,N},Syms} <: DenseArray{T,N}
+struct LArray{T, N, D <: AbstractArray{T, N}, Syms} <: DenseArray{T, N}
     __x::D
-    LArray{Syms}(__x) where {Syms} = new{eltype(__x),ndims(__x),typeof(__x),Syms}(__x)
-    LArray{T,N,D,Syms}(__x) where {T,N,D,Syms} = new{T,N,D,Syms}(__x)
+    LArray{Syms}(__x) where {Syms} = new{eltype(__x), ndims(__x), typeof(__x), Syms}(__x)
+    LArray{T, N, D, Syms}(__x) where {T, N, D, Syms} = new{T, N, D, Syms}(__x)
 end
 
 #####################################
 # NamedTuple compatibility
 #####################################
 ## LArray to named tuple
-function Base.convert(::Type{NamedTuple}, x::LArray{T,N,D,Syms}) where {T,N,D,Syms}
-    tup = NTuple{length(Syms),T}(x)
-    NamedTuple{Syms,typeof(tup)}(tup)
+function Base.convert(::Type{NamedTuple}, x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+    tup = NTuple{length(Syms), T}(x)
+    NamedTuple{Syms, typeof(tup)}(tup)
 end
-Base.keys(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
+Base.keys(x::LArray{T, N, D, Syms}) where {T, N, D, Syms} = Syms
 
 ## Named tuple to LArray
 #=
@@ -35,12 +35,11 @@ LArray((2,2), (a=1, b=2, c=3, d=4))  # need to specify size
 LArray((2,2); a=1, b=2, c=3, d=4)
 ```
 """
-function LArray(size::NTuple{S,Int}, tup::NamedTuple{Syms,Tup}) where {S,Syms,Tup}
+function LArray(size::NTuple{S, Int}, tup::NamedTuple{Syms, Tup}) where {S, Syms, Tup}
     __x = reshape(collect(tup), size)
     LArray{Syms}(__x)
 end
-LArray(size::NTuple{S,Int}; kwargs...) where {S} = LArray(size, values(kwargs))
-
+LArray(size::NTuple{S, Int}; kwargs...) where {S} = LArray(size, values(kwargs))
 
 """
 ```julia
@@ -59,9 +58,10 @@ LVector(tup::NamedTuple) = LArray((length(tup),), tup)
 LVector(; kwargs...) = LVector(values(kwargs))
 
 ## pairs iterator
-Base.pairs(x::LArray{T,N,D,Syms}) where {T,N,D,Syms} =
-# (label => getproperty(x, label) for label in Syms) # not type stable?
-    (Syms[i] => x[i] for i = 1:length(Syms))
+function Base.pairs(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+    # (label => getproperty(x, label) for label in Syms) # not type stable?
+    (Syms[i] => x[i] for i in 1:length(Syms))
+end
 
 #####################################
 # Array Interface
@@ -73,8 +73,8 @@ Base.@propagate_inbounds function Base.setindex!(x::LArray, y, i...)
     return x
 end
 
-Base.propertynames(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms
-symnames(::Type{LArray{T,N,D,Syms}}) where {T,N,D,Syms} = Syms
+Base.propertynames(::LArray{T, N, D, Syms}) where {T, N, D, Syms} = Syms
+symnames(::Type{LArray{T, N, D, Syms}}) where {T, N, D, Syms} = Syms
 
 Base.@propagate_inbounds function Base.getproperty(x::LArray, s::Symbol)
     if s == :__x
@@ -113,16 +113,15 @@ Base.@propagate_inbounds Base.setindex!(x::LArray, v, s::Symbol) = setindex!(x, 
     end
 end
 
-Base.@propagate_inbounds Base.getindex(x::LArray, s::AbstractArray{Symbol,1}) =
+Base.@propagate_inbounds function Base.getindex(x::LArray, s::AbstractArray{Symbol, 1})
     [getindex(x, si) for si in s]
+end
 
-function Base.similar(
-    x::LArray{T,K,D,Syms},
-    ::Type{S},
-    dims::NTuple{N,Int},
-) where {T,K,D,Syms,S,N}
+function Base.similar(x::LArray{T, K, D, Syms},
+                      ::Type{S},
+                      dims::NTuple{N, Int}) where {T, K, D, Syms, S, N}
     tmp = similar(x.__x, S, dims)
-    LArray{S,N,typeof(tmp),Syms}(tmp)
+    LArray{S, N, typeof(tmp), Syms}(tmp)
 end
 
 # Allow copying LArray of uninitialized data, as with regular Array
@@ -131,56 +130,52 @@ Base.deepcopy(x::LArray) = typeof(x)(deepcopy(getfield(x, :__x)))
 Base.copyto!(x::LArray, y::LArray) = copyto!(getfield(x, :__x), getfield(y, :__x))
 
 # enable the usage of LAPACK
-Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T,N,D,S}) where {T,N,D,S} =
+function Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T, N, D, S}) where {T, N, D, S}
     Base.unsafe_convert(Ptr{T}, getfield(a, :__x))
-
-Base.convert(::Type{T}, x) where {T<:LArray} = T(x)
-Base.convert(::Type{T}, x::T) where {T<:LArray} = x
-Base.convert(::Type{<:Array}, x::LArray) = convert(Array, getfield(x, :__x))
-function Base.convert(
-    ::Type{AbstractArray{T,N}},
-    x::LArray{S,N,<:Any,Syms},
-) where {T,S,N,Syms}
-    LArray{Syms}(convert(AbstractArray{T,N}, getfield(x, :__x)))
 end
-Base.convert(::Type{AbstractArray{T,N}}, x::LArray{T,N}) where {T,N} = x
 
-ArrayInterface.restructure(
-    x::LArray{T,N,D,Syms},
-    y::LArray{T2,N2,D2,Syms},
-) where {T,N,D,T2,N2,D2,Syms} = reshape(y, size(x)...)
+Base.convert(::Type{T}, x) where {T <: LArray} = T(x)
+Base.convert(::Type{T}, x::T) where {T <: LArray} = x
+Base.convert(::Type{<:Array}, x::LArray) = convert(Array, getfield(x, :__x))
+function Base.convert(::Type{AbstractArray{T, N}},
+                      x::LArray{S, N, <:Any, Syms}) where {T, S, N, Syms}
+    LArray{Syms}(convert(AbstractArray{T, N}, getfield(x, :__x)))
+end
+Base.convert(::Type{AbstractArray{T, N}}, x::LArray{T, N}) where {T, N} = x
+
+function ArrayInterface.restructure(x::LArray{T, N, D, Syms},
+                                    y::LArray{T2, N2, D2, Syms}) where {T, N, D, T2, N2, D2,
+                                                                        Syms}
+    reshape(y, size(x)...)
+end
 
 #####################################
 # Broadcast
 #####################################
-struct LAStyle{T,N,L} <: Broadcast.AbstractArrayStyle{N} end
-LAStyle{T,N,L}(x::Val{i}) where {T,N,L,i} = LAStyle{T,N,L}()
-Base.BroadcastStyle(::Type{LArray{T,N,D,L}}) where {T,N,D,L} = LAStyle{T,N,L}()
-Base.BroadcastStyle(
-    ::LabelledArrays.LAStyle{T,N,L},
-    ::LabelledArrays.LAStyle{E,N,L},
-) where {T,E,N,L} = LAStyle{promote_type(T, E),N,L}()
+struct LAStyle{T, N, L} <: Broadcast.AbstractArrayStyle{N} end
+LAStyle{T, N, L}(x::Val{i}) where {T, N, L, i} = LAStyle{T, N, L}()
+Base.BroadcastStyle(::Type{LArray{T, N, D, L}}) where {T, N, D, L} = LAStyle{T, N, L}()
+function Base.BroadcastStyle(::LabelledArrays.LAStyle{T, N, L},
+                             ::LabelledArrays.LAStyle{E, N, L}) where {T, E, N, L}
+    LAStyle{promote_type(T, E), N, L}()
+end
 
 @generated function labels2axes(::Val{t}) where {t}
-    if t isa NamedTuple && all(x -> x isa Union{Integer,UnitRange}, values(t)) # range labelling
+    if t isa NamedTuple && all(x -> x isa Union{Integer, UnitRange}, values(t)) # range labelling
         (Base.OneTo(maximum(Iterators.flatten(v for v in values(t)))),)
-    elseif t isa NTuple{<:Any,Symbol}
+    elseif t isa NTuple{<:Any, Symbol}
         axes(t)
     else
-        error(
-            "$t label isn't supported for broadcasting. Try to formulate it in terms of linear indexing.",
-        )
+        error("$t label isn't supported for broadcasting. Try to formulate it in terms of linear indexing.")
     end
 end
-function Base.similar(
-    bc::Broadcast.Broadcasted{LAStyle{T,N,L}},
-    ::Type{ElType},
-) where {T,N,L,ElType}
+function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T, N, L}},
+                      ::Type{ElType}) where {T, N, L, ElType}
     tmp = similar(Array{ElType}, axes(bc))
     if axes(bc) != labels2axes(Val(L))
         return tmp
     else
-        return LArray{ElType,N,typeof(tmp),L}(tmp)
+        return LArray{ElType, N, typeof(tmp), L}(tmp)
     end
 end
 
@@ -296,8 +291,9 @@ julia> symbols(z)
 (:a, :b, :c, :d)
 ````
 """
-symbols(::LArray{T,N,D,Syms}) where {T,N,D,Syms} = Syms isa NamedTuple ? keys(Syms) : Syms
-
+function symbols(::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+    Syms isa NamedTuple ? keys(Syms) : Syms
+end
 
 # copy constructors
 
@@ -311,11 +307,10 @@ For example:
     z = LVector(a=1, b=2, c=3);
     z2 = LVector(z; c=30)
 """
-function LVector(v1::Union{SLArray,LArray}; kwargs...)
+function LVector(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     LVector(t2)
 end
-
 
 """
     LVector(v1::Union{SLArray,LArray}; kwargs...)
@@ -328,12 +323,10 @@ For example:
     B = ABCD(1,2,3,4);
     B2 = LArray(B; c=30 )
 """
-function LArray(v1::Union{SLArray,LArray}; kwargs...)
+function LArray(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     LArray(size(v1), t2)
 end
-
-
 
 # moved vom slarray.js to here because LArray need to be known
 """
@@ -346,7 +339,7 @@ For example:
     z = SLVector(a=1, b=2, c=3);
     z2 = SLVector(z; c=30)
 """
-function SLVector(v1::Union{SLArray,LArray}; kwargs...)
+function SLVector(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     SLVector(t2)
 end
@@ -362,19 +355,15 @@ For example:
     B = ABCD(1,2,3,4);
     B2 = SLArray(B; c=30 )
 """
-function SLArray(
-    v1::Union{SLArray{S,T,N,L,Syms},LArray{T,N,D,Syms}};
-    kwargs...,
-) where {S,T,N,L,Syms,D}
+function SLArray(v1::Union{SLArray{S, T, N, L, Syms}, LArray{T, N, D, Syms}};
+                 kwargs...) where {S, T, N, L, Syms, D}
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     SLArray{S}(t2)
 end
 
 function Base.vcat(x::LArray, y::LArray)
-    LArray{(LabelledArrays.symnames(typeof(x))..., LabelledArrays.symnames(typeof(y))...)}(
-        vcat(x.__x, y.__x),
-    )
+    LArray{(LabelledArrays.symnames(typeof(x))..., LabelledArrays.symnames(typeof(y))...)}(vcat(x.__x,
+                                                                                                y.__x))
 end
 
 Base.elsize(::Type{<:LArray{T}}) where {T} = sizeof(T)
-
