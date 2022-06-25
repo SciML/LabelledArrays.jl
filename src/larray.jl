@@ -367,5 +367,11 @@ end
 
 Base.elsize(::Type{<:LArray{T}}) where {T} = sizeof(T)
 
-RecursiveArrayTools.recursive_unitless_eltype(a::Type{LArray{T, N, D, Syms}}) where {T, N, D, Syms} = 
-                        LArray{typeof(one(T)), N, D, Syms}
+function RecursiveArrayTools.recursive_unitless_eltype(a::Type{LArray{T, N, D, Syms}}) where {
+                                                                                              T,
+                                                                                              N,
+                                                                                              D,
+                                                                                              Syms
+                                                                                              }
+    LArray{typeof(one(T)), N, D, Syms}
+end

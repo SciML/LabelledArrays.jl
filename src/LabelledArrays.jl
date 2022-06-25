@@ -65,8 +65,8 @@ end
 ArrayInterface.can_setindex(::Type{<:SLArray}) = false
 
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
-                 u::LArray{T, N, D, Syms}) where {T, N, D, Syms}
-                 nelem = div(sizeof(T), sizeof(eltype(dc.dual_du))) * length(dc.du)
+                                    u::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+    nelem = div(sizeof(T), sizeof(eltype(dc.dual_du))) * length(dc.du)
     if nelem > length(dc.dual_du)
         PreallocationTools.enlargedualcache!(dc, nelem)
     end
