@@ -1,6 +1,6 @@
 module LabelledArrays
 
-using LinearAlgebra, StaticArrays, ArrayInterfaceCore
+using LinearAlgebra, StaticArraysCore, ArrayInterfaceCore
 import RecursiveArrayTools, PreallocationTools
 
 include("slarray.jl")
