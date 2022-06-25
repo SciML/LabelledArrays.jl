@@ -39,6 +39,9 @@ function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, T2,
                                    ::Size{S}) where {S, T, N, L, Syms}
     SLArray{S, T2, N, L, Syms}
 end
+function RecursiveArrayTools.recursive_unitless_eltype(a::Type{T}) where {T <: SLArray}
+    StaticArrays.similar_type(a, recursive_unitless_eltype(eltype(a)))
+end
 
 ## Named tuple to SLArray
 #=
