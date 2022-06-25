@@ -1,7 +1,7 @@
 module LabelledArrays
 
 using LinearAlgebra, StaticArrays, ArrayInterface
-import RecursiveArrayTools
+import RecursiveArrayTools, PreallocationTools
 
 include("slarray.jl")
 include("larray.jl")
