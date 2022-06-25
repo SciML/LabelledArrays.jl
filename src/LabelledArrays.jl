@@ -63,6 +63,16 @@ function ArrayInterface.ismutable(::Type{<:LArray{T, N, Syms}}) where {T, N, Sym
 end
 ArrayInterface.can_setindex(::Type{<:SLArray}) = false
 
+function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
+                 u::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+                 nelem = div(sizeof(T), sizeof(eltype(dc.dual_du))) * length(dc.du)
+    if nelem > length(dc.dual_du)
+        PreallocationTools.enlargedualcache!(dc, nelem)
+    end
+    _x = ArrayInterfaceCore.restructure(dc.du, reinterpret(T, view(dc.dual_du, 1:nelem)))
+    LabelledArrays.LArray{T, N, D, Syms}(_x)
+end
+
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
 export @SLSliced, @LSliced
