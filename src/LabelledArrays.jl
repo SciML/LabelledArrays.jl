@@ -1,6 +1,6 @@
 module LabelledArrays
 
-using LinearAlgebra, StaticArrays, ArrayInterface
+using LinearAlgebra, StaticArrays, ArrayInterfaceCore
 import RecursiveArrayTools, PreallocationTools
 
 include("slarray.jl")
@@ -59,10 +59,10 @@ end
 Base.NamedTuple(x::Union{LArray, SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
 @inline Base.reshape(a::SLArray, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
 
-function ArrayInterface.ismutable(::Type{<:LArray{T, N, Syms}}) where {T, N, Syms}
-    ArrayInterface.ismutable(T)
+function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, Syms}}) where {T, N, Syms}
+    ArrayInterfaceCore.ismutable(T)
 end
-ArrayInterface.can_setindex(::Type{<:SLArray}) = false
+ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
 
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
                                     u::LArray{T, N, D, Syms}) where {T, N, D, Syms}
