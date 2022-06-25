@@ -1,25 +1,25 @@
-struct SLArray{S, T, N, L, Syms} <: StaticArray{S, T, N}
-    __x::SArray{S, T, N, L}
+struct SLArray{S, T, N, L, Syms} <: StaticArraysCore.StaticArray{S, T, N}
+    __x::StaticArraysCore.SArray{S, T, N, L}
     #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,N,Syms,T} = new{S,N,Syms,T}(__x)
-    function SLArray{S, T, N, Syms}(__x::SArray) where {S, T, N, Syms}
+    function SLArray{S, T, N, Syms}(__x::StaticArraysCore.SArray) where {S, T, N, Syms}
         new{S, T, N, length(__x), Syms}(convert.(T, __x))
     end
-    function SLArray{S, Syms}(__x::SArray{S, T, N, L}) where {S, T, N, L, Syms}
+    function SLArray{S, Syms}(__x::StaticArraysCore.SArray{S, T, N, L}) where {S, T, N, L, Syms}
         new{S, T, N, L, Syms}(__x)
     end
-    function SLArray{S, T, Syms}(__x::SArray{S, T, N, L}) where {S, T, N, L, Syms}
+    function SLArray{S, T, Syms}(__x::StaticArraysCore.SArray{S, T, N, L}) where {S, T, N, L, Syms}
         new{S, T, N, L, Syms}(__x)
     end
     function SLArray{S, Syms}(x::Tuple) where {S, Syms}
-        __x = SArray{S}(x)
+        __x = StaticArraysCore.SArray{S}(x)
         SLArray{S, Syms}(__x)
     end
     function SLArray{S, T, Syms}(x::Tuple) where {S, T, Syms}
-        __x = SArray{S, T}(x)
+        __x = StaticArraysCore.SArray{S, T}(x)
         SLArray{S, T, Syms}(__x)
     end
     function SLArray{S, T, N, L, Syms}(x::Tuple) where {S, T, N, L, Syms}
-        __x = SArray{S, T, N, L}(x)
+        __x = StaticArraysCore.SArray{S, T, N, L}(x)
         new{S, T, N, L, Syms}(__x)
     end
 end
@@ -35,7 +35,7 @@ function Base.convert(::Type{NamedTuple},
 end
 Base.keys(x::SLArray{S, T, N, L, Syms}) where {S, T, N, L, Syms} = Syms
 
-function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, T2,
+function StaticArraysCore.similar_type(::Type{SLArray{S, T, N, L, Syms}}, T2,
                                    ::Size{S}) where {S, T, N, L, Syms}
     SLArray{S, T2, N, L, Syms}
 end
@@ -159,7 +159,7 @@ function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, ::Type{New
     if n == L
         SLArray{Tuple{NewSize...}, NewElType, length(NewSize), L, Syms}
     else
-        SArray{Tuple{NewSize...}, NewElType, length(NewSize), n}
+        StaticArraysCore.SArray{Tuple{NewSize...}, NewElType, length(NewSize), n}
     end
 end
 
@@ -235,7 +235,7 @@ julia> y = EFG(1.0,2.5,3.0,5.0)
  2.5  5.0
 
 julia> y.g
-3-element view(reshape(::StaticArrays.SArray{Tuple{2,2},Float64,2,4}, 4), 2:4) with eltype Float64:
+3-element view(reshape(::StaticArrays.StaticArraysCore.SArray{Tuple{2,2},Float64,2,4}, 4), 2:4) with eltype Float64:
  2.5
  3.0
  5.0
@@ -243,7 +243,7 @@ julia> y.g
 julia> Arr = @SLArray (2, 2) (a = (2, :), b = 3);
 julia> z = Arr(1, 2, 3, 4);
 julia> z.a
-2-element view(::StaticArrays.SArray{Tuple{2,2},Int64,2,4}, 2, :) with eltype Int64:
+2-element view(::StaticArrays.StaticArraysCore.SArray{Tuple{2,2},Int64,2,4}, 2, :) with eltype Int64:
  2
  4
 ```
