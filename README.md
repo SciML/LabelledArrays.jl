@@ -1,8 +1,14 @@
 # LabelledArrays.jl
 
+[![Join the chat at https://julialang.zulipchat.com #sciml-bridged](https://img.shields.io/static/v1?label=Zulip&message=chat&color=9558b2&labelColor=389826)](https://julialang.zulipchat.com/#narrow/stream/279055-sciml-bridged)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](http://labelledarrays.sciml.ai/stable/)
+[![Global Docs](https://img.shields.io/badge/docs-SciML-blue.svg)](https://docs.sciml.ai/dev/modules/LabelledArrays/)
+
+[![codecov](https://codecov.io/gh/SciML/LabelledArrays.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/SciML/LabelledArrays.jl)
 [![Build Status](https://github.com/SciML/LabelledArrays.jl/workflows/CI/badge.svg)](https://github.com/SciML/LabelledArrays.jl/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/SciML/LabelledArrays.jl/badge.svg?branch=master&service=github)](https://coveralls.io/github/SciML/LabelledArrays.jl?branch=master)
-[![codecov.io](http://codecov.io/github/SciML/LabelledArrays.jl/coverage.svg?branch=master)](http://codecov.io/github/SciML/LabelledArrays.jl?branch=master)
+
+[![ColPrac: Contributor's Guide on Collaborative Practices for Community Packages](https://img.shields.io/badge/ColPrac-Contributor's%20Guide-blueviolet)](https://github.com/SciML/ColPrac)
+[![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle)
 
 LabelledArrays.jl is a package which provides arrays with labels, i.e. they are
 arrays which `map`, `broadcast`, and all of that good stuff, but their components
