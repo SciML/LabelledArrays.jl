@@ -59,13 +59,13 @@ end
 Base.NamedTuple(x::Union{LArray, SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
 @inline Base.reshape(a::SLArray, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
 
-function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, Syms}}) where {T, N, Syms}
+function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, D, Syms}}) where {T, N, D, Syms}
     ArrayInterfaceCore.ismutable(T)
 end
 ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
 
-function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, Syms}) where {T, N, Syms}
-    similar(x.__x,length(Syms),length(Syms))
+function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+    similar(x.__x, length(Syms), length(Syms))
 end
 
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
