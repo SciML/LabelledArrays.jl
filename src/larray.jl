@@ -4,6 +4,11 @@ struct LArray{T, N, D <: AbstractArray{T, N}, Syms} <: DenseArray{T, N}
     LArray{T, N, D, Syms}(__x) where {T, N, D, Syms} = new{T, N, D, Syms}(__x)
 end
 
+function LArray{T, N, D, Syms}(::UndefInitializer, n::Int64) where {T, N, D, Syms}
+    @assert length(Syms) == n
+    LArray{T, N, D, Syms}(similar(D, n))
+end
+
 #####################################
 # NamedTuple compatibility
 #####################################
@@ -199,8 +204,8 @@ A.a == 1
 ```
 
 Users can also generate a labelled array with undefined values by instead giving
-the dimensions. This approach is useful if the user intends to pre-allocate an 
-array for some later input. 
+the dimensions. This approach is useful if the user intends to pre-allocate an
+array for some later input.
 
 ```julia
 A = @LArray Float64 (2,2) (:a,:b,:c,:d)
@@ -226,7 +231,7 @@ julia> z.a
  4
 ```
 
-The labels of LArray and SLArray can be accessed 
+The labels of LArray and SLArray can be accessed
 by function `symbols`, which returns a tuple of symbols.
 """
 macro LArray(vals, syms)
@@ -260,7 +265,7 @@ A = @LVector Float64 (:a,:b,:c,:d)
 A .= rand(4)
 ```
 
-On the other hand, users can also initialize the vector and set its values at the 
+On the other hand, users can also initialize the vector and set its values at the
 same time:
 
 ```julia

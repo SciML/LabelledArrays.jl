@@ -14,6 +14,7 @@ using LabelledArrays, Test, InteractiveUtils
     mat = rand(4, 3)
     @test mat * vals ≈ mat * [1.0, 2.0, 3.0]
     syms = (:a, :b, :c)
+    @test typeof(typeof(x)(undef,3)) == typeof(x)
 
     for (i, s) in enumerate(syms)
         @show i, s
