@@ -64,6 +64,10 @@ function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, Syms}}) where {T, N,
 end
 ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
 
+function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, Syms}) where {T, N, Syms}
+    similar(x.__x,length(Syms),length(Syms))
+end
+
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
                                     u::LArray{T, N, D, Syms}) where {T <: ForwardDiff.Dual,
                                                                      N, D, Syms}
