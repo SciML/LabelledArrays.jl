@@ -5,7 +5,7 @@ struct LArray{T, N, D <: AbstractArray{T, N}, Syms} <: DenseArray{T, N}
 end
 
 function LArray{T, N, D, Syms}(::UndefInitializer, n::Int64) where {T, N, D, Syms}
-    @assert sum(length, Syms) == n
+    @assert sum(lenfun, Syms) == n
     LArray{T, N, D, Syms}(similar(D, n))
 end
 

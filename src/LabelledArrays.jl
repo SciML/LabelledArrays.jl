@@ -64,8 +64,10 @@ function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, D, Syms}}) where {T,
 end
 ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
 
+lenfun(x) = length(x)
+lenfun(::Symbol) = 1
 function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
-    n = sum(length, Syms)
+    n = sum(lenfun, Syms)
     similar(x.__x, n, n)
 end
 

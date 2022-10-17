@@ -16,9 +16,9 @@ using LabelledArrays, Test, InteractiveUtils
     syms = (:a, :b, :c)
     @test typeof(typeof(x)(undef, 3)) == typeof(x)
 
-    x = LabelledArrays.LArray{Float64, 1, Vector{Float64}, (x = 1:4, y = 5:8)}(undef, 8)
-    @test length(x) == 8
-    @test size(LabelledArrays.ArrayInterfaceCore.undefmatrix(x)) == (8, 8)
+    z = LabelledArrays.LArray{Float64, 1, Vector{Float64}, (x = 1:4, y = 5:8)}(undef, 8)
+    @test length(z) == 8
+    @test size(LabelledArrays.ArrayInterfaceCore.undefmatrix(z)) == (8, 8)
 
     for (i, s) in enumerate(syms)
         @show i, s
