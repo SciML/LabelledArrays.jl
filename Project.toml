@@ -1,7 +1,7 @@
 name = "LabelledArrays"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "1.12.1"
+version = "1.12.2"
 
 [deps]
 ArrayInterfaceCore = "30b0a656-2188-435a-8636-2ec0e6a096e2"

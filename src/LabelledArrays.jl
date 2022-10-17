@@ -65,7 +65,8 @@ end
 ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
 
 function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
-    similar(x.__x, length(Syms), length(Syms))
+    n = sum(length, Syms)
+    similar(x.__x, n, n)
 end
 
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
