@@ -15,7 +15,7 @@ p = LorenzParameterVector(10.0, 28.0, 8 / 3)
 tspan = (0.0, 10.0)
 prob = ODEProblem(f, u0, tspan, p)
 sol = solve(prob, Rosenbrock23())
-@test sol.retcode === :Success
+@test sol.retcode == :Success
 sol = solve(prob, Tsit5())
 @test prob.u0 === sol.u[1] === u0
 @test prob.p === p
