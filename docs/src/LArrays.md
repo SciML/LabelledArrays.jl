@@ -7,7 +7,7 @@ the given values:
 
 Users interested in using labelled elements in their arrays should also 
 consider `ComponentArrays` from the 
-[ComponentArrays.jl](https://github.com/jonniedie/ComponentArrays.jl)
+[ComponentArrays.jl](https://docs.sciml.ai/ComponentArrays/stable/)
 library. `ComponentArrays` are well integrated into the SciML ecosystem. 
 
 ## `@LArray` and `@LVector` macros
