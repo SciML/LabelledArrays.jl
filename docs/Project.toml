@@ -4,3 +4,4 @@ LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
 
 [compat]
 Documenter = "0.27"
+LabelledArrays = "1.12"
