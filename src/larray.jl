@@ -130,7 +130,6 @@ end
 
 # Allow copying LArray of uninitialized data, as with regular Array
 Base.copy(x::LArray) = typeof(x)(copy(getfield(x, :__x)))
-Base.deepcopy(x::LArray) = typeof(x)(deepcopy(getfield(x, :__x)))
 Base.copyto!(x::LArray, y::LArray) = copyto!(getfield(x, :__x), getfield(y, :__x))
 
 # enable the usage of LAPACK
