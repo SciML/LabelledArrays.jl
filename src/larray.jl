@@ -31,13 +31,14 @@ Base.keys(x::LArray{T, N, D, Syms}) where {T, N, D, Syms} = Syms
 LArray(::Tuple, ::NamedTuple)
 LArray(::Tuple, kwargs)
 ```
+
 The standard constructors for `LArray`.
 
 For example:
 
 ```julia
-LArray((2,2), (a=1, b=2, c=3, d=4))  # need to specify size
-LArray((2,2); a=1, b=2, c=3, d=4)
+LArray((2, 2), (a = 1, b = 2, c = 3, d = 4))  # need to specify size
+LArray((2, 2); a = 1, b = 2, c = 3, d = 4)
 ```
 """
 function LArray(size::NTuple{S, Int}, tup::NamedTuple{Syms, Tup}) where {S, Syms, Tup}
@@ -51,12 +52,14 @@ LArray(size::NTuple{S, Int}; kwargs...) where {S} = LArray(size, values(kwargs))
 LVector(::NamedTuple)
 LVector(kwargs)
 ```
+
 The standard constructor for `LVector`.
 
 For example:
+
 ```julia
-LVector((a=1, b=2))
-LVector(a=1, b=2)
+LVector((a = 1, b = 2))
+LVector(a = 1, b = 2)
 ```
 """
 LVector(tup::NamedTuple) = LArray((length(tup),), tup)
@@ -193,12 +196,13 @@ Base.dataids(A::LArray) = Base.dataids(A.__x)
 @LArray Eltype Size Names
 @LArray Values Names
 ```
+
 The `@LArray` macro creates an `LArray` with names determined from the `Names`
 vector and values determined from the `Values` vector. Otherwise, the eltype
 and size are used to make an `LArray` with undefined values.
 
 ```julia
-A = @LArray [1,2,3] (:a,:b,:c)
+A = @LArray [1, 2, 3] (:a, :b, :c)
 A.a == 1
 ```
 
@@ -207,23 +211,25 @@ the dimensions. This approach is useful if the user intends to pre-allocate an
 array for some later input.
 
 ```julia
-A = @LArray Float64 (2,2) (:a,:b,:c,:d)
-W = rand(2,2)
+A = @LArray Float64 (2, 2) (:a, :b, :c, :d)
+W = rand(2, 2)
 A .= W
-A.d == W[2,2]
+A.d == W[2, 2]
 ```
 
 Users may also use an alternative constructor to set the Names and Values
 and ranges at the same time.
 
 ```julia
-julia> z = @LArray [1.,2.,3.] (a = 1:2, b = 2:3);
+julia> z = @LArray [1.0, 2.0, 3.0] (a = 1:2, b = 2:3);
+
 julia> z.b
 2-element view(::Array{Float64,1}, 2:3) with eltype Float64:
  2.0
  3.0
 
 julia> z = @LArray [1 2; 3 4] (a = (2, :), b = 2:3);
+
 julia> z.a
 2-element view(::Array{Int64,2}, 2, :) with eltype Int64:
  3
@@ -259,8 +265,9 @@ The `@LVector` macro creates an `LArray` of dimension 1 with eltype and undefine
 The vector's length is equal to the number of names given.
 
 As with an `LArray`, the user can initialize the vector and set its values later.
+
 ```julia
-A = @LVector Float64 (:a,:b,:c,:d)
+A = @LVector Float64 (:a, :b, :c, :d)
 A .= rand(4)
 ```
 
@@ -268,7 +275,7 @@ On the other hand, users can also initialize the vector and set its values at th
 same time:
 
 ```julia
-b = @LVector [1,2,3] (:a,:b,:c)
+b = @LVector [1, 2, 3] (:a, :b, :c)
 ```
 """
 macro LVector(type, syms)
@@ -285,15 +292,16 @@ end
 """
     symbols(::LArray)
 
-Returns the labels of the `LArray` .
+Returns the labels of the `LArray`.
 
 For example:
 
 ```julia
 julia> z = @LVector Float64 (:a, :b, :c, :d);
+
 julia> symbols(z)
 (:a, :b, :c, :d)
-````
+```
 """
 function symbols(::LArray{T, N, D, Syms}) where {T, N, D, Syms}
     Syms isa NamedTuple ? keys(Syms) : Syms
