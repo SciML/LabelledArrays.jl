@@ -62,12 +62,12 @@ labelled arrays, users need to specify the size
 (`Tuple{dim1,dim2,...}`) in the type parameter to the `SLArray` constructor:
 
 ```julia
-julia> SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4))
+julia> SLArray{Tuple{2, 2}}((a = 1, b = 2, c = 3, d = 4))
 2×2 SLArray{Tuple{2, 2}, Int64, 2, 4, (:a, :b, :c, :d)} with indices SOneTo(2)×SOneTo(2):
  :a => 1  :c => 3
  :b => 2  :d => 4
 
-julia> SLArray{Tuple{2,2}}(a=1, b=2, c=3, d=4)
+julia> SLArray{Tuple{2, 2}}(a = 1, b = 2, c = 3, d = 4)
  2×2 SLArray{Tuple{2,2},2,(:a, :b, :c, :d),Int64}:
  1  3
  2  4
@@ -78,9 +78,11 @@ a keyword constructor whose first argument is the source and
 whose additional keyword arguments indicate the changes.
 
 ```julia
-julia> ABCD = @SLArray (2,2) (:a,:b,:c,:d);
-julia> B = ABCD(1,2,3,4);
-julia> B2 = SLArray(B; c=30 )
+julia> ABCD = @SLArray (2, 2) (:a, :b, :c, :d);
+
+julia> B = ABCD(1, 2, 3, 4);
+
+julia> B2 = SLArray(B; c = 30)
 2×2 SLArray{Tuple{2,2},Int64,2,4,(:a, :b, :c, :d)}:
  1  30
  2   4
@@ -89,7 +91,7 @@ julia> B2 = SLArray(B; c=30 )
 Additional examples:
 
 ```julia
-SLArray{Tuple{2,2}}((a=1, b=2, c=3, d=4))
+SLArray{Tuple{2, 2}}((a = 1, b = 2, c = 3, d = 4))
 ```
 """
 function SLArray{Size}(tup::NamedTuple{Syms, Tup}) where {Size, Syms, Tup}
@@ -103,10 +105,11 @@ SLArray{Size}(; kwargs...) where {Size} = SLArray{Size}(values(kwargs))
 SLVector(::NamedTuple)
 SLVector(kwargs)
 ```
+
 The standard constructors for `SLArray`.
 
 ```julia
-julia> SLVector(a=1, b=2, c=3)
+julia> SLVector(a = 1, b = 2, c = 3)
 3-element SLArray{Tuple{3},1,(:a, :b, :c),Int64}:
  1
  2
@@ -118,8 +121,9 @@ a keyword constructor whose first argument is the source and
 whose additional keyword arguments indicate the changes.
 
 ```julia
-julia> v1 = SLVector(a=1.1, b=2.2, c=3.3);
-julia> v2 = SLVector(v1; b=20.20, c=30.30 )
+julia> v1 = SLVector(a = 1.1, b = 2.2, c = 3.3);
+
+julia> v2 = SLVector(v1; b = 20.20, c = 30.30)
 3-element SLArray{Tuple{3},Float64,1,3,(:a, :b, :c)}:
   1.1
  20.2
@@ -129,8 +133,8 @@ julia> v2 = SLVector(v1; b=20.20, c=30.30 )
 Additional examples:
 
 ```julia
-SLVector((a=1, b=2))
-SLVector(a=1, b=2)
+SLVector((a = 1, b = 2))
+SLVector(a = 1, b = 2)
 ```
 """
 SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
@@ -215,21 +219,23 @@ is given, then the eltype is determined from the arguments in the constructor.
 For example:
 
 ```julia
-ABCD = @SLArray (2,2) (:a,:b,:c,:d)
+ABCD = @SLArray (2, 2) (:a, :b, :c, :d)
 x = ABCD(1.0, 2.5, 3.0, 5.0)
 x.a == 1.0
 x.b == 2.5
 x.c == x[3]
-x.d == x[2,2]
-EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4)
-y = EFG(1.0,2.5,3.0,5.0)
-EFG = @SLArray (2,2) (e=(2, :), f=4, g=2:4)
+x.d == x[2, 2]
+EFG = @SLArray (2, 2) (e = 1:3, f = 4, g = 2:4)
+y = EFG(1.0, 2.5, 3.0, 5.0)
+EFG = @SLArray (2, 2) (e = (2, :), f = 4, g = 2:4)
 ```
+
 Users can also specify the indices directly.
 
 ```julia
-julia> EFG = @SLArray (2,2) (e=1:3, f=4, g=2:4);
-julia> y = EFG(1.0,2.5,3.0,5.0)
+julia> EFG = @SLArray (2, 2) (e = 1:3, f = 4, g = 2:4);
+
+julia> y = EFG(1.0, 2.5, 3.0, 5.0)
 2×2 SLArray{Tuple{2,2},Float64,2,4,(e = 1:3, f = 4, g = 2:4)}:
  1.0  3.0
  2.5  5.0
@@ -241,7 +247,9 @@ julia> y.g
  5.0
 
 julia> Arr = @SLArray (2, 2) (a = (2, :), b = 3);
+
 julia> z = Arr(1, 2, 3, 4);
+
 julia> z.a
 2-element view(::StaticArrays.SArray{Tuple{2,2},Int64,2,4}, 2, :) with eltype Int64:
  2
@@ -276,13 +284,12 @@ The array size is found from the input data.
 For example:
 
 ```julia
-ABC = @SLVector (:a,:b,:c)
-x = ABC(1.0,2.5,3.0)
+ABC = @SLVector (:a, :b, :c)
+x = ABC(1.0, 2.5, 3.0)
 x.a == 1.0
 x.b == 2.5
 x.c == x[3]
 ```
-
 """
 macro SLVector(syms)
     syms = esc(syms)
@@ -307,8 +314,9 @@ end
 Returns the labels of the `SLArray`.
 
 For example:
+
 ```julia
-julia> z = SLVector(a=1, b=2, c=3)
+julia> z = SLVector(a = 1, b = 2, c = 3)
 3-element SLArray{Tuple{3}, Int64, 1, 3, (:a, :b, :c)} with indices SOneTo(3):
  :a => 1
  :b => 2

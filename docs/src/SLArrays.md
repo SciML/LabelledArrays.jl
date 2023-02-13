@@ -6,9 +6,9 @@ instances of the labelled array.
 
 ## `@SLArray` and `@SLVector` macros
 
-Macro constructors are convenient for building most `SLArray` objects. An 
-`@SLArray` may be of arbitrary dimension, while an `@SLVector` is a 
-one dimensional array. 
+Macro constructors are convenient for building most `SLArray` objects. An
+`@SLArray` may be of arbitrary dimension, while an `@SLVector` is a
+one dimensional array.
 
 ```@docs
 @SLArray
