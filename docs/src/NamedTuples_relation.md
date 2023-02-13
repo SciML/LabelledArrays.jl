@@ -38,7 +38,7 @@ creates an iterator that is functionally the same as
 for each label of the array.
 
 There are some crucial differences between a labelled array and
-a named tuple. Labelled arrays can have any dimensions while 
+a named tuple. Labelled arrays can have any dimensions, while 
 named tuples are always 1D. A named tuple can have different types
 on each element, while an `SLArray` can only have one element
 type and furthermore it has the actions of a static vector.

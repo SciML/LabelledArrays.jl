@@ -57,7 +57,7 @@ SLArray{::Tuple}(::NamedTuple)
 SLArray{::Tuple}(kwargs)
 ```
 
-These are the standard constructors for `SLArray`. For general N-dimensional 
+These are the standard constructors for `SLArray`. For general N-dimensional
 labelled arrays, users need to specify the size
 (`Tuple{dim1,dim2,...}`) in the type parameter to the `SLArray` constructor:
 
@@ -129,8 +129,8 @@ julia> v2 = SLVector(v1; b=20.20, c=30.30 )
 Additional examples:
 
 ```julia
-SLVector((a=1, b=2)) 
-SLVector(a=1, b=2) 
+SLVector((a=1, b=2))
+SLVector(a=1, b=2)
 ```
 """
 SLVector(tup::NamedTuple) = SLArray{Tuple{length(tup)}}(tup)
@@ -271,7 +271,7 @@ end
 The macro creates a labelled static vector with element type
 `ElType`, and names from `Names`. If no eltype is given,
 then the eltype is determined from the values in the constructor.
-The array size is found from the input data. 
+The array size is found from the input data.
 
 For example:
 
@@ -304,7 +304,7 @@ end
 """
     symbols(::SLArray)
 
-Returns the labels of the `SLArray` .
+Returns the labels of the `SLArray`.
 
 For example:
 ```julia

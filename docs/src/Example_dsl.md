@@ -1,11 +1,11 @@
 # Example: Nice DiffEq Syntax Without A DSL
 
 Users of the SciML ecosystem are often solving large models with complicated
-states and/or hundreds or thousands of parameters. These models are implemented
+states and hundreds or thousands of parameters. These models are implemented
 using arrays, and those arrays have traditionally been indexed by integers, 
 such as `p[1]` or `p[1:5]`. Numerical indexing is wonderful for small 
 models, but can quickly cause problems as models become bigger. It is easy to 
-forget which index corresponds to which reaction rate or which diffusion coeffient. 
+forget which index corresponds to which reaction rate or which diffusion coefficient. 
 This confusion can lead to difficult to debug problems in a user's code. `LabelledArrays` 
 can make an important difference here. It is much easier to build a model using parameter 
 references such as `p.rate_nacl` or `p.probability_birth`, instead 
@@ -21,7 +21,7 @@ labelled arrays. Labelled arrays are as performant as traditional numerically
 indexed arrays.
 
 Let's solve the Lorenz equation using an `LVector`s. `LVectors` are 
-mutable, hence we can use the non-allocating form of the `OrdinaryDiffEq` 
+mutable. Hence, we can use the non-allocating form of the `OrdinaryDiffEq` 
 API.
 
 ```julia
@@ -43,8 +43,8 @@ sol[10].x
 ```
 
 In the example above, we used an `LArray` to define the
-intial state `u0` as well as the parameter vector `p`.
-The reminder of the ODE solution steps are are no different
+initial state `u0` as well as the parameter vector `p`.
+The reminder of the ODE solution steps are no different
 that the original `DifferentialEquations` [tutorials](https://docs.sciml.ai/DiffEqDocs/stable/tutorials/ode_example/#Example-2:-Solving-Systems-of-Equations).
 
 Alternatively, we can use an immutable `SLVector` to 

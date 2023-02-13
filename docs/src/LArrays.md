@@ -13,7 +13,7 @@ library. `ComponentArrays` are well integrated into the SciML ecosystem.
 ## `@LArray` and `@LVector` macros
 
 Macro constructors are convenient for building most `LArray` objects. An 
-`@LArray` may be of arbitrary dimension while an `@LVector` is a 
+`@LArray` may be of arbitrary dimension, while an `@LVector` is a 
 one dimensional array. 
 
 ```@docs

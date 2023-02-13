@@ -285,7 +285,7 @@ end
 """
     symbols(::LArray)
 
-Returns the labels of the `LArray` .
+Returns the labels of the `LArray`.
 
 For example:
 
