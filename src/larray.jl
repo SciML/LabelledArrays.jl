@@ -149,7 +149,7 @@ function Base.convert(::Type{AbstractArray{T, N}},
 end
 Base.convert(::Type{AbstractArray{T, N}}, x::LArray{T, N}) where {T, N} = x
 
-function ArrayInterfaceCore.restructure(x::LArray{T, N, D, Syms},
+function ArrayInterface.restructure(x::LArray{T, N, D, Syms},
                                         y::LArray{T2, N2, D2, Syms}) where {T, N, D, T2, N2,
                                                                             D2,
                                                                             Syms}

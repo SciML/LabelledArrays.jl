@@ -1,6 +1,6 @@
 module LabelledArrays
 
-using LinearAlgebra, StaticArrays, ArrayInterfaceCore
+using LinearAlgebra, StaticArrays, ArrayInterface
 import RecursiveArrayTools, PreallocationTools, ForwardDiff
 
 include("slarray.jl")
@@ -59,14 +59,14 @@ end
 Base.NamedTuple(x::Union{LArray, SLArray}) = NamedTuple{symnames(typeof(x))}(x.__x)
 @inline Base.reshape(a::SLArray, s::Size) = StaticArrays.similar_type(a, s)(Tuple(a))
 
-function ArrayInterfaceCore.ismutable(::Type{<:LArray{T, N, D, Syms}}) where {T, N, D, Syms}
-    ArrayInterfaceCore.ismutable(T)
+function ArrayInterface.ismutable(::Type{<:LArray{T, N, D, Syms}}) where {T, N, D, Syms}
+    ArrayInterface.ismutable(T)
 end
-ArrayInterfaceCore.can_setindex(::Type{<:SLArray}) = false
+ArrayInterface.can_setindex(::Type{<:SLArray}) = false
 
 lenfun(x) = length(x)
 lenfun(::Symbol) = 1
-function ArrayInterfaceCore.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
+function ArrayInterface.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Syms}
     n = sum(lenfun, Syms)
     similar(x.__x, n, n)
 end
@@ -78,7 +78,7 @@ function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
     if nelem > length(dc.dual_du)
         PreallocationTools.enlargedualcache!(dc, nelem)
     end
-    _x = ArrayInterfaceCore.restructure(dc.du, reinterpret(T, view(dc.dual_du, 1:nelem)))
+    _x = ArrayInterface.restructure(dc.du, reinterpret(T, view(dc.dual_du, 1:nelem)))
     LabelledArrays.LArray{T, N, D, Syms}(_x)
 end
 
