@@ -44,7 +44,7 @@ sol[10].x
 
 In the example above, we used an `LArray` to define the
 initial state `u0` as well as the parameter vector `p`.
-The reminder of the ODE solution steps are no different
+The remainder of the ODE solution steps are no different
 that the original `DifferentialEquations` [tutorials](https://docs.sciml.ai/DiffEqDocs/stable/tutorials/ode_example/#Example-2:-Solving-Systems-of-Equations).
 
 Alternatively, we can use an immutable `SLVector` to
