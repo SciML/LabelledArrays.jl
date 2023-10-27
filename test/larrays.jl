@@ -18,7 +18,7 @@ using LabelledArrays, Test, InteractiveUtils
 
     z = LabelledArrays.LArray{Float64, 1, Vector{Float64}, (x = 1:4, y = 5:8)}(undef, 8)
     @test length(z) == 8
-    @test size(LabelledArrays.ArrayInterfaceCore.undefmatrix(z)) == (8, 8)
+    @test size(LabelledArrays.ArrayInterface.undefmatrix(z)) == (8, 8)
 
     for (i, s) in enumerate(syms)
         @show i, s
