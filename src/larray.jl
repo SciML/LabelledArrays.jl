@@ -271,11 +271,11 @@ A = @LVector Float64 (:a, :b, :c, :d)
 A .= rand(4)
 ```
 
-On the other hand, users can also initialize the vector and set its values at the
-same time:
+To initialize the vector and set its values at the
+same time, use [`@LArray`](@ref) instead:
 
 ```julia
-b = @LVector [1, 2, 3] (:a, :b, :c)
+b = @LArray [1, 2, 3] (:a, :b, :c)
 ```
 """
 macro LVector(type, syms)

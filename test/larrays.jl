@@ -78,6 +78,9 @@ using LabelledArrays, Test, InteractiveUtils
     @test vcat(x, y) == [1, 2, 3, 4, 5, 6]
 
     @test_throws ErrorException x.z
+
+    # Ref #93, #154
+    @test_broken  @LVector [1, 2, 3] (:a, :b, :c)
 end
 
 @testset "Alternate array backends" begin
