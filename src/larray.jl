@@ -272,7 +272,7 @@ A .= rand(4)
 ```
 
 To initialize the vector and set its values at the
-same time, used [`@LArray`](@ref) instead:
+same time, use [`@LArray`](@ref) instead:
 
 ```julia
 b = @LArray [1, 2, 3] (:a, :b, :c)
