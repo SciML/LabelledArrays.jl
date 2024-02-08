@@ -84,8 +84,6 @@ end
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
-export @SLSliced, @LSliced
-
-export symbols, dimSymbols, rowSymbols, colSymbols
+export symbols
 
 end # module

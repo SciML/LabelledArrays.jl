@@ -79,7 +79,7 @@ julia> SLArray{Tuple{2, 2}}(a = 1, b = 2, c = 3, d = 4)
 
 Constructing copies with some items changed is supported by
 a keyword constructor whose first argument is the source and
-additonal keyword arguments change several entries.
+additional keyword arguments change several entries.
 
 ```julia
 julia> v1 = SLVector(a = 1.1, b = 2.2, c = 3.3);

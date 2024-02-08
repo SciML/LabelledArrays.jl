@@ -286,7 +286,7 @@ macro LVector(type, syms)
     end
 end
 
-#the following gives errror: TypeError: in <:, expected Type, got TypeVar
+#the following gives error: TypeError: in <:, expected Type, got TypeVar
 #symbols(::LArray{T,N,D<:AbstractArray{T,N},Syms}) where {T,N,D,Syms} = Syms
 
 """
@@ -367,8 +367,8 @@ For example:
     B = ABCD(1,2,3,4);
     B2 = SLArray(B; c=30 )
 """
-function SLArray(v1::Union{SLArray{S, T, N, L, Syms}, LArray{T, N, D, Syms}};
-                 kwargs...) where {S, T, N, L, Syms, D}
+function SLArray(v1::SLArray{S, T, N, L, Syms};
+                 kwargs...) where {S, T, N, L, Syms}
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     SLArray{S}(t2)
 end
