@@ -126,7 +126,7 @@ Base.@propagate_inbounds function Base.getindex(x::LArray, s::AbstractArray{Symb
 end
 
 function Base.similar(x::LArray{T, K, D, Syms}, ::Type{S},
-                      dims::NTuple{N, Int}) where {T, K, D, Syms, S, N}
+        dims::NTuple{N, Int}) where {T, K, D, Syms, S, N}
     tmp = similar(x.__x, S, dims)
     LArray{S, N, typeof(tmp), Syms}(tmp)
 end
@@ -144,15 +144,15 @@ Base.convert(::Type{T}, x) where {T <: LArray} = T(x)
 Base.convert(::Type{T}, x::T) where {T <: LArray} = x
 Base.convert(::Type{<:Array}, x::LArray) = convert(Array, getfield(x, :__x))
 function Base.convert(::Type{AbstractArray{T, N}},
-                      x::LArray{S, N, <:Any, Syms}) where {T, S, N, Syms}
+        x::LArray{S, N, <:Any, Syms}) where {T, S, N, Syms}
     LArray{Syms}(convert(AbstractArray{T, N}, getfield(x, :__x)))
 end
 Base.convert(::Type{AbstractArray{T, N}}, x::LArray{T, N}) where {T, N} = x
 
 function ArrayInterface.restructure(x::LArray{T, N, D, Syms},
-                                        y::LArray{T2, N2, D2, Syms}) where {T, N, D, T2, N2,
-                                                                            D2,
-                                                                            Syms}
+        y::LArray{T2, N2, D2, Syms}) where {T, N, D, T2, N2,
+        D2,
+        Syms}
     reshape(y, size(x)...)
 end
 
@@ -163,7 +163,7 @@ struct LAStyle{T, N, L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T, N, L}(x::Val{i}) where {T, N, L, i} = LAStyle{T, N, L}()
 Base.BroadcastStyle(::Type{LArray{T, N, D, L}}) where {T, N, D, L} = LAStyle{T, N, L}()
 function Base.BroadcastStyle(::LabelledArrays.LAStyle{T, N, L},
-                             ::LabelledArrays.LAStyle{E, N, L}) where {T, E, N, L}
+        ::LabelledArrays.LAStyle{E, N, L}) where {T, E, N, L}
     LAStyle{promote_type(T, E), N, L}()
 end
 
@@ -177,7 +177,7 @@ end
     end
 end
 function Base.similar(bc::Broadcast.Broadcasted{LAStyle{T, N, L}},
-                      ::Type{ElType}) where {T, N, L, ElType}
+        ::Type{ElType}) where {T, N, L, ElType}
     tmp = similar(Array{ElType}, axes(bc))
     if axes(bc) != labels2axes(Val(L))
         return tmp
@@ -368,23 +368,25 @@ For example:
     B2 = SLArray(B; c=30 )
 """
 function SLArray(v1::Union{SLArray{S, T, N, L, Syms}, LArray{T, N, D, Syms}};
-                 kwargs...) where {S, T, N, L, Syms, D}
+        kwargs...) where {S, T, N, L, Syms, D}
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     SLArray{S}(t2)
 end
 
 function Base.vcat(x::LArray, y::LArray)
-    LArray{(LabelledArrays.symnames(typeof(x))..., LabelledArrays.symnames(typeof(y))...)}(vcat(x.__x,
-                                                                                                y.__x))
+    LArray{(LabelledArrays.symnames(typeof(x))..., LabelledArrays.symnames(typeof(y))...)}(vcat(
+        x.__x,
+        y.__x))
 end
 
 Base.elsize(::Type{<:LArray{T}}) where {T} = sizeof(T)
 
-function RecursiveArrayTools.recursive_unitless_eltype(a::Type{LArray{T, N, D, Syms}}) where {
-                                                                                              T,
-                                                                                              N,
-                                                                                              D,
-                                                                                              Syms
-                                                                                              }
+function RecursiveArrayTools.recursive_unitless_eltype(a::Type{LArray{
+        T, N, D, Syms}}) where {
+        T,
+        N,
+        D,
+        Syms
+}
     LArray{typeof(one(T)), N, D, Syms}
 end

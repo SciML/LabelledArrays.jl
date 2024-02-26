@@ -29,7 +29,7 @@ end
 
 import Base: eltype, length, ndims, size, axes, eachindex, stride, strides
 MacroTools.@forward PrintWrapper.x eltype, length, ndims, size, axes, eachindex, stride,
-                                   strides
+strides
 Base.getindex(A::PrintWrapper, idxs...) = A.f(A.x, A.x[idxs...], idxs)
 
 function lazypair(A, x, idxs)
@@ -72,8 +72,8 @@ function ArrayInterface.undefmatrix(x::LArray{T, N, D, Syms}) where {T, N, D, Sy
 end
 
 function PreallocationTools.get_tmp(dc::PreallocationTools.DiffCache,
-                                    u::LArray{T, N, D, Syms}) where {T <: ForwardDiff.Dual,
-                                                                     N, D, Syms}
+        u::LArray{T, N, D, Syms}) where {T <: ForwardDiff.Dual,
+        N, D, Syms}
     nelem = div(sizeof(T), sizeof(eltype(dc.dual_du))) * length(dc.du)
     if nelem > length(dc.dual_du)
         PreallocationTools.enlargedualcache!(dc, nelem)
