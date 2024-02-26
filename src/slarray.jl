@@ -29,14 +29,14 @@ end
 #####################################
 ## SLArray to named tuple
 function Base.convert(::Type{NamedTuple},
-                      x::SLArray{S, T, N, L, Syms}) where {S, T, N, L, Syms}
+        x::SLArray{S, T, N, L, Syms}) where {S, T, N, L, Syms}
     tup = NTuple{length(Syms), T}(x.__x)
     NamedTuple{Syms, typeof(tup)}(tup)
 end
 Base.keys(x::SLArray{S, T, N, L, Syms}) where {S, T, N, L, Syms} = Syms
 
 function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, T2,
-                                   ::Size{S}) where {S, T, N, L, Syms}
+        ::Size{S}) where {S, T, N, L, Syms}
     SLArray{S, T2, N, L, Syms}
 end
 function RecursiveArrayTools.recursive_unitless_eltype(a::Type{T}) where {T <: SLArray}
@@ -157,8 +157,8 @@ Base.@propagate_inbounds Base.getindex(x::SLArray, i::Int) = getfield(x, :__x)[i
 @inline Base.Tuple(x::SLArray) = Tuple(x.__x)
 
 function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, ::Type{NewElType},
-                                   ::Size{NewSize}) where {S, T, N, L, Syms, NewElType,
-                                                           NewSize}
+        ::Size{NewSize}) where {S, T, N, L, Syms, NewElType,
+        NewSize}
     n = prod(NewSize)
     if n == L
         SLArray{Tuple{NewSize...}, NewElType, length(NewSize), L, Syms}
@@ -168,7 +168,7 @@ function StaticArrays.similar_type(::Type{SLArray{S, T, N, L, Syms}}, ::Type{New
 end
 
 function Base.similar(::Type{SLArray{S, T, N, L, Syms}}, ::Type{NewElType},
-                      ::Size{NewSize}) where {S, T, N, L, Syms, NewElType, NewSize}
+        ::Size{NewSize}) where {S, T, N, L, Syms, NewElType, NewSize}
     n = prod(NewSize)
     if n == L
         tmp = Array{NewElType}(undef, NewSize)
@@ -188,9 +188,9 @@ Base.@propagate_inbounds function Base.getindex(x::SLArray, s::Symbol)
 end
 Base.@propagate_inbounds Base.getindex(x::SLArray, s::Val) = __getindex(x, s)
 Base.@propagate_inbounds function Base.getindex(x::SLArray,
-                                                inds::AbstractArray{I, 1}) where {
-                                                                                  I <:
-                                                                                  Integer}
+        inds::AbstractArray{I, 1}) where {
+        I <:
+        Integer}
     getindex(x.__x, inds)
 end
 Base.@propagate_inbounds function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
@@ -203,7 +203,7 @@ Base.@propagate_inbounds function Base.getindex(x::SLArray, s::AbstractArray{Sym
 end
 
 function Base.vcat(x1::SLArray{S1, T, 1, L1, Syms1},
-                   x2::SLArray{S2, T, 1, L2, Syms2}) where {S1, S2, T, L1, L2, Syms1, Syms2}
+        x2::SLArray{S2, T, 1, L2, Syms2}) where {S1, S2, T, L1, L2, Syms1, Syms2}
     __x = vcat(x1.__x, x2.__x)
     SLArray{StaticArrays.size_tuple(Size(__x)), (Syms1..., Syms2...)}(__x)
 end
@@ -335,7 +335,7 @@ function Base.:\(A::StaticArrays.LU, b::SLArray{S, T, N, L, Syms}) where {S, T, 
 end
 
 function Base.reshape(x::SLArray{S, T, N, L, Syms},
-                      ax::Tuple{SOneTo, Vararg{SOneTo}}) where {S <: Tuple, T, N, L, Syms,
-                                                                SOneTo <: SOneTo}
+        ax::Tuple{SOneTo, Vararg{SOneTo}}) where {S <: Tuple, T, N, L, Syms,
+        SOneTo <: SOneTo}
     SLArray{S, T, N, L, Syms}(reshape(x.__x, ax))
 end

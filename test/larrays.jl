@@ -80,7 +80,7 @@ using LabelledArrays, Test, InteractiveUtils
     @test_throws ErrorException x.z
 
     # Ref #93, #154
-    @test_broken  @LVector [1, 2, 3] (:a, :b, :c)
+    @test_broken @LVector [1, 2, 3] (:a, :b, :c)
 end
 
 @testset "Alternate array backends" begin
