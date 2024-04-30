@@ -6,6 +6,7 @@ import RecursiveArrayTools, PreallocationTools, ForwardDiff
 include("slarray.jl")
 include("larray.jl")
 include("chainrules.jl")
+include("diffeqarray.jl")
 
 # Common
 @generated function __getindex(x::Union{LArray, SLArray}, ::Val{s}) where {s}
