@@ -1,7 +1,7 @@
 name = "LabelledArrays"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
-version = "1.16.0"
+version = "1.16.1"
 
 [deps]
 ArrayInterface = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
@@ -16,7 +16,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 [compat]
 ArrayInterface = "7"
 ChainRulesCore = "1"
-ForwardDiff = "0.10.3"
+ForwardDiff = "0.10.3, 1"
 MacroTools = "0.5"
 PreallocationTools = "0.4"
 RecursiveArrayTools = "3"
