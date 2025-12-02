@@ -2,6 +2,9 @@
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
 
+[sources]
+LabelledArrays = {path = "/home/chrisrackauckas/github-runners/deepsea3-22/_work/LabelledArrays.jl/LabelledArrays.jl"}
+
 [compat]
 Documenter = "1"
 LabelledArrays = "1.12"
