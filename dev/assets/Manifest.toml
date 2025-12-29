@@ -296,7 +296,7 @@ version = "1.12.0"
 deps = ["ArrayInterface", "ChainRulesCore", "ForwardDiff", "LinearAlgebra", "MacroTools", "PreallocationTools", "RecursiveArrayTools", "StaticArrays"]
 path = "/home/runner/work/LabelledArrays.jl/LabelledArrays.jl"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
-version = "1.16.1"
+version = "1.17.0"
 
 [[deps.LazilyInitializedFields]]
 git-tree-sha1 = "0f2da712350b020bc3957f269c9caad516383ee0"
