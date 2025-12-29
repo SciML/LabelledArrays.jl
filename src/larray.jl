@@ -286,7 +286,7 @@ macro LVector(type, syms)
     end
 end
 
-#the following gives errror: TypeError: in <:, expected Type, got TypeVar
+#the following gives error: TypeError: in <:, expected Type, got TypeVar
 #symbols(::LArray{T,N,D<:AbstractArray{T,N},Syms}) where {T,N,D,Syms} = Syms
 
 """
