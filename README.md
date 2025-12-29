@@ -293,3 +293,4 @@ unlike a named tuple, is mutable.
 This functionality has been removed from LabelledArrays.jl, but can
 replicated with the same compile-time performance and indexing syntax
 using [DimensionalData.jl](https://rafaqz.github.io/DimensionalData.jl/stable/).
+
