@@ -28,3 +28,10 @@ if GROUP == "All" || GROUP == "RecursiveArrayTools"
         include("recursivearraytools.jl")
     end
 end
+
+if GROUP == "nopre"
+    using AllocCheck
+    @time @testset "AllocCheck" begin
+        include("alloc_tests.jl")
+    end
+end
