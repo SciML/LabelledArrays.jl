@@ -294,7 +294,7 @@ version = "1.12.0"
 
 [[deps.LabelledArrays]]
 deps = ["ArrayInterface", "ChainRulesCore", "ForwardDiff", "LinearAlgebra", "MacroTools", "PreallocationTools", "RecursiveArrayTools", "StaticArrays"]
-path = "/home/runner/work/LabelledArrays.jl/LabelledArrays.jl"
+path = "/home/chrisrackauckas/github-runners/deepsea4-10/_work/LabelledArrays.jl/LabelledArrays.jl"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 version = "1.17.0"
 
@@ -563,9 +563,9 @@ weakdeps = ["ChainRulesCore"]
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "PrecompileTools", "Random", "StaticArraysCore"]
-git-tree-sha1 = "b8693004b385c842357406e3af647701fe783f98"
+git-tree-sha1 = "eee1b9ad8b29ef0d936e3ec9838c7ec089620308"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.9.15"
+version = "1.9.16"
 weakdeps = ["ChainRulesCore", "Statistics"]
 
     [deps.StaticArrays.extensions]
