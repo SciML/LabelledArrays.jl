@@ -6,5 +6,5 @@ pages = [
     "SLArrays" => "SLArrays.md",
     "LArrays" => "LArrays.md",
     "Relation to NamedTuples" => "NamedTuples_relation.md",
-    "Note_labelled_slices.md"
+    "Note: Labelled Slices" => "Note_labelled_slices.md"
 ]

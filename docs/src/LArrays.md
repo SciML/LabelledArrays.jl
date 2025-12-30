@@ -33,7 +33,7 @@ LVector
 
 ## Manipulating `LArrays` and `LVectors`
 
-User may want a list of the labels or keys in an `LArray` or `LVector`.
+Users may want a list of the labels or keys in an `LArray` or `LVector`.
 The `symbols(::LArray)` function returns a tuple of array labels.
 
 ```@docs
