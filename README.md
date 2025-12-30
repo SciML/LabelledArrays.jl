@@ -204,7 +204,7 @@ Let's solve the Lorenz equation. Using `@LVector`s, we can do:
 ```julia
 using LabelledArrays, OrdinaryDiffEq
 
-function lorenz_f(du, u, p, t)
+function lorenz_f!(du, u, p, t)
     du.x = p.σ * (u.y - u.x)
     du.y = u.x * (p.ρ - u.z) - u.y
     du.z = u.x * u.y - p.β * u.z
@@ -213,7 +213,7 @@ end
 u0 = @LArray [1.0, 0.0, 0.0] (:x, :y, :z)
 p = @LArray [10.0, 28.0, 8 / 3] (:σ, :ρ, :β)
 tspan = (0.0, 10.0)
-prob = ODEProblem(lorenz_f, u0, tspan, p)
+prob = ODEProblem(lorenz_f!, u0, tspan, p)
 sol = solve(prob, Tsit5())
 # Now the solution can be indexed as .x/y/z as well!
 sol[10].x
