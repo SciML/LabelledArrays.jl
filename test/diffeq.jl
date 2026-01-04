@@ -7,7 +7,7 @@ function f(u, p, t)
     x = p.σ * (u.y - u.x)
     y = u.x * (p.ρ - u.z) - u.y
     z = u.x * u.y - p.β * u.z
-    LorenzVector(x, y, z)
+    return LorenzVector(x, y, z)
 end
 
 u0 = LorenzVector(1.0, 0.0, 0.0)
@@ -24,7 +24,7 @@ sol = solve(prob, Tsit5())
 function iip_f(du, u, p, t)
     du.x = p.σ * (u.y - u.x)
     du.y = u.x * (p.ρ - u.z) - u.y
-    du.z = u.x * u.y - p.β * u.z
+    return du.z = u.x * u.y - p.β * u.z
 end
 
 u0 = @LArray [1.0, 0.0, 0.0] (:x, :y, :z)
