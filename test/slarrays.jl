@@ -24,15 +24,15 @@ using Test, InteractiveUtils
 
     @test @inferred(similar_type(b, Float64)) === ABC_fl
     @test @inferred(similar_type(b, Float64, Size(1, 3))) ===
-          @SLArray Float64 (1, 3) (:a, :b, :c)
+        @SLArray Float64 (1, 3) (:a, :b, :c)
     @test @inferred(similar_type(b, Float64, Size(3, 3))) ===
-          SArray{Tuple{3, 3}, Float64, 2, 9}
+        SArray{Tuple{3, 3}, Float64, 2, 9}
 
     @test typeof(@inferred(similar(b))) === LArray{Int, 1, Array{Int64, 1}, (:a, :b, :c)}
     @test typeof(@inferred(similar(b, Float64))) ===
-          LArray{Float64, 1, Array{Float64, 1}, (:a, :b, :c)}
+        LArray{Float64, 1, Array{Float64, 1}, (:a, :b, :c)}
     @test typeof(@inferred(similar(b, Size(1, 3)))) ===
-          LArray{Int, 2, Array{Int64, 2}, (:a, :b, :c)}
+        LArray{Int, 2, Array{Int64, 2}, (:a, :b, :c)}
     @test typeof(@inferred(similar(b, Size(3, 3)))) === MArray{Tuple{3, 3}, Int, 2, 9}
 
     @test @inferred(copy(b)) === ABC_int(Tuple(b))
