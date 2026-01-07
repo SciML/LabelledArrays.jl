@@ -93,4 +93,6 @@ export @SLSliced, @LSliced
 
 export symbols, dimSymbols, rowSymbols, colSymbols
 
+include("precompilation.jl")
+
 end # module
