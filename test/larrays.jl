@@ -192,3 +192,16 @@ end
     B = convert(AbstractVector{Float64}, A)
     @test B.b === 2.0
 end
+
+@testset "DiffCache get_tmp with LArray" begin
+    using PreallocationTools, ForwardDiff
+    la = @LVector Float64 (:a, :b, :c)
+    la .= [1.0, 2.0, 3.0]
+    # Use chunk size 1 but pass Duals with chunk size 3 to trigger cache enlargement
+    dc = DiffCache(zeros(3), 1)
+    T = ForwardDiff.Dual{Nothing, Float64, 3}
+    dual_la = LArray{T, 1, Vector{T}, (:a, :b, :c)}(T.(la.__x))
+    result = get_tmp(dc, dual_la)
+    @test result isa LArray
+    @test eltype(result) === T
+end

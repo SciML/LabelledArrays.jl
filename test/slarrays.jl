@@ -106,3 +106,11 @@ end
     B = convert(AbstractVector{Float64}, A)
     @test B.b === 2.0
 end
+
+@testset "recursive_unitless_eltype" begin
+    import RecursiveArrayTools
+    ABC = @SLVector (:a, :b, :c)
+    x = ABC(1.0, 2.0, 3.0)
+    result = RecursiveArrayTools.recursive_unitless_eltype(typeof(x))
+    @test result <: SLArray
+end

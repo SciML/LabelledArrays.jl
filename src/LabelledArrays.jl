@@ -81,7 +81,7 @@ function PreallocationTools.get_tmp(
     }
     nelem = div(sizeof(T), sizeof(eltype(dc.dual_du))) * length(dc.du)
     if nelem > length(dc.dual_du)
-        PreallocationTools.enlargedualcache!(dc, nelem)
+        PreallocationTools.enlargediffcache!(dc, nelem)
     end
     _x = ArrayInterface.restructure(dc.du, reinterpret(T, view(dc.dual_du, 1:nelem)))
     return LabelledArrays.LArray{T, N, D, Syms}(_x)
