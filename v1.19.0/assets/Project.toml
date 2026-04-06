@@ -1,0 +1,7 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
+
+[compat]
+Documenter = "1"
+LabelledArrays = "1.12"
