@@ -33,15 +33,8 @@ jobs:
 
   alloccheck:
     name: "AllocCheck"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: julia-actions/setup-julia@v3
-        with:
-          version: '1'
-      - uses: julia-actions/cache@v3
-      - uses: julia-actions/julia-buildpkg@v1
-      - name: Run AllocCheck tests
-        run: julia --project -e 'using Pkg; Pkg.test(; test_args=["nopre"])'
-        env:
-          GROUP: nopre
+    uses: "SciML/.github/.github/workflows/tests.yml@v1"
+    with:
+      julia-version: "1"
+      group: "nopre"
+    secrets: "inherit"
