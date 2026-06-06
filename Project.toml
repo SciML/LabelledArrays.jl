@@ -15,15 +15,16 @@ RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
-ArrayInterface = "7"
-ChainRulesCore = "1"
-ForwardDiff = "0.10.3, 1"
-MacroTools = "0.5"
+ArrayInterface = "7.25"
+ChainRulesCore = "1.26"
+ForwardDiff = "1.1"
+MacroTools = "0.5.16"
 OrdinaryDiffEq = "6, 7"
-PreallocationTools = "0.4, 1.0"
-PrecompileTools = "1"
-RecursiveArrayTools = "3.1, 4"
-StaticArrays = "1.0"
+PreallocationTools = "1.2"
+PrecompileTools = "1.2.1"
+RecursiveArrayTools = "3.54, 4"
+SciMLBase = "2, 3"
+StaticArrays = "1.9.18"
 julia = "1.10"
 
 [extras]
@@ -32,7 +33,8 @@ ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
+SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "OrdinaryDiffEq", "InteractiveUtils", "ChainRulesTestUtils", "AllocCheck"]
+test = ["Test", "OrdinaryDiffEq", "InteractiveUtils", "ChainRulesTestUtils", "AllocCheck", "SciMLBase"]
