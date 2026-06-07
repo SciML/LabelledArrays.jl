@@ -12,10 +12,10 @@ on:
       - 'docs/**'
 jobs:
   downgrade:
-    if: false  # Disabled: OrdinaryDiffEq minimum version requires StaticArrays 0.8-0.12, conflicts with StaticArrays >= 1.0 compat
     name: "Downgrade"
     uses: "SciML/.github/.github/workflows/downgrade.yml@v1"
     with:
       julia-version: "1.10"
+      allow-reresolve: false
       skip: "Pkg,TOML"
     secrets: "inherit"
