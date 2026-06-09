@@ -15,9 +15,12 @@ RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+AllocCheck = "0.2"
 ArrayInterface = "7.25"
 ChainRulesCore = "1.26"
+ChainRulesTestUtils = "1"
 ForwardDiff = "1.1"
+InteractiveUtils = "1"
 MacroTools = "0.5.16"
 OrdinaryDiffEq = "6, 7"
 PreallocationTools = "1.2"
@@ -25,6 +28,7 @@ PrecompileTools = "1.2.1"
 RecursiveArrayTools = "3.54, 4"
 SciMLBase = "2, 3"
 StaticArrays = "1.9.18"
+Test = "1"
 julia = "1.10"
 
 [extras]
