@@ -1,4 +1,10 @@
 using Pkg
+using LabelledArrays
+using Test
+using StaticArrays
+using InteractiveUtils
+using ChainRulesTestUtils
+using AllocCheck
 
 const GROUP = get(ENV, "GROUP", "All")
 
@@ -7,12 +13,6 @@ if GROUP == "QA"
     Pkg.instantiate()
     include("qa/qa.jl")
 else
-    using LabelledArrays
-    using Test
-    using StaticArrays
-    using InteractiveUtils
-    using ChainRulesTestUtils
-
     if GROUP == "All" || GROUP == "Core"
         @time begin
             @time @testset "SLArrays" begin
@@ -37,7 +37,6 @@ else
     end
 
     if GROUP == "AllocCheck"
-        using AllocCheck
         @time @testset "AllocCheck" begin
             include("alloc_tests.jl")
         end
