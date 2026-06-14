@@ -3,6 +3,7 @@ versions = ["lts", "1", "pre"]
 
 [AllocCheck]
 versions = ["1"]
+in_all = false
 
 [QA]
 versions = ["lts", "1"]

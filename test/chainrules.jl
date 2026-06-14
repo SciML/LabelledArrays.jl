@@ -1,3 +1,5 @@
+using LabelledArrays, ChainRulesTestUtils, Test
+
 @testset "Vector" begin
     x = randn(2)
     syms = (:a, :b)
