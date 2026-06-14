@@ -26,7 +26,9 @@ OrdinaryDiffEq = "6, 7"
 PreallocationTools = "1.2"
 PrecompileTools = "1.2.1"
 RecursiveArrayTools = "3.54, 4"
+SafeTestsets = "0.1, 1"
 SciMLBase = "2, 3"
+SciMLTesting = "1"
 StaticArrays = "1.9.18"
 Test = "1"
 julia = "1.10"
@@ -36,10 +38,11 @@ AllocCheck = "9b6a8646-10ed-4001-bbdc-1d2f46dfbb1a"
 ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 RecursiveArrayTools = "731186ca-8d62-57ce-b412-fbd966d074cd"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"
+SciMLTesting = "09d9d899-5365-40a9-917a-5f67fddea283"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "OrdinaryDiffEq", "InteractiveUtils", "ChainRulesTestUtils", "AllocCheck", "SciMLBase", "Pkg"]
+test = ["Test", "OrdinaryDiffEq", "InteractiveUtils", "ChainRulesTestUtils", "AllocCheck", "SciMLBase", "SafeTestsets", "SciMLTesting"]
