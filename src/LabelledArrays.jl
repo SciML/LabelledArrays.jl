@@ -1,6 +1,8 @@
 module LabelledArrays
 
-using LinearAlgebra, StaticArrays, ArrayInterface
+using LinearAlgebra: LinearAlgebra
+using StaticArrays: StaticArrays, MArray, SArray, Size, SOneTo, StaticArray, StaticVector
+using ArrayInterface: ArrayInterface
 import RecursiveArrayTools, PreallocationTools, ForwardDiff
 
 include("slarray.jl")
@@ -21,7 +23,7 @@ include("diffeqarray.jl")
     end
 end
 
-using MacroTools
+using MacroTools: MacroTools
 
 struct PrintWrapper{T, N, F, X <: AbstractArray{T, N}} <: AbstractArray{T, N}
     f::F
@@ -84,7 +86,7 @@ function PreallocationTools.get_tmp(
         PreallocationTools.enlargediffcache!(dc, nelem)
     end
     _x = ArrayInterface.restructure(dc.du, reinterpret(T, view(dc.dual_du, 1:nelem)))
-    return LabelledArrays.LArray{T, N, D, Syms}(_x)
+    return LArray{T, N, D, Syms}(_x)
 end
 
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
