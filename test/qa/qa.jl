@@ -1,15 +1,12 @@
-using LabelledArrays
-using Aqua: Aqua
-using ExplicitImports: ExplicitImports
-using SciMLTesting: SciMLTesting, run_qa
+using SciMLTesting, LabelledArrays, Test
 
 # Aqua: ambiguities / unbound_args / undefined_exports are genuine pre-existing
 # findings (method ambiguities, unbound type parameters, and the dead exports
 # `@SLSliced`/`@LSliced`/`dimSymbols`/`rowSymbols`/`colSymbols`) tracked in
 # https://github.com/SciML/LabelledArrays.jl/issues/205. JET likewise finds the
 # `setfield!`-on-immutable-`LArray` dead branch in `setproperty!` (src/larray.jl)
-# tracked in the same issue, so JET stays opt-out here. The remaining Aqua checks
-# (incl. deps_compat) run and pass.
+# tracked in the same issue, so JET stays opt-out here (JET is not loaded). The
+# remaining Aqua checks (incl. deps_compat) run and pass.
 #
 # ExplicitImports ignore-list (all_qualified_accesses_are_public): every entry is a
 # non-public name from a dependency (or Base) that LabelledArrays must access by
@@ -28,13 +25,11 @@ using SciMLTesting: SciMLTesting, run_qa
 # the LTS QA lane green; on 1.11+ they are genuinely public.
 run_qa(
     LabelledArrays;
-    Aqua = Aqua,
     aqua_kwargs = (;
         ambiguities = false,
         unbound_args = false,
         undefined_exports = false,
     ),
-    ExplicitImports = ExplicitImports,
     explicit_imports = true,
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
