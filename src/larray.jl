@@ -171,8 +171,8 @@ struct LAStyle{T, N, L} <: Broadcast.AbstractArrayStyle{N} end
 LAStyle{T, N, L}(x::Val{i}) where {T, N, L, i} = LAStyle{T, N, L}()
 Base.BroadcastStyle(::Type{LArray{T, N, D, L}}) where {T, N, D, L} = LAStyle{T, N, L}()
 function Base.BroadcastStyle(
-        ::LabelledArrays.LAStyle{T, N, L},
-        ::LabelledArrays.LAStyle{E, N, L}
+        ::LAStyle{T, N, L},
+        ::LAStyle{E, N, L}
     ) where {T, E, N, L}
     return LAStyle{promote_type(T, E), N, L}()
 end
@@ -388,7 +388,7 @@ function SLArray(
 end
 
 function Base.vcat(x::LArray, y::LArray)
-    return LArray{(LabelledArrays.symnames(typeof(x))..., LabelledArrays.symnames(typeof(y))...)}(
+    return LArray{(symnames(typeof(x))..., symnames(typeof(y))...)}(
         vcat(
             x.__x,
             y.__x

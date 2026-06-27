@@ -352,9 +352,6 @@ end
 function Base.reshape(
         x::SLArray{S, T, N, L, Syms},
         ax::Tuple{SOneTo, Vararg{SOneTo}}
-    ) where {
-        S <: Tuple, T, N, L, Syms,
-        SOneTo <: SOneTo,
-    }
+    ) where {S <: Tuple, T, N, L, Syms}
     return SLArray{S, T, N, L, Syms}(reshape(x.__x, ax))
 end
