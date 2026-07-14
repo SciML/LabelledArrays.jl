@@ -9,6 +9,6 @@ LabelledArrays = {path = "../.."}
 
 [compat]
 SafeTestsets = "0.1, 1"
-SciMLTesting = "1.5"
+SciMLTesting = "1.5, 2.1"
 Test = "1"
 julia = "1.10"
