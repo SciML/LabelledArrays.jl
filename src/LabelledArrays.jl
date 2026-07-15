@@ -89,6 +89,62 @@ function PreallocationTools.get_tmp(
     return LArray{T, N, D, Syms}(_x)
 end
 
+function _removed_labelled_slices_error(name)
+    throw(ArgumentError("`$name` was part of the removed labelled-slices API. Use DimensionalData.jl for labelled slice arrays."))
+end
+
+"""
+    @LSliced ...
+
+Removed labelled-slices constructor macro. Labelled slices are no longer
+implemented in LabelledArrays.jl; use DimensionalData.jl for labelled slice
+arrays.
+"""
+macro LSliced(args...)
+    return :(LabelledArrays._removed_labelled_slices_error("@LSliced"))
+end
+
+"""
+    @SLSliced ...
+
+Removed static labelled-slices constructor macro. Labelled slices are no longer
+implemented in LabelledArrays.jl; use DimensionalData.jl for labelled slice
+arrays.
+"""
+macro SLSliced(args...)
+    return :(LabelledArrays._removed_labelled_slices_error("@SLSliced"))
+end
+
+"""
+    dimSymbols(args...)
+
+Removed labelled-slices helper. Labelled slices are no longer implemented in
+LabelledArrays.jl; use DimensionalData.jl for labelled slice arrays.
+"""
+function dimSymbols(args...)
+    return _removed_labelled_slices_error("dimSymbols")
+end
+
+"""
+    rowSymbols(args...)
+
+Removed labelled-slices helper. Labelled slices are no longer implemented in
+LabelledArrays.jl; use DimensionalData.jl for labelled slice arrays.
+"""
+function rowSymbols(args...)
+    return _removed_labelled_slices_error("rowSymbols")
+end
+
+"""
+    colSymbols(args...)
+
+Removed labelled-slices helper. Labelled slices are no longer implemented in
+LabelledArrays.jl; use DimensionalData.jl for labelled slice arrays.
+"""
+function colSymbols(args...)
+    return _removed_labelled_slices_error("colSymbols")
+end
+
 export SLArray, LArray, SLVector, LVector, @SLVector, @LArray, @LVector, @SLArray
 
 export @SLSliced, @LSliced
