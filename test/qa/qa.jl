@@ -25,6 +25,7 @@ using SciMLTesting, LabelledArrays, Test
 # the LTS QA lane green; on 1.11+ they are genuinely public.
 run_qa(
     LabelledArrays;
+    api_docs_kwargs = (; rendered = true),
     aqua_kwargs = (;
         ambiguities = false,
         unbound_args = false,
