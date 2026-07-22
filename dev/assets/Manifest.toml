@@ -298,7 +298,7 @@ version = "1.12.0"
 
 [[deps.LabelledArrays]]
 deps = ["ArrayInterface", "ChainRulesCore", "ForwardDiff", "LinearAlgebra", "MacroTools", "PreallocationTools", "PrecompileTools", "RecursiveArrayTools", "StaticArrays"]
-path = "/home/runner/_work/LabelledArrays.jl/LabelledArrays.jl"
+path = "/home/runner/work/LabelledArrays.jl/LabelledArrays.jl"
 uuid = "2ee39098-c373-598a-b85f-a56591580800"
 version = "1.20.1"
 
