@@ -191,6 +191,10 @@ end
     @test convert(AbstractVector{Int}, A) === A
     B = convert(AbstractVector{Float64}, A)
     @test B.b === 2.0
+
+    static = SLArray(A; b = 4)
+    @test static isa SLArray{Tuple{3}}
+    @test static.b == 4
 end
 
 @testset "DiffCache get_tmp with LArray" begin

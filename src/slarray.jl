@@ -1,3 +1,17 @@
+"""
+    SLArray{Size, Labels}(values)
+
+A statically sized labelled array. Construct an `SLArray` directly when its
+size is known at compile time, or use [`@SLArray`](@ref) to create a reusable
+constructor from a size and tuple of labels.
+
+# Examples
+
+```julia
+julia > x = SLArray{Tuple{2}, (:first, :second)}((1, 2)); x.second
+2
+```
+"""
 struct SLArray{S, T, N, L, Syms} <: StaticArray{S, T, N}
     __x::SArray{S, T, N, L}
     #SLArray{Syms}(__x::StaticArray{S,T,N}) where {S,N,Syms,T} = new{S,N,Syms,T}(__x)
@@ -207,6 +221,11 @@ Base.@propagate_inbounds function Base.getindex(
     return getindex(x.__x, inds)
 end
 Base.@propagate_inbounds function Base.getindex(x::SLArray, inds::StaticVector{<:Any, Int})
+    return getindex(x.__x, inds)
+end
+Base.@propagate_inbounds function Base.getindex(
+        x::SLArray, inds::Union{SOneTo, StaticArray{<:Tuple, Int, 1}}
+    )
     return getindex(x.__x, inds)
 end
 
