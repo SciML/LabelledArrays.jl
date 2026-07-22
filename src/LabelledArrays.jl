@@ -30,9 +30,15 @@ struct PrintWrapper{T, N, F, X <: AbstractArray{T, N}} <: AbstractArray{T, N}
     x::X
 end
 
-import Base: eltype, length, ndims, size, axes, eachindex, stride, strides
-MacroTools.@forward PrintWrapper.x eltype, length, ndims, size, axes, eachindex, stride,
-    strides
+Base.eltype(A::PrintWrapper) = eltype(A.x)
+Base.length(A::PrintWrapper) = length(A.x)
+Base.ndims(A::PrintWrapper) = ndims(A.x)
+Base.size(A::PrintWrapper) = size(A.x)
+Base.axes(A::PrintWrapper) = axes(A.x)
+Base.eachindex(A::PrintWrapper) = eachindex(A.x)
+Base.eachindex(A::PrintWrapper, Bs::AbstractArray...) = eachindex(A.x, Bs...)
+Base.stride(A::PrintWrapper, k::Integer) = stride(A.x, k)
+Base.strides(A::PrintWrapper) = strides(A.x)
 Base.getindex(A::PrintWrapper, idxs...) = A.f(A.x, A.x[idxs...], idxs)
 
 function lazypair(A, x, idxs)

@@ -9,7 +9,10 @@ makedocs(
     sitename = "LabelledArrays.jl",
     authors = "Chris Rackauckas",
     modules = [LabelledArrays],
-    clean = true, doctest = false, linkcheck = true,
+    clean = true,
+    doctest = true,
+    checkdocs = :exports,
+    linkcheck = true,
     format = Documenter.HTML(
         assets = ["assets/favicon.ico"],
         canonical = "https://docs.sciml.ai/LabelledArrays/stable/"

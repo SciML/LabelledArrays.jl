@@ -1,3 +1,23 @@
+"""
+    LArray{Labels}(data)
+    LArray(size, values)
+
+A mutable array whose entries can be accessed by compile-time labels as well as
+ordinary array indices. `Labels` is a tuple of symbols, inferred from a named
+tuple by the convenience constructors.
+
+# Examples
+
+```julia
+julia> x = LArray((2,); left = 1, right = 2)
+2-element LArray{Int64, 1, Vector{Int64}, (:left, :right)}:
+ :left => 1
+ :right => 2
+
+julia> x.right = 3; x[:right]
+3
+```
+"""
 struct LArray{T, N, D <: AbstractArray{T, N}, Syms} <: DenseArray{T, N}
     __x::D
     LArray{Syms}(__x) where {Syms} = new{eltype(__x), ndims(__x), typeof(__x), Syms}(__x)
@@ -142,7 +162,7 @@ function Base.unsafe_convert(::Type{Ptr{T}}, a::LArray{T, N, D, S}) where {T, N,
     return Base.unsafe_convert(Ptr{T}, getfield(a, :__x))
 end
 
-Base.convert(::Type{T}, x) where {T <: LArray} = T(x)
+Base.convert(::Type{T}, x::AbstractArray) where {T <: LArray} = T(x)
 Base.convert(::Type{T}, x::T) where {T <: LArray} = x
 Base.convert(::Type{<:Array}, x::LArray) = convert(Array, getfield(x, :__x))
 function Base.convert(
@@ -151,7 +171,9 @@ function Base.convert(
     ) where {T, S, N, Syms}
     return LArray{Syms}(convert(AbstractArray{T, N}, getfield(x, :__x)))
 end
-Base.convert(::Type{AbstractArray{T, N}}, x::LArray{T, N}) where {T, N} = x
+Base.convert(
+    ::Type{AbstractArray{T, N}}, x::LArray{T, N, <:Any, Syms}
+) where {T, N, Syms} = x
 
 function ArrayInterface.restructure(
         x::LArray{T, N, D, Syms},
@@ -309,9 +331,9 @@ Returns the labels of the `LArray`.
 For example:
 
 ```julia
-julia> z = @LVector Float64 (:a, :b, :c, :d);
+julia > z = @LVector Float64 (:a, :b, :c, :d);
 
-julia> symbols(z)
+julia > symbols(z)
 (:a, :b, :c, :d)
 ```
 """
@@ -322,14 +344,14 @@ end
 # copy constructors
 
 """
-    LVector(v1::Union{SLArray,LArray}; kwargs...)
+    LVector(v1::Union{SLArray, LArray}; kwargs...)
 
 Creates a 1D copy of v1 with corresponding items in kwargs replaced.
 
 For example:
 
-    z = LVector(a=1, b=2, c=3);
-    z2 = LVector(z; c=30)
+    z = LVector(a = 1, b = 2, c = 3);
+    z2 = LVector(z; c = 30)
 """
 function LVector(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
@@ -337,15 +359,15 @@ function LVector(v1::Union{SLArray, LArray}; kwargs...)
 end
 
 """
-    LVector(v1::Union{SLArray,LArray}; kwargs...)
+    LVector(v1::Union{SLArray, LArray}; kwargs...)
 
 Creates a copy of v1 with corresponding items in kwargs replaced.
 
 For example:
 
-    ABCD = @SLArray (2,2) (:a,:b,:c,:d);
-    B = ABCD(1,2,3,4);
-    B2 = LArray(B; c=30 )
+    ABCD = @SLArray (2, 2) (:a, :b, :c, :d);
+    B = ABCD(1, 2, 3, 4);
+    B2 = LArray(B; c = 30)
 """
 function LArray(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
@@ -360,8 +382,8 @@ Creates a 1D copy of v1 with corresponding items in kwargs replaced.
 
 For example:
 
-    z = SLVector(a=1, b=2, c=3);
-    z2 = SLVector(z; c=30)
+    z = SLVector(a = 1, b = 2, c = 3);
+    z2 = SLVector(z; c = 30)
 """
 function SLVector(v1::Union{SLArray, LArray}; kwargs...)
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
@@ -375,16 +397,18 @@ Creates a copy of v1 with corresponding items in kwargs replaced.
 
 For example:
 
-    ABCD = @SLArray (2,2) (:a,:b,:c,:d);
-    B = ABCD(1,2,3,4);
-    B2 = SLArray(B; c=30 )
+    ABCD = @SLArray (2, 2) (:a, :b, :c, :d);
+    B = ABCD(1, 2, 3, 4);
+    B2 = SLArray(B; c = 30)
 """
-function SLArray(
-        v1::Union{SLArray{S, T, N, L, Syms}, LArray{T, N, D, Syms}};
-        kwargs...
-    ) where {S, T, N, L, Syms, D}
+function SLArray(v1::SLArray{S}; kwargs...) where {S}
     t2 = merge(convert(NamedTuple, v1), values(kwargs))
     return SLArray{S}(t2)
+end
+
+function SLArray(v1::LArray; kwargs...)
+    t2 = merge(convert(NamedTuple, v1), values(kwargs))
+    return SLArray{Tuple{size(v1)...}}(t2)
 end
 
 function Base.vcat(x::LArray, y::LArray)
