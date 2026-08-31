@@ -189,6 +189,10 @@ function StaticArrays.similar_type(
     end
 end
 
+function ArrayInterface.restructure(x::SLArray, y)
+    return StaticArrays.similar_type(typeof(x), eltype(y), Size(x))(Tuple(y))
+end
+
 function Base.similar(
         ::Type{SLArray{S, T, N, L, Syms}}, ::Type{NewElType},
         ::Size{NewSize}
