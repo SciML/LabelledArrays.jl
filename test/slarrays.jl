@@ -1,5 +1,6 @@
 using LabelledArrays, StaticArrays
 using Test, InteractiveUtils
+import ArrayInterface
 
 @testset "Basic interface" begin
     ABC = @SLVector (:a, :b, :c)
@@ -36,6 +37,9 @@ using Test, InteractiveUtils
     @test typeof(@inferred(similar(b, Size(3, 3)))) === MArray{Tuple{3, 3}, Int, 2, 9}
 
     @test @inferred(copy(b)) === ABC_int(Tuple(b))
+
+    @test @inferred(ArrayInterface.restructure(b, SVector(1.0, 2.0, 3.0))) ===
+        ABC_fl(1.0, 2.0, 3.0)
 
     @test @inferred(broadcast(Float64, b)) === ABC_fl(Tuple(b))
     @test @inferred(broadcast(+, b, b)) === ABC_int(Tuple(b.__x .+ b.__x))
