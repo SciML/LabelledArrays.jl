@@ -542,9 +542,9 @@ version = "0.1.0"
 
 [[deps.RuntimeGeneratedFunctions]]
 deps = ["ExprTools", "PrecompileTools", "SHA", "Serialization"]
-git-tree-sha1 = "6cb9b83354089fcb33c643773acfd3235f2f1bf5"
+git-tree-sha1 = "1719b26eee2c5e40d4b41c647b91dbaac1dcbf05"
 uuid = "7e49a35a-f44a-4d26-94aa-eba1b4ca6b47"
-version = "0.5.25"
+version = "0.5.26"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
