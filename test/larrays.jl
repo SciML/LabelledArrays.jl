@@ -91,7 +91,7 @@ end
 
     s = similar(x)
     @test size(s) == size(x)
-    @test typeof(s.__x) == Array{Int64, 1}
+    @test typeof(s.__x) == Array{Int, 1}
     @test LabelledArrays.symnames(typeof(s)) == (:a, :b, :c, :d)
 end
 
