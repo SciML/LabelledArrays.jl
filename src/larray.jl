@@ -24,7 +24,7 @@ struct LArray{T, N, D <: AbstractArray{T, N}, Syms} <: DenseArray{T, N}
     LArray{T, N, D, Syms}(__x) where {T, N, D, Syms} = new{T, N, D, Syms}(__x)
 end
 
-function LArray{T, N, D, Syms}(::UndefInitializer, n::Int64) where {T, N, D, Syms}
+function LArray{T, N, D, Syms}(::UndefInitializer, n::Integer) where {T, N, D, Syms}
     @assert sum(lenfun, Syms) == n
     return LArray{T, N, D, Syms}(similar(D, n))
 end
